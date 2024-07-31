@@ -1,0 +1,174 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+
+const Formbot = () => {
+    const { formId } = useParams();
+    const [formData, setFormData] = useState(null);
+    const [formValues, setFormValues] = useState({});
+    const [message, setMessage] = useState("");
+    const [themeColor, setThemeColor] = useState('#FFFFFF');
+
+    useEffect(() => {
+        const fetchFormData = async () => {
+            try {
+                const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+                if (!backendUrl) {
+                    throw new Error('Backend URL is not defined');
+                }
+
+                const response = await axios.get(`${backendUrl}/form/form/${formId}`);
+                setFormData(response.data.data);
+
+                console.log('Fetched data:', response.data); // Log the response to check structure
+
+                if (!response.data || !response.data.data) {
+                    throw new Error('Invalid data structure');
+                }
+
+                setFormData(response.data.data);
+
+                // Initialize form values
+                const initialValues = {
+                    textInputs: response.data.data.textInputs || [],
+                    imageInputs: response.data.data.imageInputs || [],
+                    videoInputs: response.data.data.videoInputs || [],
+                    gifInputs: response.data.data.gifInputs || [],
+                    tinputs: response.data.data.tinputs || [],
+                    numberInputs: response.data.data.numberInputs || [],
+                    phoneInputs: response.data.data.phoneInputs || [],
+                    emailInputs: response.data.data.emailInputs || [],
+                    dateInputs: response.data.data.dateInputs || [],
+                    ratingInputs: response.data.data.ratingInputs || [],
+                    buttonInputs: response.data.data.buttonInputs || []
+                };
+                setFormValues(initialValues);
+
+            } catch (error) {
+                console.error('Error fetching form data:', error);
+            }
+        };
+
+        fetchFormData();
+
+        const savedThemeColor = localStorage.getItem('selectedThemeColor');
+        if (savedThemeColor) {
+            setThemeColor(savedThemeColor);
+        }
+    }, [formId]);
+
+    const handleInputChange = (type, index, event) => {
+        const newValues = { ...formValues };
+        newValues[type][index].value = event.target.value;
+        setFormValues(newValues);
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            if (!backendUrl) {
+                throw new Error('Backend URL is not defined');
+            }
+
+            const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, formValues);
+            setMessage("Form data saved successfully!");
+
+        } catch (error) {
+            console.error('Error saving form data:', error);
+            setMessage("Error saving form data. Please try again.");
+        }
+    };
+
+    if (!formData) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div>
+            <h1>{formData.formName}</h1>
+            <form onSubmit={handleSubmit}>
+            {formData.textInputs.map((input, index) => (
+                    <div key={input.id}>
+                        <span>{formValues.textInputs[index].value}</span>
+                    </div>
+                ))}
+                {formData.imageInputs.map((input, index) => (
+                    <div key={input.id}>
+                        <img src={input.value} alt="image" />
+                    </div>
+                ))}
+                {formData.videoInputs.map((input, index) => (
+                    <div key={input.id}>
+                        <video src={input.value} controls />
+                    </div>
+                ))}
+                {formData.gifInputs.map((input, index) => (
+                    <div key={input.id}>
+                        <img src={input.value} alt="gif" />
+                    </div>
+                ))}
+                {formData.tinputs.map((input, index) => (
+                    <input
+                        key={input.id}
+                        value={formValues.tinputs[index].value}
+                        onChange={(e) => handleInputChange('tinputs', index, e)}
+                        placeholder="Enter text input"
+                    />
+                ))}
+                {formData.numberInputs.map((input, index) => (
+                    <input
+                        key={input.id}
+                        type="number"
+                        value={formValues.numberInputs[index].value}
+                        onChange={(e) => handleInputChange('numberInputs', index, e)}
+                        placeholder="Enter number"
+                    />
+                ))}
+                {formData.emailInputs.map((input, index) => (
+                    <input
+                        key={input.id}
+                        type="email"
+                        value={formValues.emailInputs[index].value}
+                        onChange={(e) => handleInputChange('emailInputs', index, e)}
+                        placeholder="Enter email"
+                    />
+                ))}
+                {formData.dateInputs.map((input, index) => (
+                    <input
+                        key={input.id}
+                        type="date"
+                        value={formValues.dateInputs[index].value}
+                        onChange={(e) => handleInputChange('dateInputs', index, e)}
+                        placeholder="Enter date"
+                    />
+                ))}
+                {formData.phoneInputs.map((input, index) => (
+                    <input
+                        key={input.id}
+                        type="tel"
+                        value={formValues.phoneInputs[index].value}
+                        onChange={(e) => handleInputChange('phoneInputs', index, e)}
+                        placeholder="Enter phone number"
+                    />
+                ))}
+                {formData.ratingInputs.map((input, index) => (
+                    <input
+                        key={input.id}
+                        type="number"
+                        value={formValues.ratingInputs[index].value}
+                        onChange={(e) => handleInputChange('ratingInputs', index, e)}
+                        placeholder="Enter rating"
+                    />
+                ))}
+                {formData.buttonInputs.map((input, index) => (
+                    <button key={input.id} type="button">{input.value}</button>
+                ))}
+                <button type="submit">Submit</button>
+            </form>
+            {message && <p>{message}</p>}
+        </div>
+    );
+};
+
+export default Formbot;

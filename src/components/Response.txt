@@ -1,0 +1,176 @@
+import React ,{useState,useEffect}from "react";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
+import Close from "../assets/close.png";
+import { useParams } from 'react-router-dom';
+
+function Response(){
+    const [formData, setFormData] = useState(null);
+    const [activeButton, setActiveButton] = useState(null);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
+    const { formId } = useParams();
+
+    const handleClick = (buttonName) => {
+        setActiveButton(buttonName);
+      };
+    
+      const buttonStyle = {
+        width: '58px',
+        height: '32px',
+        padding: '7.1px 13px 7.9px 13px',
+        borderRadius: '6px 6px 6px 6px',
+        background: 'transparent',
+        color: '#FFFFFF',
+        cursor: 'pointer'
+      };
+
+      const shareStyle = {
+        width:'65px',
+        height:'25px',top:'16px',left:'1220px',
+        borderRadius: '4px 4px 4px 4px'      
+    }
+
+      const activeShare = {
+        ...shareStyle,
+        background:'#1A5FFF'
+      }
+
+      const activeButtonStyle = {
+        ...buttonStyle,
+        color: '#7EA6FF',
+        border: '1px solid #7EA6FF'
+      };
+
+      const handleResponseClick = () => {
+        handleClick('Response');
+        navigate(`/response/${id}`)
+      };
+    
+      const handleThemeClick = () => {
+        handleClick('Theme');
+        navigate('/theme')
+      };
+    
+      const handleFlowClick = (formId) => {
+        handleClick('Flow');
+        navigate(`/formspace/${formId}`)
+      };
+
+ 
+      useEffect(() => {
+        const fetchFormData = async () => {
+          try {
+            if (!formId) {
+              throw new Error('No formId found in URL parameters');
+            }
+    
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            if (!backendUrl) {
+              throw new Error('Backend URL is not defined');
+            }
+    
+            const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
+            setFormData(response.data);
+          } catch (error) {
+            setError('Error fetching form data');
+            console.error('Error fetching form data:', error);
+          }
+        };
+    
+        fetchFormData();
+      }, [formId]);
+    
+      if (error) return <div>{error}</div>;
+
+
+
+    const renderTable = () => {
+      if (!formData) {
+          return <p>No data available</p>;
+      }
+
+      const submittedTime = new Date(formData.updatedAt).toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true
+    });
+
+    const tableData = [];
+
+    const fields = ['textInputs', 'imageInputs', 'videoInputs', 'gifInputs', 'tinputs', 'numberInputs', 'phoneInputs', 'emailInputs', 'dateInputs', 'ratingInputs', 'buttonInputs'];
+
+    fields.forEach((field) => {
+      formData[field].forEach((input, index) => {
+          tableData.push({
+              field,
+              id: index + 1,
+              value: input.value || 'N/A',
+              submittedTime
+          });
+      });
+  });
+    
+  return (
+    <table>
+        <thead>
+            <tr>
+                <th>Submitted time</th>
+                <th>Field</th>
+                <th>ID</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            {tableData.map((row, index) => (
+                <tr key={index}>
+                    <td>{row.submittedTime}</td>
+                    <td>{row.field}</td>
+                    <td>{row.id}</td>
+                    <td>{row.value}</td>
+                </tr>
+            ))}
+        </tbody>
+    </table>
+);
+};
+      
+
+    return(
+        <div style={{
+            width: '1440px', height: '900px', margin: '0 auto',
+            background:'#1F1F23',
+            position: 'relative'}}>
+                <div style={{width: '1440px',height: '56px',border: '0px 0px 1px 0px',background:'#18181B',borderBottom: '1px solid #FFFFFF29',
+                    fontFamily: 'Open Sans,sans-serif',fontSize: '12px',fontWeight: '600',lineHeight: '21px',textAlign: 'left'
+                 }}>
+
+                    <div style={{left:'40%',top:'0.5%',position:'absolute',display: 'flex',gap: '30px',textAlign:'center'}}>
+                        <span style={activeButton === 'Flow' ? activeButtonStyle:buttonStyle} onClick={handleFlowClick}>Flow</span>
+                        <span style={activeButton === 'Theme' ? activeButtonStyle:buttonStyle} onClick={handleThemeClick}>Theme</span>
+                        <span style={activeButton === 'Response' ? activeButtonStyle:buttonStyle} onClick={handleResponseClick}>Response</span>
+                     </div>
+                     <div style={{left:'84%',top:'2%',position:'absolute',display:'flex',gap:'20px'}}>
+                        <button style={{background:'#848890',width:'65px',height:'25px',color:'#FFFFFF',fontFamily: 'Open Sans,sans-serif',
+                        fontSize: '14px',fontWeight: '600',lineHeight: '16.8px',textAlign:'center',}}>Share</button>
+                        <button style={{background:'#4ADE80CC',width:'65px',height:'25px',color:'#FFFFFF',fontFamily: 'Open Sans,sans-serif',
+                        fontSize: '14px',fontWeight: '600',lineHeight: '16.8px',textAlign:'center',}}>Save</button>
+                        <img src={Close} style={{width:'24px',height:'24px'}}/>
+                     </div>
+
+                </div>
+
+                <div>
+                  {renderTable()}
+                </div>
+                <div>
+                {JSON.stringify(formData)}
+                </div>
+
+        </div>
+    )
+}
+
+export default Response;

@@ -1,0 +1,292 @@
+import React, { useState } from "react";
+import Polygon from "../assets/Group 2.png";
+import Back from "../assets/arrow_back.png";
+import Ellipse1 from "../assets/Ellipse 1.png";
+import Ellipse2 from "../assets/Ellipse 2.png";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
+
+function Signup(){
+  const navigate = useNavigate();
+
+  const [userName, setuserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const[confirmPassword,setconfirmPassword] =useState('');
+  const [success,setSuccess]= useState('');
+
+  const [error,setError]= useState({
+      userName:false,
+      email:false,
+      password:false,
+      confirmPassword:false,
+      passwordMatch: false,
+  });
+
+
+
+  const handleSubmit = async(e) => {
+    e.preventDefault()
+
+    setError((prevState) => {
+        return{ 
+            ...prevState,
+            userName:false,
+            email:false,
+            password:false,
+            confirmPassword:false,
+            passwordMatch: password !== confirmPassword
+        }
+    })
+
+    if(!userName){
+        setError((prevState)=>{
+            return {
+            ...prevState,
+            userName:true
+            }
+        })
+    }
+    if(!email){
+        setError((prevState)=>{
+            return{
+            ...prevState,
+            email:true
+            }
+        })
+    }
+    if(!password){
+        setError((prevState)=>{
+            return{
+            ...prevState,
+            password:true
+            }
+        })
+    }
+
+    if(!confirmPassword){
+      setError((prevState)=>{
+          return{
+          ...prevState,
+          confirmPassword:true
+          }
+      })
+  }
+
+    if(!userName || !email ||!password ||!confirmPassword || password !== confirmPassword){
+        console.log("Error exist in the form")
+        return;
+    }
+    const userData = {
+        userName,
+        email,
+        password,
+        confirmPassword
+    };
+    console.log(userData);
+
+    navigate('/workspace');
+
+    try {
+      const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+          if (!backendUrl) {
+              throw new Error('Backend URL is not defined');
+          }
+      const response = await axios.post(`${backendUrl}/user/register`, userData, {
+          headers: {
+              'Content-Type': 'application/json'
+          }
+      });
+
+      console.log('Form submitted successfully', response.data);
+      setSuccess('Account created successfully!');
+      setError('');
+
+      // Optionally clear the form fields
+  } catch (error) {
+      console.error('Error submitting form', error);
+      if (error.response) {
+          console.error('Response data:', error.response.data);
+          console.error('Response status:', error.response.status);
+          console.error('Response headers:', error.response.headers);
+          setError(`Failed to create account: ${error.response.data.message || 'Please try again.'}`);
+      } else if (error.request) {
+          console.error('Request data:', error.request);
+          setError('No response received from the server. Please try again.');
+      } else {
+          console.error('Error message:', error.message);
+          setError(`Failed to create account: ${error.message}. Please try again.`);
+      }
+      setSuccess('');
+  }
+};
+    return(
+        <div 
+        style={{
+          width: '1440px',
+          height: '900px',
+          margin: '0 auto',
+          background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',
+          position: 'relative' // To ensure absolutely positioned elements are positioned relative to this div
+        }}
+      >
+        <img 
+          src={Polygon} 
+          alt="Polygon" 
+          style={{
+            width: '283.27px',
+            height: '273.61px',
+            top: '381.57px',
+            left: '44px',
+            transform: 'rotate(21.45deg)', // Correct angle transform
+            position: 'absolute'
+          }} 
+        />
+        <img 
+          src={Back} 
+          alt="Back" 
+          onClick={()=>navigate(-1)}
+          style={{
+            width: '30px',
+            height: '30px',
+            top: '70px',
+            left: '66px',
+            position: 'absolute'
+          }} 
+        />
+        <img 
+          src={Ellipse1} 
+          alt="Ellipse1" 
+          style={{
+            width: '229px',
+            height: '114.5px',
+            top: '785px',
+            left: '70%',
+            position: 'absolute'
+          }} 
+        />
+        <img 
+          src={Ellipse2} 
+          alt="Ellipse2" 
+          style={{
+            width: '114.5px',
+            height: '229px',
+            top: '178px',
+            left: '92%', // Correct left position to fit within 1440px width // Correct angle transform
+            position: 'absolute'
+          }} 
+        />
+         <form onSubmit={handleSubmit}
+          style={{width:'314.97px',top:'257px',left:'563px',borderRadius:'12px 12px 12px 12px',position:'absolute',
+            fontFamily:'Poppins,sans-serif',fontSize:'14px',fontWeight:'500',lineHeight:'21px',letterSpacing:'0.03em',textAlign:'center' }}
+          >
+                <div>
+                  <p  style={{width:'42.34px',height:'21.69px',top:'330px',left:'562px',color:'#FFFFFF'}}
+                  >Username</p>
+                <input
+                style={{
+                  width:'313.97px',height:'41.31px',left:'564px',borderRadius:'12px 12px 12px 12px',border:'1px 0px 0px 0px',
+                  background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',color:'#FFFFFF'
+                }}
+                    id="username"
+                    type="text"
+                    name="userName"
+                    autoComplete='off'
+                    placeholder="Enter a username"
+                    value={userName}
+                    onInput={(e)=> setuserName(e.target.value)} // Add onChange handler
+                />
+                {error.userName && <p style={{color:'red'}}> ! Please enter a valid name </p>}
+                
+                </div>
+                <div>
+                  <p  style={{width:'42.34px',height:'21.69px',top:'330px',left:'562px',color:'#FFFFFF'}}
+                  >Email</p>
+                <input
+                style={{
+                  width:'313.97px',height:'41.31px',left:'564px',borderRadius:'12px 12px 12px 12px',border:'1px 0px 0px 0px',
+                  background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',color:'#FFFFFF'
+                }}
+                    id="email"
+                    type="email"
+                    name="email"
+                    autoComplete='off'
+                    placeholder="Enter your email"
+                    value={email}
+                    onInput={(e)=> setEmail(e.target.value)} // Add onChange handler
+                />
+                {error.email && <p style={{color:'red'}}> ! Please enter a valid Email </p>}
+              
+                </div>
+                <div>
+                  <p  style={{width:'42.34px',height:'21.69px',top:'330px',left:'562px',color:'#FFFFFF'}}
+                  >Password </p>
+                <input
+                style={{
+                  width:'313.97px',height:'41.31px',left:'564px',borderRadius:'12px 12px 12px 12px',border:'1px 0px 0px 0px',
+                  background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',color:'#FFFFFF'
+                }}
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete='off'
+                    placeholder="**********"
+                    value={password}
+                    onInput={(e)=> setPassword(e.target.value)} // Add onChange handler 
+                />
+                {error.password && <p style={{color:'red'}}> ! Please enter a Password</p>}
+                </div>
+                <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent:'left', color: error.passwordMatch ? 'red' : '#FFFFFF',marginTop: '10px' }}>
+                      <p style={{ margin: 0 }}>Confirm Password</p>
+                    </div>
+                <input
+                style={{
+                  width:'313.97px',height:'41.31px',left:'564px',borderRadius:'12px 12px 12px 12px',border:'1px 0px 0px 0px',
+                  background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',color:'#FFFFFF',marginTop: '20px'
+                }}
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    autoComplete='off'
+                    placeholder="**********"
+                    value={confirmPassword}
+                    onInput={(e)=> setconfirmPassword(e.target.value)} // Add onChange handler
+                />
+                 {error.confirmPassword && <p style={{color:'red'}}> ! Please confirm your Password</p>}
+                 {error.passwordMatch && <p style={{color:'red'}}>enter same password in both fields</p>}
+                </div>
+                <button style={{
+                width:'313.97px',height:'41.31px',borderRadius:'12px 12px 12px 12px',
+                boxShadow: '0px 4px 10px 0px #E9444B40',background:'#1A5FFF',color:'#FFFFFF', marginTop: '20px'
+              }}>Sign Up</button>
+              <div
+        style={{
+          width: '259px',
+          height: '17px',
+          top:'530px',
+          left:'20px',
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '14px',
+          fontWeight: '400',
+          lineHeight: '16.94px',
+          letterSpacing: '0.03em',
+          textAlign: 'center',
+          position: 'absolute',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '5px'// Add gap between the text and link
+        }}
+      >
+        <p style={{ color: '#FFFFFF', margin: 0 }}>Already have an account ? </p>
+        <Link to="/signin" style={{ color: '#7EA6FF', textDecoration: 'none' }}>Login</Link>
+      </div>
+            </form>
+    </div>
+    )
+}
+
+export default Signup;

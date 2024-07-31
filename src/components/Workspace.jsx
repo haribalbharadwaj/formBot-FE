@@ -1,0 +1,566 @@
+import { useEffect, useState } from "react";
+import React from "react";
+import Button from "../assets/Button.png";
+import CreateBot from "../assets/Button1.png";
+import axios from 'axios';
+import Deleete from "../assets/delete.png";
+import Line from "../assets/Line 4.png";
+import Down from "../assets/downside.png";
+import Up from "../assets/upward.png";
+import {useNavigate} from "react-router-dom";
+import { useFormContext } from "../components/FormContext";
+
+function Workspace() {
+    const [userName, setUserName] = useState('');
+    const [isFolderCreateVisible, setIsFolderCreateVisible] = useState(false);
+    const [folderName, setFolderName] = useState('');
+    const [folders, setFolders] = useState([]);
+    const [error, setError] = useState('');
+    const [showDeleteFolder, setShowDeleteFolder] = useState(false);
+    const [showSettings,setShowSettings]=useState(false);
+    const [showDownArrow, setShowDownArrow] = useState(true); 
+    const [selectedForm, setSelectedForm] = useState(null);
+    const [forms,setForms]= useState([]);
+    const [formId, setFormId] = useState(null);
+    const [showDeleteForm, setShowDeleteForm] = useState(false);
+    const [formToDelete, setFormToDelete] = useState(null);
+    const [user, setUser] = useState(null);
+    const [folderId, setFolderId] = useState(null);
+
+
+  
+    const userId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token');
+
+    if (!userId) {
+        console.error('User ID is missing from localStorage');
+        return;
+    }
+
+    const { setSelectedFormId } = useFormContext()
+    const navigate = useNavigate();
+    useEffect(() => {
+        const storedUserName = localStorage.getItem('userName');
+        if (storedUserName) {
+            setUserName(storedUserName);
+        }
+        fetchFolders();
+        fetchForms();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const userId = localStorage.getItem('userId');
+                const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+                const response = await axios.get(`${backendUrl}/user/user/${userId}`);
+                setUser(response.data.data);
+            } catch (error) {
+                console.error('Error fetching user data', error);
+            }
+        };
+
+        fetchUser();
+    }, [userId]);
+
+
+    const fetchForms = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const userId = localStorage.getItem('userId');
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            
+            if (!backendUrl) {
+                throw new Error('Backend URL is not defined');
+            }
+    
+            if (!userId) {
+                console.error('User ID is not found in localStorage.');
+                return;
+            }
+    
+            const response = await axios.get(`${backendUrl}/form/forms/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+    
+            console.log('Forms:', response.data.data);
+    
+            if (response.data.status === 'SUCCESS') {
+                if (Array.isArray(response.data.data)) {
+                    setForms(response.data.data);
+                    const formIds = response.data.data.map(form => form._id);
+                    localStorage.setItem('formIds', JSON.stringify(formIds));
+                    if (formIds.length > 0) {
+                        localStorage.setItem('formId', formIds[0]);
+                        setFormId(formIds[0]); // Assuming you want the first form ID
+                    } else {
+                        setError('No forms found for this user.');
+                    }
+                } else {
+                    setError('Unexpected data format received.');
+                }
+            } else {
+                setError('Failed to fetch the forms.');
+            }
+    
+        } catch (error) {
+            console.error('Error fetching forms:', error);
+            setError('Failed to fetch forms. Please try again.');
+        }
+    };
+    
+        const fetchFolders = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+                if (!backendUrl) {
+                    throw new Error('Backend URL is not defined');
+                }
+                const response = await axios.get(`${backendUrl}/folder/folders/${userId}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    },
+                }
+                );
+
+                console.log('Folders:', response.data); // Log the response to check its structure
+                if (response.data.status === 'SUCCESS') {
+                    setFolders(response.data.data);
+                    const folderIds = response.data.data.map(folder => folder._id);
+                    localStorage.setItem('folderIds', JSON.stringify(folderIds));
+        
+                    // Optionally, store the first folder ID in localStorage
+                    if (folderIds.length > 0) {
+                        localStorage.setItem('folderId', folderIds[0]);
+                        setFolderId(response.data.data); 
+                    }
+                } else {
+                    setError('Failed to fetch folders');
+                }
+            } catch (error) {
+                console.error('Error fetching folders:', error);
+                setError('Error fetching folders');
+            }
+        };
+
+    console.log('Folders state:',{userId});
+
+    const handleCreateFolder = () => {
+        setIsFolderCreateVisible(true);
+    };
+
+    const closeCreateFolder = ()=>{
+        close
+        setIsFolderCreateVisible(false);
+    }
+    
+
+    const createFolder = async () => {
+        try {
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            if (!backendUrl) {
+                throw new Error('Backend URL is not defined');
+            }
+            const response = await axios.post(`${backendUrl}/folder/createFolder`, { folderName, userId }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.data.status === 'SUCCESS') {
+                setFolders([...folders, response.data.data]);
+                setFolderName('');
+                setIsFolderCreateVisible(false);
+                console.log('Folder created successfully', response.data);
+            } else {
+                setError('Failed to create folder');
+            }
+        } catch (error) {
+            console.error('Error creating folder:', error);
+            setError('Error creating folder');
+        }
+    };
+
+    
+    const confirmDeleteFolder = async ()=>{
+
+        const folderId = localStorage.getItem('folderId');
+        console.log('folderId:',folderId);
+        if (!folderId) {
+            console.error('No folder ID found in localStorage');
+            return;
+        }
+        try{
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            if (!backendUrl) {
+                throw new Error('Backend URL is not defined');
+            }
+
+            const response = await axios.delete(`${backendUrl}/folder/deleteFolder/${folderId}`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.data.status === 'SUCCESS') {
+                fetchFolders();
+                setShowDeleteFolder(false);
+                console.log('Folder deleted successfully', response.data);
+            } else {
+                setError('Failed to delete folder');
+            }
+        }catch(error){
+            console.error('Error deleting folder:', error);
+            setError('Error deleting folder');
+        }finally {
+            localStorage.removeItem('folderId'); // Ensure folder ID is removed from localStorage
+        }
+        console.log('Deleted folderId:',folderId);
+    }
+
+
+    const confirmDeleteForm = async () => {
+        const formId = localStorage.getItem('formId');
+        console.log('formId:', formId);
+        
+        if (!formId) {
+            console.error('No form ID found in localStorage');
+            setError('No form ID found');
+            return;
+        }
+    
+        try {
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            if (!backendUrl) {
+                throw new Error('Backend URL is not defined');
+            }
+    
+            const response = await axios.delete(`${backendUrl}/form/deleteForm/${formId}`, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            console.log('Delete response:', response.data);
+    
+            // Assuming response.data.message contains the success or failure message
+            if (response.data.message === 'Form deleted successfully') {
+                await fetchForms(); // Fetch forms again to update the UI
+                setShowDeleteForm(false);
+                console.log('Form deleted successfully');
+            } else {
+                console.error('Delete failed:', response.data.message);
+                setError('Failed to delete form');
+            }
+        } catch (error) {
+            console.error('Error deleting form:', error);
+            setError('Error deleting form');
+        } finally {
+            localStorage.removeItem('formId'); // Ensure form ID is removed from localStorage
+        }
+    };
+    
+
+
+
+    const handleDeleteConfirmation = (folderId) => {
+        localStorage.setItem('folderId', folderId);
+        setShowDeleteFolder(true);
+    };
+
+   
+
+
+    const showSettingsHandler = () => {
+        setShowSettings(!showSettings);
+        setShowDownArrow(!showDownArrow);
+    };
+
+      const logoutHandler = () => {
+        // Clear localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('folderId');
+
+        // Optionally, make an API call to log out on the server side
+        // await axios.post('/api/logout'); // Example endpoint
+
+        // Redirect to login page
+       navigate('/');
+    };
+
+    const handleFormClick = (formId) => {
+        setSelectedFormId(formId);
+        navigate(`/formspace/${formId}`);
+      };
+
+    const fetchFormEdit = (formId) => {
+        localStorage.setItem('formId', formId);
+        navigate(`/formspace/${formId}`);
+    };
+    
+
+    const openSettings=()=>{
+        navigate('/settings');
+    }
+
+    const formWorkspace=()=>{
+        navigate(`/formspace/${formId}`);
+    }
+
+    const handleDeleteFormClick = (formId) => {
+        setFormToDelete(formId);
+        setShowDeleteForm(true);
+    };
+
+    const closeDeleteConfirmation = () => {
+        setShowDeleteForm(false);
+        setFormToDelete(null);
+    };
+
+    const closeDeleteFolderConfirmation = () => {
+        setShowDeleteFolder(false);
+    };
+
+	const fetchFormById = async (formId) => {
+        try {
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            const response = await axios.get(`${backendUrl}/form/${formId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching form:', error);
+            return null;
+        }
+    };
+
+
+    return (
+        <div style={{
+            width: '1440px', height: '900px', margin: '0 auto',
+            background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',
+            position: 'relative'
+        }}>
+            <div style={{
+                width: '292px', height: '40px', padding: '8px 9px',
+                borderRadius: '6px 0 0 0', border: '1px solid #FFFFFF29',
+                position: 'absolute', left: '40%', fontFamily: 'Open Sans, sans-serif',
+                fontSize: '16px', fontWeight: '600', lineHeight: '19.2px',
+                textAlign: 'center', color: '#FFFFFFEB', display: 'flex',
+                alignItems: 'center', justifyContent: 'center',gap:'30px'
+            }}>
+                <span>{user ? user.userName : 'Guest'}'s workspace</span>
+                {showDownArrow ?(
+                    <img src={Down} onClick={showSettingsHandler} style={{ cursor: 'pointer' }}/>
+                ):(
+                    <img src={Up} onClick={showSettingsHandler} style={{ cursor: 'pointer' }}/>)}
+            </div>
+            {showSettings &&(
+                <div  id="settings" style={{zIndex:'1000', position: 'absolute', top: '0px', left: '40%'}}>
+                <div  style={{width: '292px', height: '40px', padding: '8px 9px',borderRadius: '6px 0 0 0', border: '1px solid #FFFFFF29',top:'54px',
+                position: 'absolute', left: '40%', fontFamily: 'Open Sans, sans-serif',fontSize: '16px', fontWeight: '600', lineHeight: '19.2px',
+                textAlign: 'left', color: '#FFFFFFEB', display: 'flex',alignItems: 'left', justifyContent: 'left',gap:'30px',background:'#121212'}}>
+                <p onClick={openSettings} style={{cursor: 'pointer'}}>Settings</p>
+                </div>
+                <div  style={{width: '292px', height: '40px', padding: '8px 9px',borderRadius: '6px 0 0 0', border: '1px solid #FFFFFF29',top:'108px',
+                position: 'absolute', left: '40%', fontFamily: 'Open Sans, sans-serif',fontSize: '16px', fontWeight: '600', lineHeight: '19.2px',
+                textAlign: 'left', color: '#FFA54C', display: 'flex',alignItems: 'left', justifyContent: 'left',gap:'30px',background:'#121212'}}>
+                <p onClick={logoutHandler} style={{cursor: 'pointer'}}>Log Out</p>
+                </div>
+            </div>
+            )}
+            <div id="Folder creation" style={{top: '65px', width: '1000px', height: '325px',padding: '40px 0 469px 0', position: 'absolute',
+             left: '50%',transform: 'translateX(-50%)'}}>
+                <img src={Button} onClick={handleCreateFolder} alt="Create Folder" style={{position: 'absolute', top: '40px', left: '9%', transform: 'translateX(-50%)'
+                }} />
+                 <img src={CreateBot} alt="Create Bot" onClick={formWorkspace} style={{position: 'absolute', width:'225px',height:'270px',
+                    top: '120px', left: '12%', transform: 'translateX(-50%)'}} />
+                <div className="workspace" style={{left: '250px', top: '60px', position: 'relative'}}>
+                    {error && <p className="error">{error}</p>}
+                   
+                    <div className="forms-list"   style={{ display: 'flex', flexDirection: 'row', gap: '30px'}}>
+                        {forms.length > 0 ? (
+                        forms.map(form => (
+
+                            <div key={form._id} >
+                                <img src={Deleete} style={{marginLeft:'220px',marginBottom:'-10px'}} onClick={handleDeleteFormClick}/>
+                                <div  className="form-item" style={{ width:'225px',height:'270px',border: '1px solid ', background:'#D3D3D3',brderRadius: '5px',
+                             display: 'flex',justifyContent: 'center',alignItems: 'center'}} onClick={() => handleFormClick(form._id)}>
+                            <h3 style={{ margin: 0 ,color:'#FFFFFF',fontFamily: 'Open Sans,sans-serif',fontSize: '18px',fontWeight: '400',lineHeight: '21.6px',
+                            textAlign: 'center'}}>{form.formName}</h3>
+                            {/* Render additional details of the form as needed */}
+                        </div>
+                            </div>
+                        
+                        ))
+                        ) : (
+                        <p>No forms found.</p>
+                        )}
+                    </div>
+                </div>
+                {isFolderCreateVisible && (
+                    <div id="folderCreate" style={{
+                        width: '540px', height: '261px', transform: 'translate(50%, 20%)',
+                        borderRadius: '24px', border: '1px solid #47474A',
+                        boxShadow: '0px 0px 3.8px 0px #FFFFFF40', position: 'absolute',
+                        backgroundColor: '#121212',padding: '25px', // Added padding for better spacing
+                        boxSizing: 'border-box'
+                    }}>
+                        <p style={{ color: '#FFFFFF',width:'245px',height:'41px',marginTop:'0',marginBottom:'20px',
+                            fontFamily:'Open Sans,sans-serif',fontSize:'27.33px',fontWeight:'600',lineHeight:'41px',textAlign:'center'}}>Create New Folder</p>
+                        <input
+                            type="text"
+                            placeholder="Enter folder name"
+                            value={folderName}
+                            onChange={(e) => setFolderName(e.target.value)}
+                            style={{borderRadius: '8px 8px 8px 8px', width:'471px',height:'73px',top: '94px',left: '276px',background:'#1F1F23',
+                                fontFamily:'Open Sans,sans-serif',fontSize:'20px',fontWeight: '600',lineHeight: '41px',textAlign: 'left',
+                                color:'#FFFFFF'
+                            }}
+                        />
+                        <div style={{
+                            display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '80px', marginTop: '20px',
+                            fontFamily: 'Open Sans,sans-serif',fontSize: '27.33px',fontWeight: '600',lineHeight: '41px',textAlign: 'left'
+
+                        }}>
+                            <span onClick={createFolder} style={{
+                                padding: '10px', borderRadius: '8px', border: 'none',
+                                color: '#1A5FFF', width: '70px', height: '41px', textAlign: 'centre', cursor: 'pointer'
+                            }}>
+                                Done
+                            </span>
+                            <img src={Line}/>
+                            <span onClick={closeCreateFolder} style={{
+                                color: '#FFFFFF', cursor: 'pointer', textAlign: 'center', padding: '10px',
+                                width: '70px', height: '41px'
+                            }}>
+                                Cancel
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {showDeleteFolder && (
+                    <div id="deleteConfirmation" style={{
+                        width: '540px', height: '211px', transform: 'translate(50%, 20%)',
+                        borderRadius: '24px', border: '1px solid #47474A',
+                        boxShadow: '0px 0px 3.8px 0px #FFFFFF40', position: 'absolute',
+                        backgroundColor: '#121212', padding: '25px', // Added padding for better spacing
+                        boxSizing: 'border-box'
+                    }}>
+                        <p style={{
+                            color: '#FFFFFF', width: '338px', height: '82px', marginTop: '0', marginBottom: '20px',marginLeft:'60px',
+                            fontFamily: 'Open Sans, sans-serif', fontSize: '27.33px', fontWeight: '600', lineHeight: '41px', textAlign: 'center'
+                        }}>
+                            Are you sure you want to delete this folder ?
+                        </p>
+                        <div style={{
+                            display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '80px', marginTop: '20px',
+                            fontFamily: 'Open Sans,sans-serif',fontSize: '27.33px',fontWeight: '600',lineHeight: '41px',textAlign: 'left'
+
+                        }}>
+                            <span onClick={confirmDeleteFolder} style={{
+                                padding: '10px', borderRadius: '8px', border: 'none',
+                                color: '#1A5FFF', width: '70px', height: '41px', textAlign: 'centre', cursor: 'pointer'
+                            }}>
+                                Confirm
+                            </span>
+                            <img src={Line}/>
+                            <span onClick={closeDeleteFolderConfirmation} style={{
+                                color: '#FFFFFF', cursor: 'pointer', textAlign: 'center', padding: '10px',
+                                width: '70px', height: '41px'
+                            }}>
+                                Cancel
+                            </span>
+                        </div>
+                    </div>
+                )}
+
+                {showDeleteForm && (
+                <div id="deleteConfirmation" style={{
+                    width: '540px', height: '211px', transform: 'translate(50%, 20%)',
+                    borderRadius: '24px', border: '1px solid #47474A',
+                    boxShadow: '0px 0px 3.8px 0px #FFFFFF40', position: 'absolute',
+                    backgroundColor: '#121212', padding: '25px', // Added padding for better spacing
+                    boxSizing: 'border-box'
+                }}>
+                    <p style={{
+                        color: '#FFFFFF', width: '338px', height: '82px', marginTop: '0', marginBottom: '20px', marginLeft: '60px',
+                        fontFamily: 'Open Sans, sans-serif', fontSize: '27.33px', fontWeight: '600', lineHeight: '41px', textAlign: 'center'
+                    }}>
+                        Are you sure you want to delete this form?
+                    </p>
+                    <div style={{
+                        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '80px', marginTop: '20px',
+                        fontFamily: 'Open Sans, sans-serif', fontSize: '27.33px', fontWeight: '600', lineHeight: '41px', textAlign: 'left'
+                    }}>
+                        <span onClick={confirmDeleteForm} style={{
+                            padding: '10px', borderRadius: '8px', border: 'none',
+                            color: '#1A5FFF', width: '70px', height: '41px', textAlign: 'center', cursor: 'pointer'
+                        }}>
+                            Confirm
+                        </span>
+                        <img src={Line} alt="Divider" />
+                        <span onClick={closeDeleteConfirmation} style={{
+                            color: '#FFFFFF', cursor: 'pointer', textAlign: 'center', padding: '10px',
+                            width: '70px', height: '41px'
+                        }}>
+                            Cancel
+                        </span>
+                    </div>
+                </div>
+            )}
+
+        {error && <p>{error}</p>}
+        <ul style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', // Allows wrapping to new line if needed
+            listStyleType: 'none',
+            top:'5%',
+            left:'20%', // Removes default list bullets
+            padding: 0, 
+            margin: 0,
+            position:'absolute',
+             gap: '20px'
+        }}>
+            {folders.length > 0 ? (
+                folders.map((folder) => (
+                    <li key={folder._id} style={{
+                        width:'213px',
+                        height:'40px',
+                        fontFamily:'Open Sans,sans-serif',fontSize:'16px',fontWeight:'600',lineHeight:'40px',textAlign:'center',
+                        backgroundColor: '#2E2E2E',
+                        borderRadius: '5px',
+                        color: '#FFFFFF',
+                        display: 'flex', // Add flex display to align items
+                        alignItems: 'center', // Center items vertically
+                        justifyContent: 'center',
+                        gap:'10px',
+                        cursor: 'pointer'
+                    }}
+                    onClick={() => {
+                        localStorage.setItem('folderId', folder._id); // Store the clicked folder ID in localStorage
+                    }}
+                    >
+                        {folder.folderName}
+                        <img src={Deleete} alt="Delete" onClick={(e) => {e.stopPropagation();
+                        handleDeleteConfirmation(folder._id); 
+                }} />
+                    </li>
+                ))
+            ) : (
+                <p style={{ color: '#FFFFFF' }}>No folders found</p>
+            )}
+        </ul>
+
+
+            </div>
+
+        </div>
+    );
+}
+
+export default Workspace;
