@@ -90,89 +90,89 @@ const Formbot = () => {
         <div>
             <h1>{formData.formName}</h1>
             <form onSubmit={handleSubmit}>
-                {formValues.textInputs.map((input, index) => (
+                {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.textInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('textInputs', index, e)}
                         placeholder="Enter text"
                     />
                 ))}
-                {formValues.imageInputs.map((input, index) => (
+                {formValues.imageInputs.length > 0 && formValues.imageInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.imageInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('imageInputs', index, e)}
                         placeholder="Enter image URL"
                     />
                 ))}
-                {formValues.videoInputs.map((input, index) => (
+                {formValues.videoInputs.length > 0 && formValues.videoInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.videoInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('videoInputs', index, e)}
                         placeholder="Enter video URL"
                     />
                 ))}
-                {formValues.gifInputs.map((input, index) => (
+                {formValues.gifInputs.length > 0 && formValues.gifInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.gifInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('gifInputs', index, e)}
                         placeholder="Enter gif URL"
                     />
                 ))}
-                {formValues.tinputs.map((input, index) => (
+                {formValues.tinputs.length > 0 && formValues.tinputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.tinputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('tinputs', index, e)}
                         placeholder="Enter text input"
                     />
                 ))}
-                {formValues.numberInputs.map((input, index) => (
+                {formValues.numberInputs.length > 0 && formValues.numberInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.numberInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('numberInputs', index, e)}
                         placeholder="Enter number"
                     />
                 ))}
-                {formValues.phoneInputs.map((input, index) => (
+                {formValues.phoneInputs.length > 0 && formValues.phoneInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.phoneInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('phoneInputs', index, e)}
                         placeholder="Enter phone number"
                     />
                 ))}
-                {formValues.emailInputs.map((input, index) => (
+                {formValues.emailInputs.length > 0 && formValues.emailInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.emailInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('emailInputs', index, e)}
                         placeholder="Enter email"
                     />
                 ))}
-                {formValues.dateInputs.map((input, index) => (
+                {formValues.dateInputs.length > 0 && formValues.dateInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.dateInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('dateInputs', index, e)}
                         placeholder="Enter date"
                     />
                 ))}
-                {formValues.ratingInputs.map((input, index) => (
+                {formValues.ratingInputs.length > 0 && formValues.ratingInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.ratingInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('ratingInputs', index, e)}
                         placeholder="Enter rating"
                     />
                 ))}
-                {formValues.buttonInputs.map((input, index) => (
+                {formValues.buttonInputs.length > 0 && formValues.buttonInputs.map((input, index) => (
                     <input
-                        key={index}
+                        key={input.id}
                         value={formValues.buttonInputs[index]?.value || ''}
                         onChange={(e) => handleInputChange('buttonInputs', index, e)}
                         placeholder="Enter button text"
