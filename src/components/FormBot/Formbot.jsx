@@ -39,7 +39,7 @@ const Formbot = () => {
                 };
 
                 setFormData(data);
-                setFormValues(initialValues);
+                setFormValues(data);
                 console.log('setFormValues:',setFormValues);
 
                 // Debugging: Check initial form values
@@ -67,7 +67,7 @@ const Formbot = () => {
 
         const formDataToSend = {
             formName: formData?.formName || '',
-            textInputs: formData.textInputs,
+            textInputs: formValues.textInputs,
             imageInputs: formValues.imageInputs,
             videoInputs: formValues.videoInputs,
             gifInputs: formValues.gifInputs,
