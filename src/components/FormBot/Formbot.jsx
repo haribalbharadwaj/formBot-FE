@@ -6,7 +6,6 @@ const Formbot = () => {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
     const [formValues, setFormValues] = useState({});
-    const [hasInputs, setHasInputs] = useState(false);
 
     useEffect(() => {
         const fetchFormData = async () => {
@@ -23,28 +22,23 @@ const Formbot = () => {
 
                 // Initialize formValues with default values if not present in formData
                 const initialValues = {
-                    textInputs: data.textInputs || [],
-                    imageInputs: data.imageInputs || [],
-                    videoInputs: data.videoInputs || [],
-                    gifInputs: data.gifInputs || [],
-                    tinputs: data.tinputs || [],
-                    numberInputs: data.numberInputs || [],
-                    phoneInputs: data.phoneInputs || [],
-                    emailInputs: data.emailInputs || [],
-                    dateInputs: data.dateInputs || [],
-                    ratingInputs: data.ratingInputs || [],
-                    buttonInputs: data.buttonInputs || []
+                    textInputs: data.textInputs.length > 0 ? data.textInputs : [{ id: 1, value: '' }],
+                    imageInputs: data.imageInputs.length > 0 ? data.imageInputs : [{ id: 1, value: '' }],
+                    videoInputs: data.videoInputs.length > 0 ? data.videoInputs : [{ id: 1, value: '' }],
+                    gifInputs: data.gifInputs.length > 0 ? data.gifInputs : [{ id: 1, value: '' }],
+                    tinputs: data.tinputs.length > 0 ? data.tinputs : [{ id: 1, value: '' }],
+                    numberInputs: data.numberInputs.length > 0 ? data.numberInputs : [{ id: 1, value: '' }],
+                    phoneInputs: data.phoneInputs.length > 0 ? data.phoneInputs : [{ id: 1, value: '' }],
+                    emailInputs: data.emailInputs.length > 0 ? data.emailInputs : [{ id: 1, value: '' }],
+                    dateInputs: data.dateInputs.length > 0 ? data.dateInputs : [{ id: 1, value: '' }],
+                    ratingInputs: data.ratingInputs.length > 0 ? data.ratingInputs : [{ id: 1, value: '' }],
+                    buttonInputs: data.buttonInputs.length > 0 ? data.buttonInputs : [{ id: 1, value: '' }]
                 };
 
                 setFormData(data);
                 setFormValues(initialValues);
 
-                // Determine if there are any inputs to display
-                const hasInputs = Object.values(initialValues).some(arr => arr.length > 0);
-                setHasInputs(hasInputs);
-
                 console.log('Initial form values:', initialValues); // Log initial form values
-                console.log('Has inputs:', hasInputs); // Log if there are inputs
 
             } catch (error) {
                 console.error('Error fetching form data:', error);
@@ -94,24 +88,98 @@ const Formbot = () => {
 
     return (
         <div>
-            {hasInputs ? (
-                <form onSubmit={handleSubmit}>
-                    {formData.textInputs.map((input, index) => (
-                        <input
-                            key={index}
-                            value={formValues.textInputs[index]?.value || ''}
-                            onChange={(e) => handleInputChange('textInputs', index, e)}
-                            placeholder="Enter text"
-                        />
-                    ))}
-                    {/* Render other input types similarly */}
-                    <button type="submit">Submit</button>
-                </form>
-            ) : (
-                <div>
-                    <p>No inputs available</p>
-                </div>
-            )}
+            <h1>{formData.formName}</h1>
+            <form onSubmit={handleSubmit}>
+                {formValues.textInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.textInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('textInputs', index, e)}
+                        placeholder="Enter text"
+                    />
+                ))}
+                {formValues.imageInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.imageInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('imageInputs', index, e)}
+                        placeholder="Enter image URL"
+                    />
+                ))}
+                {formValues.videoInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.videoInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('videoInputs', index, e)}
+                        placeholder="Enter video URL"
+                    />
+                ))}
+                {formValues.gifInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.gifInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('gifInputs', index, e)}
+                        placeholder="Enter gif URL"
+                    />
+                ))}
+                {formValues.tinputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.tinputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('tinputs', index, e)}
+                        placeholder="Enter text input"
+                    />
+                ))}
+                {formValues.numberInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.numberInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('numberInputs', index, e)}
+                        placeholder="Enter number"
+                    />
+                ))}
+                {formValues.phoneInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.phoneInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('phoneInputs', index, e)}
+                        placeholder="Enter phone number"
+                    />
+                ))}
+                {formValues.emailInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.emailInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('emailInputs', index, e)}
+                        placeholder="Enter email"
+                    />
+                ))}
+                {formValues.dateInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.dateInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('dateInputs', index, e)}
+                        placeholder="Enter date"
+                    />
+                ))}
+                {formValues.ratingInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.ratingInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('ratingInputs', index, e)}
+                        placeholder="Enter rating"
+                    />
+                ))}
+                {formValues.buttonInputs.map((input, index) => (
+                    <input
+                        key={index}
+                        value={formValues.buttonInputs[index]?.value || ''}
+                        onChange={(e) => handleInputChange('buttonInputs', index, e)}
+                        placeholder="Enter button text"
+                    />
+                ))}
+                <button type="submit">Submit</button>
+            </form>
         </div>
     );
 };
