@@ -20,7 +20,8 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-                console.log('Fetched form data:', data); // Log fetched data
+                // Debugging: Check fetched data
+                console.log('Fetched form data:', data);
 
                 // Initialize formValues with default values if not present in formData
                 const initialValues = {
@@ -40,7 +41,8 @@ const Formbot = () => {
                 setFormData(data);
                 setFormValues(initialValues);
 
-                console.log('Initial form values:', initialValues); // Log initial form values
+                // Debugging: Check initial form values
+                console.log('Initial form values:', initialValues);
 
             } catch (error) {
                 console.error('Error fetching form data:', error);
@@ -100,7 +102,7 @@ const Formbot = () => {
             <h1>{formData?.formName || 'Formbot'}</h1>
             <form onSubmit={handleSubmit}>
                 {/* Conditionally render fields based on formData */}
-                {formValues.textInputs.map((input, index) => (
+                {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
                     <div key={`textInput-${input.id}`}>
                         <label>Text Input {index + 1}</label>
                         <input
@@ -111,7 +113,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.imageInputs.map((input, index) => (
+                {formValues.imageInputs.length > 0 && formValues.imageInputs.map((input, index) => (
                     <div key={`imageInput-${input.id}`}>
                         <label>Image URL {index + 1}</label>
                         <input
@@ -122,7 +124,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.videoInputs.map((input, index) => (
+                {formValues.videoInputs.length > 0 && formValues.videoInputs.map((input, index) => (
                     <div key={`videoInput-${input.id}`}>
                         <label>Video URL {index + 1}</label>
                         <input
@@ -133,7 +135,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.gifInputs.map((input, index) => (
+                {formValues.gifInputs.length > 0 && formValues.gifInputs.map((input, index) => (
                     <div key={`gifInput-${input.id}`}>
                         <label>GIF URL {index + 1}</label>
                         <input
@@ -146,7 +148,7 @@ const Formbot = () => {
                 ))}
 
                 {/* Static rendering for other input types */}
-                {formValues.tinputs.map((input, index) => (
+                {formValues.tinputs.length > 0 && formValues.tinputs.map((input, index) => (
                     <div key={`tinput-${input.id}`}>
                         <label>Text Input {index + 1}</label>
                         <input
@@ -157,7 +159,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.numberInputs.map((input, index) => (
+                {formValues.numberInputs.length > 0 && formValues.numberInputs.map((input, index) => (
                     <div key={`numberInput-${input.id}`}>
                         <label>Number Input {index + 1}</label>
                         <input
@@ -168,7 +170,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.phoneInputs.map((input, index) => (
+                {formValues.phoneInputs.length > 0 && formValues.phoneInputs.map((input, index) => (
                     <div key={`phoneInput-${input.id}`}>
                         <label>Phone Input {index + 1}</label>
                         <input
@@ -179,7 +181,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.emailInputs.map((input, index) => (
+                {formValues.emailInputs.length > 0 && formValues.emailInputs.map((input, index) => (
                     <div key={`emailInput-${input.id}`}>
                         <label>Email Input {index + 1}</label>
                         <input
@@ -190,7 +192,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.dateInputs.map((input, index) => (
+                {formValues.dateInputs.length > 0 && formValues.dateInputs.map((input, index) => (
                     <div key={`dateInput-${input.id}`}>
                         <label>Date Input {index + 1}</label>
                         <input
@@ -201,7 +203,7 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.ratingInputs.map((input, index) => (
+                {formValues.ratingInputs.length > 0 && formValues.ratingInputs.map((input, index) => (
                     <div key={`ratingInput-${input.id}`}>
                         <label>Rating Input {index + 1}</label>
                         <input
@@ -214,14 +216,14 @@ const Formbot = () => {
                         />
                     </div>
                 ))}
-                {formValues.buttonInputs.map((input, index) => (
+                {formValues.buttonInputs.length > 0 && formValues.buttonInputs.map((input, index) => (
                     <div key={`buttonInput-${input.id}`}>
                         <label>Button Input {index + 1}</label>
                         <input
                             type="text"
                             value={input.value || ''}
                             onChange={(e) => handleInputChange('buttonInputs', index, e)}
-                            placeholder="Enter button text"
+                            placeholder="Enter button label"
                         />
                     </div>
                 ))}
