@@ -263,7 +263,7 @@ function Signup() {
             style={{
               width: '313.97px',
               height: '41.31px',
-              background: '#F4B15F',
+              background: '#1A5FFF',
               borderRadius: '12px',
               border: 'none',
               color: '#FFFFFF',
