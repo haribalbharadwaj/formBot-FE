@@ -67,7 +67,7 @@ const Formbot = () => {
 
         const formDataToSend = {
             formName: formData?.formName || '',
-            textInputs: formValues.textInputs,
+            textInputs: formData.textInputs,
             imageInputs: formValues.imageInputs,
             videoInputs: formValues.videoInputs,
             gifInputs: formValues.gifInputs,
@@ -101,6 +101,7 @@ const Formbot = () => {
     return (
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
+            <h2>{textInputs}</h2>
             <form onSubmit={handleSubmit}>
                 {/* Conditionally render fields based on formValues */}
                 {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
