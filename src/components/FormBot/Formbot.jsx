@@ -16,12 +16,12 @@ const Formbot = () => {
                 if (!backendUrl) {
                     throw new Error('Backend URL is not defined');
                 }
-        
+
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data;
-        
+
                 console.log('Fetched form data:', data);
-        
+
                 setFormData(data);
                 setFormValues({
                     textInputs: data.textInputs || [],
@@ -36,7 +36,7 @@ const Formbot = () => {
                     ratingInputs: data.ratingInputs || [],
                     buttonInputs: data.buttonInputs || []
                 });
-        
+
             } catch (error) {
                 console.error('Error fetching form data:', error);
                 setError(`Failed to fetch form data: ${error.message}`);
@@ -44,13 +44,13 @@ const Formbot = () => {
                 setLoading(false);
             }
         };
-        
 
         fetchFormData();
     }, [formId]);
 
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
+        newValues[type] = [...newValues[type]];
         newValues[type][index].value = event.target.value;
         setFormValues(newValues);
     };
@@ -85,11 +85,8 @@ const Formbot = () => {
 
     const renderInputs = (inputs, type) => {
         if (inputs.length === 0) {
-            console.log(`No ${type} inputs available.`); // Debugging line
             return <p>No {type} inputs available.</p>;
         }
-
-        console.log(`Rendering ${type} inputs:`, inputs); // Debugging line
 
         return inputs.map((input, index) => (
             <div key={`${type}-${index}`}>
@@ -125,14 +122,13 @@ const Formbot = () => {
                 {renderInputs(formValues.imageInputs, 'image')}
                 {renderInputs(formValues.videoInputs, 'video')}
                 {renderInputs(formValues.gifInputs, 'gif')}
-                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs and */}
+                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs */}
                 {renderInputs(formValues.numberInputs, 'number')}
                 {renderInputs(formValues.phoneInputs, 'phone')}
                 {renderInputs(formValues.emailInputs, 'email')}
                 {renderInputs(formValues.dateInputs, 'date')}
                 {renderInputs(formValues.ratingInputs, 'rating')}
                 {renderInputs(formValues.buttonInputs, 'button')}
-                
                 <button type="submit">Submit</button>
             </form>
         </div>
