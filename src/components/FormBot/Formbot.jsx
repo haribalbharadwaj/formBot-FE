@@ -18,7 +18,7 @@ const Formbot = () => {
                 }
 
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
-                const data = response.data.data || {};
+                const data = response.data.data;
 
                 // Debugging: Check fetched data
                 console.log('Fetched form data:', data);
