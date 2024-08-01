@@ -83,18 +83,12 @@ const Formbot = () => {
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
     const renderInputs = (inputs, type) => {
         if (inputs.length === 0) {
             return <p>No {type} inputs available.</p>;
         }
+
+        console.log(`Rendering ${type} inputs:`, inputs); // Debugging line
 
         return inputs.map((input, index) => (
             <div key={`${type}-${index}`}>
@@ -113,6 +107,14 @@ const Formbot = () => {
             </div>
         ));
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error}</div>;
+    }
 
     return (
         <div>
