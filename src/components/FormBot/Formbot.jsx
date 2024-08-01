@@ -63,10 +63,7 @@ const Formbot = () => {
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
 
-        // Ensure we're working with an array of inputs for the specified type
-        newValues[type] = newValues[type].map((input, i) =>
-            i === index ? { ...input, value: event.target.value } : input
-        );
+        newValues[type][index].value = event.target.value;
 
         setFormValues(newValues);
     };
@@ -105,7 +102,7 @@ const Formbot = () => {
         }
 
         return inputs.map((input, index) => (
-            <div key={`${type}-${index}`}>
+            <div key={`${type}-${index}`} className={`${type}-input`}>
                 <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
                 {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
                 {type === 'video' && input.value && <video controls src={input.value} />}
@@ -118,7 +115,7 @@ const Formbot = () => {
                         placeholder={`Enter ${type}`}
                     />
                 )}
-                <button onClick={() => handleButtonClick(type, index)}>Action</button>
+                <button type="button" onClick={() => handleButtonClick(type, index)}>Action</button>
             </div>
         ));
     };
@@ -140,17 +137,39 @@ const Formbot = () => {
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
             <form onSubmit={handleSubmit}>
-                {renderInputs(formValues.textInputs, 'text')}
-                {renderInputs(formValues.imageInputs, 'image')}
-                {renderInputs(formValues.videoInputs, 'video')}
-                {renderInputs(formValues.gifInputs, 'gif')}
-                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs */}
-                {renderInputs(formValues.numberInputs, 'number')}
-                {renderInputs(formValues.phoneInputs, 'phone')}
-                {renderInputs(formValues.emailInputs, 'email')}
-                {renderInputs(formValues.dateInputs, 'date')}
-                {renderInputs(formValues.ratingInputs, 'rating')}
-                {renderInputs(formValues.buttonInputs, 'button')}
+                <div className="text-inputs">
+                    {renderInputs(formValues.textInputs, 'text')}
+                </div>
+                <div className="image-inputs">
+                    {renderInputs(formValues.imageInputs, 'image')}
+                </div>
+                <div className="video-inputs">
+                    {renderInputs(formValues.videoInputs, 'video')}
+                </div>
+                <div className="gif-inputs">
+                    {renderInputs(formValues.gifInputs, 'gif')}
+                </div>
+                <div className="tinputs">
+                    {renderInputs(formValues.tinputs, 'text')}
+                </div>
+                <div className="number-inputs">
+                    {renderInputs(formValues.numberInputs, 'number')}
+                </div>
+                <div className="phone-inputs">
+                    {renderInputs(formValues.phoneInputs, 'phone')}
+                </div>
+                <div className="email-inputs">
+                    {renderInputs(formValues.emailInputs, 'email')}
+                </div>
+                <div className="date-inputs">
+                    {renderInputs(formValues.dateInputs, 'date')}
+                </div>
+                <div className="rating-inputs">
+                    {renderInputs(formValues.ratingInputs, 'rating')}
+                </div>
+                <div className="button-inputs">
+                    {renderInputs(formValues.buttonInputs, 'button')}
+                </div>
                 <button type="submit">Submit</button>
             </form>
         </div>
