@@ -85,6 +85,7 @@ const Formbot = () => {
 
     const renderInputs = (inputs, type) => {
         if (inputs.length === 0) {
+            console.log(`No ${type} inputs available.`); // Debugging line
             return <p>No {type} inputs available.</p>;
         }
 
@@ -124,13 +125,14 @@ const Formbot = () => {
                 {renderInputs(formValues.imageInputs, 'image')}
                 {renderInputs(formValues.videoInputs, 'video')}
                 {renderInputs(formValues.gifInputs, 'gif')}
-                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs */}
+                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs and */}
                 {renderInputs(formValues.numberInputs, 'number')}
                 {renderInputs(formValues.phoneInputs, 'phone')}
                 {renderInputs(formValues.emailInputs, 'email')}
                 {renderInputs(formValues.dateInputs, 'date')}
                 {renderInputs(formValues.ratingInputs, 'rating')}
                 {renderInputs(formValues.buttonInputs, 'button')}
+                
                 <button type="submit">Submit</button>
             </form>
         </div>
