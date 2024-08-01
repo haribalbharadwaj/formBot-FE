@@ -1,47 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 
-const Formbot = () => {
-    const { formId } = useParams();
-    const [formData, setFormData] = useState(null);
-    const [formValues, setFormValues] = useState({});
+const FormPage = ({ formId }) => {
+    const [formValues, setFormValues] = useState({
+        textInputs: [],
+        imageInputs: [],
+        videoInputs: [],
+        gifInputs: [],
+        tinputs: [],
+        buttonInputs: [],
+        dateInputs: [],
+        emailInputs: [],
+        numberInputs: [],
+        phoneInputs: [],
+        ratingInputs: []
+    });
 
     useEffect(() => {
         const fetchFormData = async () => {
             try {
-                const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-                if (!backendUrl) {
-                    throw new Error('Backend URL is not defined');
-                }
+                const response = await axios.get(`https://jobfinder-be.vercel.app/form/${formId}`);
+                const data = response.data;
 
-                const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
-                const data = response.data.data || {};
-
-                console.log('Fetched form data:', data); // Log fetched data
-
-                // Initialize formValues with default values if not present in formData
-                const initialValues = {
-                    textInputs: data.textInputs.length > 0 ? data.textInputs : [{ id: 1, value: '' }],
-                    imageInputs: data.imageInputs.length > 0 ? data.imageInputs : [{ id: 1, value: '' }],
-                    videoInputs: data.videoInputs.length > 0 ? data.videoInputs : [{ id: 1, value: '' }],
-                    gifInputs: data.gifInputs.length > 0 ? data.gifInputs : [{ id: 1, value: '' }],
-                    tinputs: data.tinputs.length > 0 ? data.tinputs : [{ id: 1, value: '' }],
-                    numberInputs: data.numberInputs.length > 0 ? data.numberInputs : [{ id: 1, value: '' }],
-                    phoneInputs: data.phoneInputs.length > 0 ? data.phoneInputs : [{ id: 1, value: '' }],
-                    emailInputs: data.emailInputs.length > 0 ? data.emailInputs : [{ id: 1, value: '' }],
-                    dateInputs: data.dateInputs.length > 0 ? data.dateInputs : [{ id: 1, value: '' }],
-                    ratingInputs: data.ratingInputs.length > 0 ? data.ratingInputs : [{ id: 1, value: '' }],
-                    buttonInputs: data.buttonInputs.length > 0 ? data.buttonInputs : [{ id: 1, value: '' }]
-                };
-
-                setFormData(data);
-                setFormValues(initialValues);
-
-                console.log('Initial form values:', initialValues); // Log initial form values
-
+                setFormValues({
+                    textInputs: data.textInputs || [],
+                    imageInputs: data.imageInputs || [],
+                    videoInputs: data.videoInputs || [],
+                    gifInputs: data.gifInputs || [],
+                    tinputs: data.tinputs || [],
+                    buttonInputs: data.buttonInputs || [],
+                    dateInputs: data.dateInputs || [],
+                    emailInputs: data.emailInputs || [],
+                    numberInputs: data.numberInputs || [],
+                    phoneInputs: data.phoneInputs || [],
+                    ratingInputs: data.ratingInputs || []
+                });
             } catch (error) {
-                console.error('Error fetching form data:', error);
+                console.error("Error fetching form data:", error);
             }
         };
 
@@ -49,175 +44,68 @@ const Formbot = () => {
     }, [formId]);
 
     const handleInputChange = (type, index, event) => {
-        const newValues = { ...formValues };
-        newValues[type][index].value = event.target.value;
-        setFormValues(newValues);
+        const updatedInputs = [...formValues[type]];
+        updatedInputs[index].value = event.target.value;
+        setFormValues({ ...formValues, [type]: updatedInputs });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const renderDisplayFields = () => (
+        <div>
+            {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
+                <div key={`display-textInput-${index}`}>
+                    <p>{input.value}</p>
+                </div>
+            ))}
+            {formValues.imageInputs.length > 0 && formValues.imageInputs.map((input, index) => (
+                <div key={`display-imageInput-${index}`}>
+                    <img src={input.url} alt={`Image ${index}`} />
+                </div>
+            ))}
+            {formValues.videoInputs.length > 0 && formValues.videoInputs.map((input, index) => (
+                <div key={`display-videoInput-${index}`}>
+                    <video src={input.url} controls />
+                </div>
+            ))}
+            {/* Add similar render logic for gifInputs if needed */}
+        </div>
+    );
 
-        const formDataToSend = {
-            formName: formData.formName,
-            textInputs: formValues.textInputs,
-            imageInputs: formValues.imageInputs,
-            videoInputs: formValues.videoInputs,
-            gifInputs: formValues.gifInputs,
-            tinputs: formValues.tinputs,
-            numberInputs: formValues.numberInputs,
-            phoneInputs: formValues.phoneInputs,
-            emailInputs: formValues.emailInputs,
-            dateInputs: formValues.dateInputs,
-            ratingInputs: formValues.ratingInputs,
-            buttonInputs: formValues.buttonInputs
-        };
-
-        console.log("Form Data to Send:", formDataToSend); // Debugging
-
-        try {
-            const response = await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`, formDataToSend);
-            console.log('Form updated successfully:', response.data);
-        } catch (error) {
-            console.error('Error saving form data:', error);
-        }
-    };
-
-    if (!formData) {
-        return <div>Loading...</div>;
-    }
+    const renderInputFields = () => (
+        <div>
+            {formValues.tinputs.length > 0 && formValues.tinputs.map((input, index) => (
+                <div key={`input-text-${index}`}>
+                    <label>Text Input {index + 1}</label>
+                    <input
+                        type="text"
+                        value={input.value || ''}
+                        onChange={(e) => handleInputChange('tinputs', index, e)}
+                        placeholder="Enter text"
+                    />
+                </div>
+            ))}
+            {formValues.buttonInputs.length > 0 && formValues.buttonInputs.map((input, index) => (
+                <div key={`input-button-${index}`}>
+                    <label>Button Input {index + 1}</label>
+                    <input
+                        type="text"
+                        value={input.value || ''}
+                        onChange={(e) => handleInputChange('buttonInputs', index, e)}
+                        placeholder="Enter button text"
+                    />
+                </div>
+            ))}
+            {/* Add similar render logic for other input types */}
+        </div>
+    );
 
     return (
         <div>
-            <h1>{formData.formName}</h1>
-            <form onSubmit={handleSubmit}>
-                {formValues.textInputs.map((input, index) => (
-                    <div key={`textInput-${input.id}`}>
-                        <label>Text Input {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('textInputs', index, e)}
-                            placeholder="Enter text"
-                        />
-                    </div>
-                ))}
-                {formValues.imageInputs.map((input, index) => (
-                    <div key={`imageInput-${input.id}`}>
-                        <label>Image URL {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('imageInputs', index, e)}
-                            placeholder="Enter image URL"
-                        />
-                    </div>
-                ))}
-                {formValues.videoInputs.map((input, index) => (
-                    <div key={`videoInput-${input.id}`}>
-                        <label>Video URL {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('videoInputs', index, e)}
-                            placeholder="Enter video URL"
-                        />
-                    </div>
-                ))}
-                {formValues.gifInputs.map((input, index) => (
-                    <div key={`gifInput-${input.id}`}>
-                        <label>GIF URL {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('gifInputs', index, e)}
-                            placeholder="Enter GIF URL"
-                        />
-                    </div>
-                ))}
-                                {formValues.tinputs.map((input, index) => (
-                    <div key={`tinput-${input.id}`}>
-                        <label>Text Input {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('tinputs', index, e)}
-                            placeholder="Enter text"
-                        />
-                    </div>
-                ))}
-                {formValues.numberInputs.map((input, index) => (
-                    <div key={`numberInput-${input.id}`}>
-                        <label>Number Input {index + 1}</label>
-                        <input
-                            type="number"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('numberInputs', index, e)}
-                            placeholder="Enter number"
-                        />
-                    </div>
-                ))}
-                {formValues.phoneInputs.map((input, index) => (
-                    <div key={`phoneInput-${input.id}`}>
-                        <label>Phone Input {index + 1}</label>
-                        <input
-                            type="tel"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('phoneInputs', index, e)}
-                            placeholder="Enter phone number"
-                        />
-                    </div>
-                ))}
-                {formValues.emailInputs.map((input, index) => (
-                    <div key={`emailInput-${input.id}`}>
-                        <label>Email Input {index + 1}</label>
-                        <input
-                            type="email"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('emailInputs', index, e)}
-                            placeholder="Enter email"
-                        />
-                    </div>
-                ))}
-                {formValues.dateInputs.map((input, index) => (
-                    <div key={`dateInput-${input.id}`}>
-                        <label>Date Input {index + 1}</label>
-                        <input
-                            type="date"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('dateInputs', index, e)}
-                            placeholder="Enter date"
-                        />
-                    </div>
-                ))}
-                {formValues.ratingInputs.map((input, index) => (
-                    <div key={`ratingInput-${input.id}`}>
-                        <label>Rating Input {index + 1}</label>
-                        <input
-                            type="number"
-                            min="1"
-                            max="5"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('ratingInputs', index, e)}
-                            placeholder="Enter rating"
-                        />
-                    </div>
-                ))}
-                {formValues.buttonInputs.map((input, index) => (
-                    <div key={`buttonInput-${input.id}`}>
-                        <label>Button Input {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('buttonInputs', index, e)}
-                            placeholder="Enter button text"
-                        />
-                    </div>
-                ))}
-                <button type="submit">Submit</button>
-            </form>
+            <h1>{formValues.formName}</h1>
+            {renderDisplayFields()}
+            {renderInputFields()}
+            {/* Add a submit button or other functionality if needed */}
         </div>
     );
 };
 
-export default Formbot;
-
+export default FormPage;
