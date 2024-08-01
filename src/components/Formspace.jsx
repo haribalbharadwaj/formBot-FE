@@ -75,6 +75,8 @@ function Formspace() {
             // Clear form fields
             setFormName('');
             setInputs([]);
+            localStorage.setItem('userId', response.data.formId); 
+            console.log('formId:',formId);
 
             return response.data.data._id;
 
@@ -110,10 +112,14 @@ function Formspace() {
                 alert('Link copied to clipboard');
             } catch (err) {
                 console.error('Failed to copy link:', err);
+                alert('Failed to copy link');
             }
+        } else {
+            console.error('Failed to retrieve form ID');
+            alert('Failed to retrieve form ID');
         }
     };
-
+    
     const handleInputClick = (type) => {
         setInputs([...inputs, { id: inputs.length + 1, type, value: '', visible: true }]);
     };

@@ -25,7 +25,6 @@ const Settings = ({ setShowSettings }) => {
      // or useNavigate if using React Router v6
 
     const navigate = useNavigate();
-    const {setUser} = useUser();
     const handleSubmit = async (e) => {
         e.preventDefault();
 
