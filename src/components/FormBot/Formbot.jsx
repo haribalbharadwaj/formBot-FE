@@ -39,7 +39,8 @@ const Formbot = () => {
                 };
 
                 setFormData(data);
-                setFormValues(initialValues.data);
+                setFormValues(initialValues);
+                console.log('setFormValues:',setFormValues);
 
                 // Debugging: Check initial form values
                 console.log('Initial form values:', initialValues);
