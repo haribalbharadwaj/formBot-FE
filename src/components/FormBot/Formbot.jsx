@@ -101,7 +101,7 @@ const Formbot = () => {
 
     const renderInputs = (inputs, type) => {
         if (!Array.isArray(inputs) || inputs.length === 0) {
-            return;
+            return null;
         }
 
         return inputs.map((input, index) => (
@@ -118,8 +118,14 @@ const Formbot = () => {
                         placeholder={`Enter ${type}`}
                     />
                 )}
+                <button onClick={() => handleButtonClick(type, index)}>Action</button>
             </div>
         ));
+    };
+
+    const handleButtonClick = (type, index) => {
+        // Handle button click for the respective input type and index
+        console.log(`${type} Input ${index + 1} button clicked`);
     };
 
     if (loading) {
