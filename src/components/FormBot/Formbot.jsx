@@ -60,6 +60,17 @@ const Formbot = () => {
         fetchFormData();
     }, [formId]);
 
+    const handleInputChange = (type, index, event) => {
+        const newValues = { ...formValues };
+
+        // Ensure we're working with an array of inputs for the specified type
+        newValues[type] = newValues[type].map((input, i) =>
+            i === index ? { ...input, value: event.target.value } : input
+        );
+
+        setFormValues(newValues);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -88,7 +99,7 @@ const Formbot = () => {
         }
     };
 
-    const renderInputs = (inputs, type, editable = true) => {
+    const renderInputs = (inputs, type) => {
         if (!Array.isArray(inputs) || inputs.length === 0) {
             return null;
         }
@@ -103,11 +114,14 @@ const Formbot = () => {
                     <input
                         type={type === 'number' ? 'number' : 'text'}
                         value={input.value || ''}
-                        readOnly={!editable}
+                        readOnly={type === 'text' || type === 'image' || type === 'video' || type === 'gif'}
+                        onChange={(e) => handleInputChange(type, index, e)}
                         placeholder={`Enter ${type}`}
                     />
                 )}
-                {!editable && <button onClick={() => handleButtonClick(type, index)}>Action</button>}
+                {type === 'image' || type === 'video' || type === 'gif' ? null : (
+                    <button onClick={() => handleButtonClick(type, index)}>Action</button>
+                )}
             </div>
         ));
     };
@@ -129,10 +143,10 @@ const Formbot = () => {
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
             <form onSubmit={handleSubmit}>
-                {renderInputs(formValues.textInputs, 'text', false)}
-                {renderInputs(formValues.imageInputs, 'image', false)}
-                {renderInputs(formValues.videoInputs, 'video', false)}
-                {renderInputs(formValues.gifInputs, 'gif', false)}
+                {renderInputs(formValues.textInputs, 'text')}
+                {renderInputs(formValues.imageInputs, 'image')}
+                {renderInputs(formValues.videoInputs, 'video')}
+                {renderInputs(formValues.gifInputs, 'gif')}
                 {renderInputs(formValues.tinputs, 'text')}
                 {renderInputs(formValues.numberInputs, 'number')}
                 {renderInputs(formValues.phoneInputs, 'phone')}
