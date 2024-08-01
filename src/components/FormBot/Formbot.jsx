@@ -17,7 +17,7 @@ const Formbot = () => {
                     throw new Error('Backend URL is not defined');
                 }
         
-                const response = await axios.get(`${backendUrl}/getForm/${formId}`);
+                const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data;
         
                 console.log('Fetched form data:', data);
