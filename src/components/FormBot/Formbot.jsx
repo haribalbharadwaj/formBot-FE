@@ -101,7 +101,6 @@ const Formbot = () => {
     return (
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
-            <h2>{data}</h2>
             <form onSubmit={handleSubmit}>
                 {/* Conditionally render fields based on formValues */}
                 {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
