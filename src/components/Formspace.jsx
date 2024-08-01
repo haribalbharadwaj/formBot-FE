@@ -39,54 +39,65 @@ function Formspace() {
         if (event && event.preventDefault) {
             event.preventDefault();
         }
-
+    
         const token = localStorage.getItem('token');
         console.log("Retrieved token:", token);
-
+    
         if (!token) {
             setError('Authentication token not found. Please log in again.');
             setSuccess('');
             return;
         }
-
+    
+        // Ensure inputs is structured correctly
         const formData = {
             formName,
-            inputs
+            textInputs: inputs.filter(input => input.type === 'text'),
+            imageInputs: inputs.filter(input => input.type === 'image'),
+            videoInputs: inputs.filter(input => input.type === 'video'),
+            gifInputs: inputs.filter(input => input.type === 'gif'),
+            numberInputs: inputs.filter(input => input.type === 'number'),
+            emailInputs: inputs.filter(input => input.type === 'email'),
+            dateInputs: inputs.filter(input => input.type === 'date'),
+            phoneInputs: inputs.filter(input => input.type === 'phone'),
+            ratingInputs: inputs.filter(input => input.type === 'rating'),
+            buttonInputs: inputs.filter(input => input.type === 'button')
         };
+    
         console.log("Form submitted with data:", formData);
-
+    
         try {
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
             if (!backendUrl) {
                 throw new Error('Backend URL is not defined');
             }
-
+    
             const response = await axios.post(`${backendUrl}/form/addForm`, formData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
             });
-
+    
             console.log('Form added successfully:', response.data);
-            setSuccess('Job added successfully');
+            setSuccess('Form added successfully');
             setError('');
-
+    
             // Clear form fields
             setFormName('');
             setInputs([]);
-            localStorage.setItem('userId', response.data.formId); 
-            console.log('formId:',formId);
-
+            localStorage.setItem('userId', response.data.data._id); 
+    
+            console.log('formId:', response.data.data._id);
             return response.data.data._id;
-
+    
         } catch (error) {
             console.log('Error adding form:', error.response ? error.response.data : error.message);
             setError('Error adding form. Please try again');
             setSuccess('');
         }
     };
-
+    
     const handleSave = async (e) => {
         if (e && e.preventDefault) {
             e.preventDefault();
