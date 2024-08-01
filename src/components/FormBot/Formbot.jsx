@@ -20,13 +20,11 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data;
 
-                if (!data) {
-                    throw new Error('No data returned from the backend');
-                }
-
                 console.log('Fetched form data:', data);
 
-                const initialValues = {
+                // Initialize formValues with the fetched data
+                setFormData(data);
+                setFormValues({
                     textInputs: data.textInputs || [],
                     imageInputs: data.imageInputs || [],
                     videoInputs: data.videoInputs || [],
@@ -38,12 +36,7 @@ const Formbot = () => {
                     dateInputs: data.dateInputs || [],
                     ratingInputs: data.ratingInputs || [],
                     buttonInputs: data.buttonInputs || []
-                };
-
-                setFormData(data);
-                setFormValues(initialValues);
-
-                console.log('Initial form values:', initialValues);
+                });
 
             } catch (error) {
                 console.error('Error fetching form data:', error);
@@ -99,15 +92,17 @@ const Formbot = () => {
     }
 
     const renderInputs = (inputs, type) => {
-        if (inputs.length === 0) return null;
+        if (inputs.length === 0) {
+            return <p>No {type} inputs available.</p>;
+        }
 
         return inputs.map((input, index) => (
             <div key={`${type}-${index}`}>
                 <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
-                {type === 'image' && <img src={input.value} alt={`Image ${index + 1}`} style={{ maxWidth: '100px' }} />}
-                {type === 'video' && <video controls src={input.value} style={{ maxWidth: '300px' }} />}
-                {type === 'gif' && <img src={input.value} alt={`GIF ${index + 1}`} style={{ maxWidth: '100px' }} />}
-                {type !== 'image' && type !== 'video' && type !== 'gif' && (
+                {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
+                {type === 'video' && input.value && <video controls src={input.value} />}
+                {type === 'gif' && input.value && <img src={input.value} alt={`GIF ${index + 1}`} />}
+                {(type !== 'image' && type !== 'video' && type !== 'gif') && (
                     <input
                         type={type === 'number' ? 'number' : 'text'}
                         value={input.value || ''}
@@ -127,7 +122,7 @@ const Formbot = () => {
                 {renderInputs(formValues.imageInputs, 'image')}
                 {renderInputs(formValues.videoInputs, 'video')}
                 {renderInputs(formValues.gifInputs, 'gif')}
-                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs and others */}
+                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs */}
                 {renderInputs(formValues.numberInputs, 'number')}
                 {renderInputs(formValues.phoneInputs, 'phone')}
                 {renderInputs(formValues.emailInputs, 'email')}
@@ -137,7 +132,6 @@ const Formbot = () => {
                 <button type="submit">Submit</button>
             </form>
         </div>
-
     );
 };
 
