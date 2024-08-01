@@ -20,6 +20,9 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
+                console.log('Fetched form data:', data); // Log fetched data
+
+                // Initialize formValues with default values if not present in formData
                 const initialValues = {
                     textInputs: data.textInputs || [],
                     imageInputs: data.imageInputs || [],
@@ -37,6 +40,7 @@ const Formbot = () => {
                 setFormData(data);
                 setFormValues(initialValues);
 
+                // Determine if there are any inputs to display
                 const hasInputs = Object.values(initialValues).some(arr => arr.length > 0);
                 setHasInputs(hasInputs);
 
@@ -72,14 +76,10 @@ const Formbot = () => {
             buttonInputs: formValues.buttonInputs
         };
 
-        console.log("Form Data to Send:", formDataToSend);
+        console.log("Form Data to Send:", formDataToSend); // Debugging
 
         try {
-            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-                if (!backendUrl) {
-                    throw new Error('Backend URL is not defined');
-                }
-            const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
+            const response = await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`, formDataToSend);
             console.log('Form updated successfully:', response.data);
             setMessage('Form updated successfully');
         } catch (error) {
@@ -96,7 +96,7 @@ const Formbot = () => {
         <div>
             {hasInputs ? (
                 <form onSubmit={handleSubmit}>
-                    {formData.textInputs.map((input, index) => (
+                    {formData.textInputs && formData.textInputs.map((input, index) => (
                         <input
                             key={input.id}
                             value={formValues.textInputs[index]?.value || ''}
@@ -104,7 +104,7 @@ const Formbot = () => {
                             placeholder="Enter text"
                         />
                     ))}
-                    {formData.imageInputs.map((input, index) => (
+                    {formData.imageInputs && formData.imageInputs.map((input, index) => (
                         <div key={input.id}>
                             <img src={input.value} alt="image" />
                             <input
@@ -114,7 +114,7 @@ const Formbot = () => {
                             />
                         </div>
                     ))}
-                    {formData.videoInputs.map((input, index) => (
+                    {formData.videoInputs && formData.videoInputs.map((input, index) => (
                         <div key={input.id}>
                             <video src={input.value} controls />
                             <input
@@ -124,7 +124,7 @@ const Formbot = () => {
                             />
                         </div>
                     ))}
-                    {formData.gifInputs.map((input, index) => (
+                    {formData.gifInputs && formData.gifInputs.map((input, index) => (
                         <div key={input.id}>
                             <img src={input.value} alt="gif" />
                             <input
@@ -134,7 +134,7 @@ const Formbot = () => {
                             />
                         </div>
                     ))}
-                    {formData.tinputs.map((input, index) => (
+                    {formData.tinputs && formData.tinputs.map((input, index) => (
                         <input
                             key={input.id}
                             value={formValues.tinputs[index]?.value || ''}
@@ -142,7 +142,7 @@ const Formbot = () => {
                             placeholder="Enter text input"
                         />
                     ))}
-                    {formData.numberInputs.map((input, index) => (
+                    {formData.numberInputs && formData.numberInputs.map((input, index) => (
                         <input
                             key={input.id}
                             type="number"
@@ -151,7 +151,7 @@ const Formbot = () => {
                             placeholder="Enter number"
                         />
                     ))}
-                    {formData.emailInputs.map((input, index) => (
+                    {formData.emailInputs && formData.emailInputs.map((input, index) => (
                         <input
                             key={input.id}
                             type="email"
@@ -160,7 +160,7 @@ const Formbot = () => {
                             placeholder="Enter email"
                         />
                     ))}
-                    {formData.dateInputs.map((input, index) => (
+                    {formData.dateInputs && formData.dateInputs.map((input, index) => (
                         <input
                             key={input.id}
                             type="date"
@@ -169,7 +169,7 @@ const Formbot = () => {
                             placeholder="Enter date"
                         />
                     ))}
-                    {formData.phoneInputs.map((input, index) => (
+                    {formData.phoneInputs && formData.phoneInputs.map((input, index) => (
                         <input
                             key={input.id}
                             type="tel"
@@ -178,7 +178,7 @@ const Formbot = () => {
                             placeholder="Enter phone number"
                         />
                     ))}
-                    {formData.ratingInputs.map((input, index) => (
+                    {formData.ratingInputs && formData.ratingInputs.map((input, index) => (
                         <input
                             key={input.id}
                             type="number"
@@ -187,7 +187,7 @@ const Formbot = () => {
                             placeholder="Enter rating"
                         />
                     ))}
-                    {formData.buttonInputs.map((input, index) => (
+                    {formData.buttonInputs && formData.buttonInputs.map((input, index) => (
                         <button key={input.id} type="button">{input.value}</button>
                     ))}
                     <button type="submit">Submit</button>
