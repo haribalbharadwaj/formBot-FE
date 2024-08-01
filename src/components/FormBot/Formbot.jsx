@@ -19,7 +19,7 @@ const FormPage = ({ formId }) => {
     useEffect(() => {
         const fetchFormData = async () => {
             try {
-                const response = await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`, formDataToSend);
+                const response = await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`);
                 const data = response.data;
 
                 setFormValues({
