@@ -38,7 +38,7 @@ const Formbot = () => {
                     buttonInputs: data.buttonInputs || []
                 };
 
-                setFormData(data);
+                setFormData(data.data);
                 setFormValues(initialValues);
 
                 // Debugging: Check initial form values
