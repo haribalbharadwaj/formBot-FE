@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const FormPage = ({ formId }) => {
+    // State to hold the form data
     const [formValues, setFormValues] = useState({
         textInputs: [],
         imageInputs: [],
@@ -16,12 +17,14 @@ const FormPage = ({ formId }) => {
         ratingInputs: []
     });
 
+    // Fetch form data when component mounts or formId changes
     useEffect(() => {
         const fetchFormData = async () => {
             try {
-                const response = await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`);
+                const response = await axios.get(`https://jobfinder-be.vercel.app/form/${formId}`);
                 const data = response.data;
 
+                // Set the fetched data into state
                 setFormValues({
                     textInputs: data.textInputs || [],
                     imageInputs: data.imageInputs || [],
@@ -43,12 +46,14 @@ const FormPage = ({ formId }) => {
         fetchFormData();
     }, [formId]);
 
+    // Handle changes in input fields
     const handleInputChange = (type, index, event) => {
         const updatedInputs = [...formValues[type]];
         updatedInputs[index].value = event.target.value;
         setFormValues({ ...formValues, [type]: updatedInputs });
     };
 
+    // Render fields for displaying data
     const renderDisplayFields = () => (
         <div>
             {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
@@ -58,18 +63,19 @@ const FormPage = ({ formId }) => {
             ))}
             {formValues.imageInputs.length > 0 && formValues.imageInputs.map((input, index) => (
                 <div key={`display-imageInput-${index}`}>
-                    <img src={input.url} alt={`Image ${index}`} />
+                    <img src={input.url} alt={`Image ${index}`} style={{ width: '100px', height: 'auto' }} />
                 </div>
             ))}
             {formValues.videoInputs.length > 0 && formValues.videoInputs.map((input, index) => (
                 <div key={`display-videoInput-${index}`}>
-                    <video src={input.url} controls />
+                    <video src={input.url} controls style={{ width: '200px', height: 'auto' }} />
                 </div>
             ))}
-            {/* Add similar render logic for gifInputs if needed */}
+            {/* Add similar logic for gifInputs if needed */}
         </div>
     );
 
+    // Render input fields for data entry
     const renderInputFields = () => (
         <div>
             {formValues.tinputs.length > 0 && formValues.tinputs.map((input, index) => (
@@ -94,7 +100,7 @@ const FormPage = ({ formId }) => {
                     />
                 </div>
             ))}
-            {/* Add similar render logic for other input types */}
+            {/* Add similar logic for other input types */}
         </div>
     );
 
