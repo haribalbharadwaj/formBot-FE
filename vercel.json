@@ -1,0 +1,9 @@
+{
+    "routes": [
+      {
+        "src": "/form/(.*)",
+        "dest": "/index.html"
+      }
+    ]
+  }
+  
