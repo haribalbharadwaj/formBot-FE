@@ -101,7 +101,7 @@ const Formbot = () => {
 
     const renderInputs = (inputs, type) => {
         if (!Array.isArray(inputs) || inputs.length === 0) {
-            return <p>No {type} inputs available.</p>;
+            return;
         }
 
         return inputs.map((input, index) => (
