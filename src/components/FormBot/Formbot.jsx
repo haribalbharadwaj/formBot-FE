@@ -25,11 +25,11 @@ const Formbot = () => {
 
                 // Initialize formValues with default values if not present in formData
                 const initialValues = {
-                    textInputs: data.textInputs || [{ id: 1, value: '' }],
-                    imageInputs: data.imageInputs || [{ id: 1, value: '' }],
-                    videoInputs: data.videoInputs || [{ id: 1, value: '' }],
-                    gifInputs: data.gifInputs || [{ id: 1, value: '' }],
-                    tinputs: data.tinputs || [{ id: 1, value: '' }],
+                    textInputs: data.textInputs || [],
+                    imageInputs: data.imageInputs || [],
+                    videoInputs: data.videoInputs || [],
+                    gifInputs: data.gifInputs || [],
+                    tinputs: data.tinputs || [],
                     numberInputs: data.numberInputs || [],
                     phoneInputs: data.phoneInputs || [],
                     emailInputs: data.emailInputs || [],
@@ -101,9 +101,9 @@ const Formbot = () => {
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
             <form onSubmit={handleSubmit}>
-                {/* Conditionally render fields based on formData */}
+                {/* Conditionally render fields based on formValues */}
                 {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
-                    <div key={`textInput-${input.id}`}>
+                    <div key={`textInput-${index}`}>
                         <label>Text Input {index + 1}</label>
                         <input
                             type="text"
@@ -114,7 +114,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.imageInputs.length > 0 && formValues.imageInputs.map((input, index) => (
-                    <div key={`imageInput-${input.id}`}>
+                    <div key={`imageInput-${index}`}>
                         <label>Image URL {index + 1}</label>
                         <input
                             type="text"
@@ -125,7 +125,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.videoInputs.length > 0 && formValues.videoInputs.map((input, index) => (
-                    <div key={`videoInput-${input.id}`}>
+                    <div key={`videoInput-${index}`}>
                         <label>Video URL {index + 1}</label>
                         <input
                             type="text"
@@ -136,7 +136,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.gifInputs.length > 0 && formValues.gifInputs.map((input, index) => (
-                    <div key={`gifInput-${input.id}`}>
+                    <div key={`gifInput-${index}`}>
                         <label>GIF URL {index + 1}</label>
                         <input
                             type="text"
@@ -149,7 +149,7 @@ const Formbot = () => {
 
                 {/* Static rendering for other input types */}
                 {formValues.tinputs.length > 0 && formValues.tinputs.map((input, index) => (
-                    <div key={`tinput-${input.id}`}>
+                    <div key={`tinput-${index}`}>
                         <label>Text Input {index + 1}</label>
                         <input
                             type="text"
@@ -160,7 +160,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.numberInputs.length > 0 && formValues.numberInputs.map((input, index) => (
-                    <div key={`numberInput-${input.id}`}>
+                    <div key={`numberInput-${index}`}>
                         <label>Number Input {index + 1}</label>
                         <input
                             type="number"
@@ -171,7 +171,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.phoneInputs.length > 0 && formValues.phoneInputs.map((input, index) => (
-                    <div key={`phoneInput-${input.id}`}>
+                    <div key={`phoneInput-${index}`}>
                         <label>Phone Input {index + 1}</label>
                         <input
                             type="tel"
@@ -182,7 +182,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.emailInputs.length > 0 && formValues.emailInputs.map((input, index) => (
-                    <div key={`emailInput-${input.id}`}>
+                    <div key={`emailInput-${index}`}>
                         <label>Email Input {index + 1}</label>
                         <input
                             type="email"
@@ -193,7 +193,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.dateInputs.length > 0 && formValues.dateInputs.map((input, index) => (
-                    <div key={`dateInput-${input.id}`}>
+                    <div key={`dateInput-${index}`}>
                         <label>Date Input {index + 1}</label>
                         <input
                             type="date"
@@ -204,7 +204,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.ratingInputs.length > 0 && formValues.ratingInputs.map((input, index) => (
-                    <div key={`ratingInput-${input.id}`}>
+                    <div key={`ratingInput-${index}`}>
                         <label>Rating Input {index + 1}</label>
                         <input
                             type="number"
@@ -217,7 +217,7 @@ const Formbot = () => {
                     </div>
                 ))}
                 {formValues.buttonInputs.length > 0 && formValues.buttonInputs.map((input, index) => (
-                    <div key={`buttonInput-${input.id}`}>
+                    <div key={`buttonInput-${index}`}>
                         <label>Button Input {index + 1}</label>
                         <input
                             type="text"
