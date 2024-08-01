@@ -109,7 +109,8 @@ const Formbot = () => {
                 {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
                 {type === 'video' && input.value && <video controls src={input.value} />}
                 {type === 'gif' && input.value && <img src={input.value} alt={`GIF ${index + 1}`} />}
-                {(type !== 'image' && type !== 'video' && type !== 'gif') && (
+                {type === 'text' && input.value && <div>{input.value}</div>}
+                {type !== 'image' && type !== 'video' && type !== 'gif' && type !== 'text' && (
                     <input
                         type={type === 'number' ? 'number' : 'text'}
                         value={input.value || ''}
