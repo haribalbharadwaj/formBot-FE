@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
-const FormPage = ({ formId }) => {
+const Formbot = ({ formId }) => {
+    const { formId } = useParams();
+    const [formData, setFormData] = useState(null);
     // State to hold the form data
     const [formValues, setFormValues] = useState({
         textInputs: [],
@@ -21,7 +24,7 @@ const FormPage = ({ formId }) => {
     useEffect(() => {
         const fetchFormData = async () => {
             try {
-                const response = await axios.get(`https://jobfinder-be.vercel.app/form/${formId}`);
+                const response = await axios.get(`https://jobfinder-be.vercel.app/form/getForm/${formId}`);
                 const data = response.data;
 
                 // Set the fetched data into state
