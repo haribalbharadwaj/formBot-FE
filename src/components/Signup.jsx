@@ -91,37 +91,44 @@ function Signup(){
 
     try {
       const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-          if (!backendUrl) {
-              throw new Error('Backend URL is not defined');
-          }
+      if (!backendUrl) {
+        throw new Error('Backend URL is not defined');
+      }
+    
       const response = await axios.post(`${backendUrl}/user/register`, userData, {
-          headers: {
-              'Content-Type': 'application/json'
-          }
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
-
+    
       console.log('Form submitted successfully', response.data);
       setSuccess('Account created successfully!');
+    
+      const userId = response.data.userId;
+      localStorage.setItem('userId', userId);
+      console.log('userId: stored in localStorage', userId);
       setError('');
-
+    
       // Optionally clear the form fields
-  } catch (error) {
+    } catch (error) {
       console.error('Error submitting form', error);
       if (error.response) {
-          console.error('Response data:', error.response.data);
-          console.error('Response status:', error.response.status);
-          console.error('Response headers:', error.response.headers);
-          setError(`Failed to create account: ${error.response.data.message || 'Please try again.'}`);
+        console.error('Response data:', error.response.data);
+        console.error('Response status:', error.response.status);
+        console.error('Response headers:', error.response.headers);
+        setError(`Failed to create account: ${error.response.data.message || 'Please try again.'}`);
       } else if (error.request) {
-          console.error('Request data:', error.request);
-          setError('No response received from the server. Please try again.');
+        console.error('Request data:', error.request);
+        setError('No response received from the server. Please try again.');
       } else {
-          console.error('Error message:', error.message);
-          setError(`Failed to create account: ${error.message}. Please try again.`);
+        console.error('Error message:', error.message);
+        setError(`Failed to create account: ${error.message}. Please try again.`);
       }
       setSuccess('');
+    }
+    
   }
-};
+
     return(
         <div 
         style={{
