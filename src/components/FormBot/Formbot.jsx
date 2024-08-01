@@ -5,7 +5,19 @@ import { useParams } from 'react-router-dom';
 const Formbot = () => {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
-    const [formValues, setFormValues] = useState({});
+    const [formValues, setFormValues] = useState({
+        textInputs: [],
+        imageInputs: [],
+        videoInputs: [],
+        gifInputs: [],
+        tinputs: [],
+        numberInputs: [],
+        phoneInputs: [],
+        emailInputs: [],
+        dateInputs: [],
+        ratingInputs: [],
+        buttonInputs: []
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -50,8 +62,12 @@ const Formbot = () => {
 
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
-        newValues[type] = [...newValues[type]];
-        newValues[type][index].value = event.target.value;
+
+        // Ensure we're working with an array of inputs for the specified type
+        newValues[type] = newValues[type].map((input, i) =>
+            i === index ? { ...input, value: event.target.value } : input
+        );
+
         setFormValues(newValues);
     };
 
@@ -84,7 +100,7 @@ const Formbot = () => {
     };
 
     const renderInputs = (inputs, type) => {
-        if (inputs.length === 0) {
+        if (!Array.isArray(inputs) || inputs.length === 0) {
             return <p>No {type} inputs available.</p>;
         }
 
