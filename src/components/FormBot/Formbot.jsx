@@ -16,13 +16,14 @@ const Formbot = () => {
                 if (!backendUrl) {
                     throw new Error('Backend URL is not defined');
                 }
-
+        
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
+                console.log('API Response:', response.data);
+        
                 const data = response.data.data;
-
+        
                 console.log('Fetched form data:', data);
-
-                // Initialize formValues with the fetched data
+        
                 setFormData(data);
                 setFormValues({
                     textInputs: data.textInputs || [],
@@ -37,14 +38,15 @@ const Formbot = () => {
                     ratingInputs: data.ratingInputs || [],
                     buttonInputs: data.buttonInputs || []
                 });
-
+        
             } catch (error) {
                 console.error('Error fetching form data:', error);
-                setError('Failed to fetch form data.');
+                setError(`Failed to fetch form data: ${error.message}`);
             } finally {
                 setLoading(false);
             }
         };
+        
 
         fetchFormData();
     }, [formId]);
