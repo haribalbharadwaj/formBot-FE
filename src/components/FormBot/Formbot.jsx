@@ -94,36 +94,40 @@ const Formbot = () => {
         return <div>Error: {error}</div>;
     }
 
+    const renderInputs = (inputs, type) => {
+        return inputs.map((input, index) => (
+            <div key={`${type}-${index}`}>
+                <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
+                {type === 'image' && <img src={input.value} alt={`Image ${index + 1}`} />}
+                {type === 'video' && <video controls src={input.value} />}
+                {type === 'gif' && <img src={input.value} alt={`GIF ${index + 1}`} />}
+                {type !== 'image' && type !== 'video' && type !== 'gif' && (
+                    <input
+                        type={type === 'number' ? 'number' : 'text'}
+                        value={input.value || ''}
+                        onChange={(e) => handleInputChange(type, index, e)}
+                        placeholder={`Enter ${type}`}
+                    />
+                )}
+            </div>
+        ));
+    };
+
     return (
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
             <form onSubmit={handleSubmit}>
-                {/* Render form fields conditionally */}
-                {formValues.textInputs.length > 0 && formValues.textInputs.map((input, index) => (
-                    <div key={`textInput-${index}`}>
-                        <label>Text Input {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('textInputs', index, e)}
-                            placeholder="Enter text"
-                        />
-                    </div>
-                ))}
-                {/* Add similar blocks for other input types */}
-                {/* Example for imageInputs */}
-                {formValues.imageInputs.length > 0 && formValues.imageInputs.map((input, index) => (
-                    <div key={`imageInput-${index}`}>
-                        <label>Image URL {index + 1}</label>
-                        <input
-                            type="text"
-                            value={input.value || ''}
-                            onChange={(e) => handleInputChange('imageInputs', index, e)}
-                            placeholder="Enter image URL"
-                        />
-                    </div>
-                ))}
-                {/* Add similar blocks for other input types */}
+                {renderInputs(formValues.textInputs, 'text')}
+                {renderInputs(formValues.imageInputs, 'image')}
+                {renderInputs(formValues.videoInputs, 'video')}
+                {renderInputs(formValues.gifInputs, 'gif')}
+                {renderInputs(formValues.tinputs, 'text')} {/* Custom text inputs */}
+                {renderInputs(formValues.numberInputs, 'number')}
+                {renderInputs(formValues.phoneInputs, 'phone')}
+                {renderInputs(formValues.emailInputs, 'email')}
+                {renderInputs(formValues.dateInputs, 'date')}
+                {renderInputs(formValues.ratingInputs, 'rating')}
+                {renderInputs(formValues.buttonInputs, 'button')}
                 <button type="submit">Submit</button>
             </form>
         </div>
