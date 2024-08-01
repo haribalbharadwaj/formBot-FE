@@ -62,8 +62,7 @@ const Formbot = () => {
 
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
-
-        // Ensure we're working with an array of inputs for the specified type
+                // Ensure we're working with an array of inputs for the specified type
         newValues[type] = newValues[type].map((input, i) =>
             i === index ? { ...input, value: event.target.value } : input
         );
@@ -110,18 +109,15 @@ const Formbot = () => {
                 {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
                 {type === 'video' && input.value && <video controls src={input.value} />}
                 {type === 'gif' && input.value && <img src={input.value} alt={`GIF ${index + 1}`} />}
-                {type !== 'image' && type !== 'video' && type !== 'gif' && (
+                {(type !== 'image' && type !== 'video' && type !== 'gif') && (
                     <input
                         type={type === 'number' ? 'number' : 'text'}
                         value={input.value || ''}
-                        readOnly={type === 'text' || type === 'image' || type === 'video' || type === 'gif'}
                         onChange={(e) => handleInputChange(type, index, e)}
                         placeholder={`Enter ${type}`}
                     />
                 )}
-                {type === 'image' || type === 'video' || type === 'gif' ? null : (
-                    <button onClick={() => handleButtonClick(type, index)}>Action</button>
-                )}
+                <button onClick={() => handleButtonClick(type, index)}>Action</button>
             </div>
         ));
     };
@@ -143,17 +139,7 @@ const Formbot = () => {
         <div>
             <h1>{formData?.formName || 'Formbot'}</h1>
             <form onSubmit={handleSubmit}>
-                {renderInputs(formValues.textInputs, 'text')}
-                {renderInputs(formValues.imageInputs, 'image')}
-                {renderInputs(formValues.videoInputs, 'video')}
-                {renderInputs(formValues.gifInputs, 'gif')}
-                {renderInputs(formValues.tinputs, 'text')}
-                {renderInputs(formValues.numberInputs, 'number')}
-                {renderInputs(formValues.phoneInputs, 'phone')}
-                {renderInputs(formValues.emailInputs, 'email')}
-                {renderInputs(formValues.dateInputs, 'date')}
-                {renderInputs(formValues.ratingInputs, 'rating')}
-                {renderInputs(formValues.buttonInputs, 'button')}
+                {Object.keys(formValues).map((key) => renderInputs(formValues[key], key))}
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -161,3 +147,5 @@ const Formbot = () => {
 };
 
 export default Formbot;
+
+
