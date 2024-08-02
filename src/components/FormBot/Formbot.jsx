@@ -105,7 +105,6 @@ const Formbot = () => {
             
                 return inputs.map((input, index) => (
                     <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
-                        <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
                         {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
                         {type === 'video' && input.value && <video controls src={input.value} />}
                         {type === 'gif' && input.value && <img src={input.value} alt={`GIF ${index + 1}`} />}
