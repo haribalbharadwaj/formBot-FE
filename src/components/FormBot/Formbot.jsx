@@ -113,7 +113,8 @@ const Formbot = () => {
                             <p style={{ margin: '10px 0' }}>{input.value || `No value provided for ${type} input ${index + 1}`}</p>
                         )}
                         {(type !== 'image' && type !== 'video' && type !== 'gif' && type !== 'text') && (
-                            <>
+                            <> 
+                            <h2 style={{ margin: '10px 0' }}>{input.value || `No value provided for ${type} input ${index + 1}`}</h2>
                                 <input
                                     type={type === 'number' ? 'number' : 'text'}
                                     value={input.value || ''}
