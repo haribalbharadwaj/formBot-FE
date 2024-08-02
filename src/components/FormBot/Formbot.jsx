@@ -102,25 +102,29 @@ const Formbot = () => {
                 if (!Array.isArray(inputs) || inputs.length === 0) {
                     return null;
                 }
-        
+            
                 return inputs.map((input, index) => (
-                    <div key={`${type}-${index}`}>
+                    <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
                         <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
                         {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
                         {type === 'video' && input.value && <video controls src={input.value} />}
                         {type === 'gif' && input.value && <img src={input.value} alt={`GIF ${index + 1}`} />}
                         {(type !== 'image' && type !== 'video' && type !== 'gif') && (
-                            <input
-                                type={type === 'number' ? 'number' : 'text'}
-                                value={input.value || ''}
-                                onChange={(e) => handleInputChange(type, index, e)}
-                                placeholder={`Enter ${type}`}
-                            />
+                            <>
+                                <h2 style={{ margin: '10px 0' }}>{`Enter ${type}`}</h2>
+                                <input
+                                    type={type === 'number' ? 'number' : 'text'}
+                                    value={input.value || ''}
+                                    onChange={(e) => handleInputChange(type, index, e)}
+                                    style={{ display: 'block', margin: '10px 0' }}
+                                />
+                            </>
                         )}
-                        <button onClick={() => handleButtonClick(type, index)}>Action</button>
+                        <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
                     </div>
                 ));
             };
+            
         
             const handleButtonClick = (type, index) => {
                 // Handle button click for the respective input type and index
