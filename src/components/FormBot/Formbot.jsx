@@ -106,19 +106,25 @@ const Formbot = () => {
                 return inputs.map((input, index) => (
                     <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
                         <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
-                        {type === 'image' && input.value && <img src={input.value} alt={`Image ${index + 1}`} />}
-                        {type === 'video' && input.value && <video controls src={input.value} />}
-                        {type === 'gif' && input.value && <img src={input.value} alt={`GIF ${index + 1}`} />}
+                        {type === 'image' && input.value && (
+                            <img src={input.value} alt={`Image ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                        )}
+                        {type === 'video' && input.value && (
+                            <video controls src={input.value} style={{ maxWidth: '100%', height: 'auto' }} />
+                        )}
+                        {type === 'gif' && input.value && (
+                            <img src={input.value} alt={`GIF ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                        )}
                         {type === 'text' && (
                             <p style={{ margin: '10px 0' }}>{input.value || `No value provided for ${type} input ${index + 1}`}</p>
                         )}
                         {(type !== 'image' && type !== 'video' && type !== 'gif' && type !== 'text') && (
-                            <> 
-                            <h2 style={{ margin: '10px 0' }}>{input.value || `No value provided for ${type} input ${index + 1}`}</h2>
+                            <>
                                 <input
                                     type={type === 'number' ? 'number' : 'text'}
                                     value={input.value || ''}
                                     onChange={(e) => handleInputChange(type, index, e)}
+                                    placeholder={`Enter ${type}`}
                                     style={{ display: 'block', margin: '10px 0' }}
                                 />
                             </>
