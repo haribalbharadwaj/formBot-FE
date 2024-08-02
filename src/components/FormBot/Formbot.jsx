@@ -8,11 +8,10 @@ const Formbot = () => {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
     const [formValues, setFormValues] = useState({});
-    const [visibleIndex, setVisibleIndex] = useState(-1); // Start with -1 to show welcome message
-    const [showStartMessage, setShowStartMessage] = useState(true);
+    const [visibleIndex, setVisibleIndex] = useState(0); // Start with index 0
     const [selectedDate, setSelectedDate] = useState(null);
-    const [selectedRating, setSelectedRating] = useState(null); // State for rating
-    const [combinedInputs, setCombinedInputs] = useState([]); // New state to hold combined inputs
+    const [selectedRating, setSelectedRating] = useState(null);
+    const [combinedInputs, setCombinedInputs] = useState([]);
 
     useEffect(() => {
         const fetchFormData = async () => {
@@ -25,7 +24,6 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-                // Initialize form values
                 const initialValues = {
                     textInputs: data.textInputs || [],
                     imageInputs: data.imageInputs || [],
@@ -39,7 +37,6 @@ const Formbot = () => {
                     buttonInputs: data.buttonInputs || []
                 };
 
-                // Combine inputs into a single array
                 const combined = [
                     ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
                     ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
@@ -51,11 +48,11 @@ const Formbot = () => {
                     ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
                     ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
                     ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.position - b.position); // Assuming each input has a 'position' property
+                ].sort((a, b) => a.position - b.position);
 
                 setFormData(data);
                 setFormValues(initialValues);
-                setCombinedInputs(combined); // Set combined inputs
+                setCombinedInputs(combined);
             } catch (error) {
                 console.error('Error fetching form data:', error);
             }
@@ -67,7 +64,7 @@ const Formbot = () => {
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
         if (type === 'dateInputs') {
-            newValues[type][index].value = selectedDate; // Use selectedDate for date input
+            newValues[type][index].value = selectedDate;
         } else {
             newValues[type][index].value = event.target.value;
         }
@@ -78,12 +75,16 @@ const Formbot = () => {
         setSelectedRating(rating);
         setFormValues(prevValues => ({
             ...prevValues,
-            ratingInputs: [{ ...prevValues.ratingInputs[0], value: rating }] // Assuming only one rating input
+            ratingInputs: [{ ...prevValues.ratingInputs[0], value: rating }]
         }));
     };
 
     const handleNextClick = () => {
-        setVisibleIndex(prevIndex => prevIndex + 1);
+        setVisibleIndex(prevIndex => Math.min(prevIndex + 1, combinedInputs.length - 1));
+    };
+
+    const handlePreviousClick = () => {
+        setVisibleIndex(prevIndex => Math.max(prevIndex - 1, 0));
     };
 
     const handleSubmit = async (e) => {
@@ -104,7 +105,6 @@ const Formbot = () => {
             await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`, formDataToSend);
             console.log('Form updated successfully');
 
-            // Clear form values after successful submission
             const initialValues = {
                 textInputs: formData.textInputs.map(input => ({ ...input, value: '' })),
                 numberInputs: formData.numberInputs.map(input => ({ ...input, value: '' })),
@@ -116,7 +116,7 @@ const Formbot = () => {
             };
 
             setFormValues(initialValues);
-            setVisibleIndex(-1); // Reset to show welcome message
+            setVisibleIndex(0);
         } catch (error) {
             console.error('Error saving form data:', error);
         }
@@ -209,30 +209,23 @@ const Formbot = () => {
     return (
         <div>
             <h1>{formData.formName}</h1>
-            {showStartMessage && (
-                <div>
-                    <p>Welcome! Please start filling out the form below:</p>
-                    <button onClick={() => {
-                        setShowStartMessage(false);
-                        handleNextClick(); // Ensure visibility changes
-                    }} style={buttonStyle}>
-                        Start
-                    </button>
-                </div>
-            )}
             <form onSubmit={handleSubmit}>
-                {visibleIndex >= 0 && combinedInputs.map((input, index) => {
-                    if (index === visibleIndex) {
-                        return (
-                            <div key={index}>
-                                {renderInput(input, index)}
-                                <button type="button" onClick={handleNextClick} style={buttonStyle}>Next</button>
-                            </div>
-                        );
-                    }
-                    return null;
-                })}
-                {visibleIndex >= combinedInputs.length && (
+                {combinedInputs.slice(0, visibleIndex + 1).map((input, index) => (
+                    <div key={index}>
+                        {renderInput(input, index)}
+                    </div>
+                ))}
+                {visibleIndex < combinedInputs.length - 1 && (
+                    <button type="button" onClick={handleNextClick} style={buttonStyle}>
+                        Next
+                    </button>
+                )}
+                {visibleIndex > 0 && (
+                    <button type="button" onClick={handlePreviousClick} style={buttonStyle}>
+                        Previous
+                    </button>
+                )}
+                {visibleIndex >= combinedInputs.length - 1 && (
                     <button type="submit" style={buttonStyle}>Submit</button>
                 )}
             </form>
