@@ -112,13 +112,15 @@ const Formbot = () => {
     <>
         {console.log("Image URL: ", input.value)} {/* Log the URL */}
         <img 
-            src={encodeURI(input.value)} 
+            src="https://via.placeholder.com/150" 
             alt={`Image ${index + 1}`} 
             style={{ maxWidth: '100%', height: 'auto' }} 
             onError={(e) => console.error("Image failed to load: ", e)} // Log errors
+            onLoad={(e) => console.log("Image loaded successfully: ", e)} // Log successful load
         />
     </>
 )}
+
 
 
                             {type === 'video' && input.value && (
