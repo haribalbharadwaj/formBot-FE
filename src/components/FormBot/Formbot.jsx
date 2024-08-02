@@ -118,24 +118,35 @@ const Formbot = () => {
                                 <img src={input.value} alt={`GIF ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
                             )}
                             {type === 'text' && (
-                                <p style={{ margin: '10px 0' }}>{input.value ? input.value : `No value provided for ${type} input ${index + 1}`}</p>
+                                <input
+                                    type="text"
+                                    value={input.value || ''}
+                                    onChange={(e) => handleInputChange(type, index, e)}
+                                    style={{ display: 'block', margin: '10px 0' }}
+                                />
                             )}
                             {(type !== 'image' && type !== 'video' && type !== 'gif' && type !== 'text') && (
-                                <>  
-                                    <p style={{ margin: '10px 0' }}>{input.value ? input.value : `No value provided for ${type} input ${index + 1}`}</p>
-                                    <input
-                                        type={type === 'number' ? 'number' : 'text'}
-                                        value={input.value || ''}
-                                        onChange={(e) => handleInputChange(type, index, e)}
-                                        style={{ display: 'block', margin: '10px 0' }}
-                                    />
-                                </>
+                                <p style={{ margin: '10px 0' }}>{input.value ? input.value : `No value provided for ${type} input ${index + 1}`}</p>
                             )}
                             <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
+
+
+
+                            <div>
+        {renderInputs(formValues.textInputs, 'text')}
+        {renderInputs(formValues.imageInputs, 'image')}
+        {renderInputs(formValues.videoInputs, 'video')}
+        {renderInputs(formValues.gifInputs, 'gif')}
+        {renderInputs(formValues.emailInputs, 'email')}
+        {renderInputs(formValues.dateInputs, 'date')}
+        {renderInputs(formValues.ratingInputs, 'rating')}
+    </div>
                         </div>
                     );
                 });
             };
+            
+            // Example usage in JSX
             
             
         
