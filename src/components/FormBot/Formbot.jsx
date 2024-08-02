@@ -116,18 +116,6 @@ const Formbot = () => {
                                 <p style={{ margin: '10px 0' }}>{input.value ? input.value : `No value provided for ${type} input ${index + 1}`}</p>
                             )}
                             <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
-
-
-
-                            <div>
-        {renderInputs(formValues.textInputs, 'text')}
-        {renderInputs(formValues.imageInputs, 'image')}
-        {renderInputs(formValues.videoInputs, 'video')}
-        {renderInputs(formValues.gifInputs, 'gif')}
-        {renderInputs(formValues.emailInputs, 'email')}
-        {renderInputs(formValues.dateInputs, 'date')}
-        {renderInputs(formValues.ratingInputs, 'rating')}
-    </div>
                         </div>
                 });
             };
