@@ -164,6 +164,7 @@ const Formbot = () => {
                 </div>
             );
         }
+        
 
         if (type === 'imageInputs') {
             return (
@@ -220,87 +221,84 @@ const Formbot = () => {
         </div>
     );
 
-
-
-const containerStyle = {
-    padding: '20px'
-};
-
-const formContainerStyle = {
-    marginTop: '20px'
-};
-
-const descriptionStyle = {
-    marginBottom: '20px',
-    fontWeight: 'bold'
-};
-
-const inputContainerStyle = {
-    marginBottom: '10px'
-};
-
-const inputWrapperStyle = {
-    marginBottom: '20px'
-};
-
-const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px'
-};
-
-const buttonStyle = {
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    padding: '10px 20px',
-    margin: '5px'
-};
-
-const ratingContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    maxWidth: '200px',
-    marginBottom: '10px'
-};
-
-const ratingCircleStyle = {
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    backgroundColor: '#ccc',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer'
-};
-
-const selectedRatingStyle = {
-    backgroundColor: '#FFD700'
-};
-
-const calendarStyle = {
-    width: '100%'
-};
-
-const imageStyle = {
-    maxWidth: '100%',
-    height: 'auto'
-};
-
-const videoStyle = {
-    maxWidth: '100%',
-    height: 'auto'
-};
-
-const gifStyle = {
-    maxWidth: '100%',
-    height: 'auto'
-};
-
+    const containerStyle = {
+        padding: '20px',
+        maxWidth: '800px',
+        margin: '0 auto',
+    };
+    
+    const inputContainerStyle = {
+        marginBottom: '10px',
+    };
+    
+    const buttonStyle = {
+        padding: '10px 20px',
+        margin: '5px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+    };
+    
+    const ratingContainerStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+    };
+    
+    const ratingCircleStyle = {
+        width: '30px',
+        height: '30px',
+        borderRadius: '50%',
+        border: '1px solid #ddd',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 5px',
+        cursor: 'pointer',
+    };
+    
+    const selectedRatingStyle = {
+        backgroundColor: '#007bff',
+        color: '#fff',
+    };
+    
+    const imageStyle = {
+        width: '100%',
+        height: 'auto',
+    };
+    
+    const videoStyle = {
+        width: '100%',
+        height: 'auto',
+    };
+    
+    const gifStyle = {
+        width: '100%',
+        height: 'auto',
+    };
+    
+    const inputStyle = {
+        width: '100%',
+        padding: '8px',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+    };
+    
+    const formContainerStyle = {
+        marginTop: '20px',
+    };
+    
+    const descriptionStyle = {
+        fontSize: '18px',
+        marginBottom: '10px',
+    };
+    
+    const inputWrapperStyle = {
+        marginBottom: '20px',
+    };
+    
+    
 }
 
 export default Formbot;
