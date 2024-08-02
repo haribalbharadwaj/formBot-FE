@@ -211,6 +211,8 @@ const Formbot = () => {
             );
         }
 
+        
+
         return (
             <div key={id} style={inputContainerStyle}>
                 <input
@@ -223,12 +225,91 @@ const Formbot = () => {
         );
     };
 
+    const containerStyle = {
+        padding: '20px',
+        maxWidth: '800px',
+        margin: '0 auto',
+    };
+    
+    const inputContainerStyle = {
+        marginBottom: '10px',
+    };
+    
+    const buttonStyle = {
+        padding: '10px 20px',
+        margin: '5px',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '4px',
+        cursor: 'pointer',
+    };
+    
+    const ratingContainerStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+    };
+    
+    const ratingCircleStyle = {
+        width: '30px',
+        height: '30px',
+        borderRadius: '50%',
+        border: '1px solid #ddd',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 5px',
+        cursor: 'pointer',
+    };
+    
+    const selectedRatingStyle = {
+        backgroundColor: '#007bff',
+        color: '#fff',
+    };
+    
+    const imageStyle = {
+        width: '100%',
+        height: 'auto',
+    };
+    
+    const videoStyle = {
+        width: '100%',
+        height: 'auto',
+    };
+    
+    const gifStyle = {
+        width: '100%',
+        height: 'auto',
+    };
+    
+    const inputStyle = {
+        width: '100%',
+        padding: '8px',
+        borderRadius: '4px',
+        border: '1px solid #ddd',
+    };
+    
+    const formContainerStyle = {
+        marginTop: '20px',
+    };
+    
+    const descriptionStyle = {
+        fontSize: '18px',
+        marginBottom: '10px',
+    };
+    
+    const inputWrapperStyle = {
+        marginBottom: '20px',
+    };
+    
+
     return (
         <div style={containerStyle}>
             <h1>Welcome</h1>
             <form onSubmit={handleSubmit} style={formContainerStyle}>
                 <div>
                     <h2 style={descriptionStyle}>{combinedInputs[visibleIndex]?.description || 'No Description'}</h2>
+                    <div></div>
                 </div>
                 <div style={inputWrapperStyle}>
                     {combinedInputs.slice(visibleIndex, visibleIndex + 1).map(renderInput)}
@@ -241,6 +322,8 @@ const Formbot = () => {
             </form>
         </div>
     );
+
+    
 };
 
 export default Formbot;
