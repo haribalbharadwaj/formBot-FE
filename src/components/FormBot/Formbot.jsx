@@ -39,17 +39,17 @@ const Formbot = () => {
 
                 // Combine all inputs and sort them by serialNo
                 const combined = [
-                    ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
-                    ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
-                    ...data.videoInputs.map(input => ({ ...input, type: 'videoInputs' })),
-                    ...data.gifInputs.map(input => ({ ...input, type: 'gifInputs' })),
-                    ...data.numberInputs.map(input => ({ ...input, type: 'numberInputs' })),
-                    ...data.emailInputs.map(input => ({ ...input, type: 'emailInputs' })),
-                    ...data.dateInputs.map(input => ({ ...input, type: 'dateInputs' })),
-                    ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
-                    ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
-                    ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.serialNo - b.serialNo); // Sort by serialNo
+                    ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
+                    ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
+                    ...(data.videoInputs || []).map(input => ({ ...input, type: 'videoInputs' })),
+                    ...(data.gifInputs || []).map(input => ({ ...input, type: 'gifInputs' })),
+                    ...(data.numberInputs || []).map(input => ({ ...input, type: 'numberInputs' })),
+                    ...(data.emailInputs || []).map(input => ({ ...input, type: 'emailInputs' })),
+                    ...(data.dateInputs || []).map(input => ({ ...input, type: 'dateInputs' })),
+                    ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
+                    ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
+                    ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' }))
+                ].sort((a, b) => a.id - b.id);
 
                 setFormData(data);
                 setFormValues(initialValues);
@@ -194,13 +194,27 @@ const Formbot = () => {
             );
         }
 
+        if (type === 'imageInputs' || type === 'videoInputs' || type === 'gifInputs') {
+            return (
+                <div key={id} style={inputContainerStyle}>
+                    <label>{type.replace('Inputs', '')} URL:</label>
+                    <input
+                        type="text"
+                        value={value}
+                        onChange={(e) => handleInputChange(type, index, e)}
+                        style={inputStyle}
+                    />
+                </div>
+            );
+        }
+
         return (
             <div key={id} style={inputContainerStyle}>
+                <label>{type.replace('Inputs', '')}:</label>
                 <input
-                    type={type === 'emailInputs' ? 'email' : type === 'numberInputs' ? 'number' : 'text'}
-                    value={formValues[type][index]?.value || ''}
+                    type="text"
+                    value={value}
                     onChange={(e) => handleInputChange(type, index, e)}
-                    placeholder={type === 'buttonInputs' ? 'Click here' : 'Enter text'}
                     style={inputStyle}
                 />
             </div>
@@ -210,72 +224,77 @@ const Formbot = () => {
     return (
         <div style={containerStyle}>
             <h1>{formData.formName}</h1>
-            <div style={descriptionStyle}>Above are rating and phone number</div>
             <form onSubmit={handleSubmit}>
-                <div style={formContainerStyle}>
-                    {combinedInputs.slice(0, visibleIndex + 1).map((input, index) => (
-                        <div key={index} style={inputWrapperStyle}>
-                            {renderInput(input, index)}
-                        </div>
-                    ))}
-                </div>
-                {visibleIndex < combinedInputs.length - 1 && (
-                    <button type="button" onClick={handleNextClick} style={buttonStyle}>
-                        Next
-                    </button>
-                )}
-                {visibleIndex > 0 && (
-                    <button type="button" onClick={handlePreviousClick} style={buttonStyle}>
+                {combinedInputs.length > 0 && renderInput(combinedInputs[visibleIndex], visibleIndex)}
+                <div style={navigationStyle}>
+                    <button
+                        type="button"
+                        onClick={handlePreviousClick}
+                        disabled={visibleIndex === 0}
+                        style={buttonStyle}
+                    >
                         Previous
                     </button>
-                )}
-                {visibleIndex >= combinedInputs.length - 1 && (
-                    <button type="submit" style={buttonStyle}>Submit</button>
-                )}
+                    <button
+                        type="button"
+                        onClick={handleNextClick}
+                        disabled={visibleIndex === combinedInputs.length - 1}
+                        style={buttonStyle}
+                    >
+                        Next
+                    </button>
+                </div>
+                <button type="submit" style={submitStyle}>Submit</button>
             </form>
         </div>
     );
 };
 
+
 const containerStyle = {
-    padding: '20px'
-};
-
-const formContainerStyle = {
-    marginTop: '20px'
-};
-
-const descriptionStyle = {
-    marginBottom: '20px'
-};
-
-const inputWrapperStyle = {
-    marginBottom: '20px'
+    padding: '20px',
+    maxWidth: '600px',
+    margin: '0 auto'
 };
 
 const inputContainerStyle = {
-    marginBottom: '10px'
-};
-
-const buttonStyle = {
-    marginTop: '20px'
+    marginBottom: '20px'
 };
 
 const inputStyle = {
     width: '100%',
     padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
+    fontSize: '1em'
 };
 
 const calendarStyle = {
-    width: '100%'
+    width: '100%',
+    marginBottom: '10px'
 };
 
 const ratingContainerStyle = {
     display: 'flex',
-    marginBottom: '10px'
+    justifyContent: 'space-around',
+    marginBottom: '20px'
 };
+
+const navigationStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginBottom: '20px'
+};
+
+const buttonStyle = {
+    padding: '10px 20px',
+    fontSize: '1em'
+};
+
+const submitStyle = {
+    padding: '10px 20px',
+    fontSize: '1em',
+    width: '100%'
+};
+
 
 const ratingCircleStyle = {
     width: '30px',
