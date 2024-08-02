@@ -48,7 +48,7 @@ const Formbot = () => {
                     ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
                     ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
                     ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.position - b.position);
+                ].sort((a, b) => a.position - b.position); // Ensure correct ordering
 
                 setFormData(data);
                 setFormValues(initialValues);
@@ -131,7 +131,7 @@ const Formbot = () => {
 
         if (type === 'dateInputs') {
             return (
-                <div key={id}>
+                <div key={id} style={inputContainerStyle}>
                     <Calendar
                         onChange={setSelectedDate}
                         value={selectedDate}
@@ -171,30 +171,30 @@ const Formbot = () => {
 
         if (type === 'imageInputs') {
             return (
-                <div key={id}>
-                    <img src={value} alt={`image-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                <div key={id} style={inputContainerStyle}>
+                    <img src={value} alt={`image-${index}`} style={imageStyle} />
                 </div>
             );
         }
 
         if (type === 'videoInputs') {
             return (
-                <div key={id}>
-                    <video src={value} controls style={{ maxWidth: '100%', height: 'auto' }} />
+                <div key={id} style={inputContainerStyle}>
+                    <video src={value} controls style={videoStyle} />
                 </div>
             );
         }
 
         if (type === 'gifInputs') {
             return (
-                <div key={id}>
-                    <img src={value} alt={`gif-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                <div key={id} style={inputContainerStyle}>
+                    <img src={value} alt={`gif-${index}`} style={gifStyle} />
                 </div>
             );
         }
 
         return (
-            <div key={id}>
+            <div key={id} style={inputContainerStyle}>
                 <input
                     type={type === 'emailInputs' ? 'email' : type === 'numberInputs' ? 'number' : 'text'}
                     value={formValues[type][index]?.value || ''}
@@ -229,13 +229,21 @@ const Formbot = () => {
                     <button type="submit" style={buttonStyle}>Submit</button>
                 )}
             </form>
+            <p></p>
         </div>
     );
 };
 
-const inputStyle = {
-    margin: '10px',
+const inputContainerStyle = {
+    margin: '10px 0',
     padding: '5px',
+    borderRadius: '5px',
+    border: '1px solid #ccc'
+};
+
+const inputStyle = {
+    width: '100%',
+    padding: '10px',
     borderRadius: '5px',
     border: '1px solid #ccc'
 };
@@ -251,10 +259,23 @@ const buttonStyle = {
 };
 
 const calendarStyle = {
-    margin: '10px',
-    padding: '5px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
+    width: '100%',
+    margin: '10px 0'
+};
+
+const imageStyle = {
+    width: '100%',
+    height: 'auto'
+};
+
+const videoStyle = {
+    width: '100%',
+    height: 'auto'
+};
+
+const gifStyle = {
+    width: '100%',
+    height: 'auto'
 };
 
 const ratingContainerStyle = {
