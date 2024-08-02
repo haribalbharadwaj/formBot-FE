@@ -8,7 +8,7 @@ const Formbot = () => {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
     const [formValues, setFormValues] = useState({});
-    const [visibleIndex, setVisibleIndex] = useState(0);
+    const [visibleIndices, setVisibleIndices] = useState([0]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedRating, setSelectedRating] = useState(null);
     const [combinedInputs, setCombinedInputs] = useState([]);
@@ -37,7 +37,7 @@ const Formbot = () => {
                     buttonInputs: data.buttonInputs || []
                 };
 
-                // Combine all inputs and sort them by serialNo
+                // Combine all inputs and sort them by id
                 const combined = [
                     ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
                     ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
@@ -49,7 +49,7 @@ const Formbot = () => {
                     ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
                     ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
                     ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.id - b.id);
+                ].sort((a, b) => a.id - b.id); // Sort by id
 
                 setFormData(data);
                 setFormValues(initialValues);
@@ -81,11 +81,14 @@ const Formbot = () => {
     };
 
     const handleNextClick = () => {
-        setVisibleIndex(prevIndex => Math.min(prevIndex + 1, combinedInputs.length - 1));
+        setVisibleIndices(prevIndices => [
+            ...prevIndices,
+            Math.min(prevIndices[prevIndices.length - 1] + 1, combinedInputs.length - 1)
+        ]);
     };
 
     const handlePreviousClick = () => {
-        setVisibleIndex(prevIndex => Math.max(prevIndex - 1, 0));
+        setVisibleIndices(prevIndices => prevIndices.slice(0, -1));
     };
 
     const handleSubmit = async (e) => {
@@ -117,7 +120,7 @@ const Formbot = () => {
             };
 
             setFormValues(initialValues);
-            setVisibleIndex(0);
+            setVisibleIndices([0]);
         } catch (error) {
             console.error('Error saving form data:', error);
         }
@@ -154,42 +157,19 @@ const Formbot = () => {
         if (type === 'ratingInputs') {
             return (
                 <div key={id} style={ratingContainerStyle}>
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                        <div
-                            key={rating}
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                            key={star}
+                            onClick={() => handleRatingChange(star)}
                             style={{
-                                ...ratingCircleStyle,
-                                ...(selectedRating === rating ? selectedRatingStyle : {})
+                                fontSize: '2em',
+                                cursor: 'pointer',
+                                color: selectedRating >= star ? '#FFD700' : '#e4e5e9'
                             }}
-                            onClick={() => handleRatingChange(rating)}
                         >
-                            {rating}
-                        </div>
+                            &#9733;
+                        </span>
                     ))}
-                </div>
-            );
-        }
-
-        if (type === 'imageInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <img src={value} alt={`image-${index}`} style={imageStyle} />
-                </div>
-            );
-        }
-
-        if (type === 'videoInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <video src={value} controls style={videoStyle} />
-                </div>
-            );
-        }
-
-        if (type === 'gifInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <img src={value} alt={`gif-${index}`} style={gifStyle} />
                 </div>
             );
         }
@@ -225,12 +205,12 @@ const Formbot = () => {
         <div style={containerStyle}>
             <h1>{formData.formName}</h1>
             <form onSubmit={handleSubmit}>
-                {combinedInputs.length > 0 && renderInput(combinedInputs[visibleIndex], visibleIndex)}
+                {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
                 <div style={navigationStyle}>
                     <button
                         type="button"
                         onClick={handlePreviousClick}
-                        disabled={visibleIndex === 0}
+                        disabled={visibleIndices.length === 1}
                         style={buttonStyle}
                     >
                         Previous
@@ -238,7 +218,7 @@ const Formbot = () => {
                     <button
                         type="button"
                         onClick={handleNextClick}
-                        disabled={visibleIndex === combinedInputs.length - 1}
+                        disabled={visibleIndices[visibleIndices.length - 1] === combinedInputs.length - 1}
                         style={buttonStyle}
                     >
                         Next
@@ -249,7 +229,6 @@ const Formbot = () => {
         </div>
     );
 };
-
 
 const containerStyle = {
     padding: '20px',
@@ -293,39 +272,6 @@ const submitStyle = {
     padding: '10px 20px',
     fontSize: '1em',
     width: '100%'
-};
-
-
-const ratingCircleStyle = {
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: '5px',
-    cursor: 'pointer',
-    backgroundColor: '#f0f0f0'
-};
-
-const selectedRatingStyle = {
-    backgroundColor: '#7EA6FF',
-    color: '#fff'
-};
-
-const imageStyle = {
-    width: '100%',
-    height: 'auto'
-};
-
-const videoStyle = {
-    width: '100%',
-    height: 'auto'
-};
-
-const gifStyle = {
-    width: '100%',
-    height: 'auto'
 };
 
 export default Formbot;
