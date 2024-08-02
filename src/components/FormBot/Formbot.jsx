@@ -63,19 +63,25 @@ const Formbot = () => {
     }, [formId]);
 
     const handleInputChange = (type, index, event) => {
-        const newValues = { ...formValues };
+        setFormValues(prevValues => {
+            const newValues = { ...prevValues };
 
-        if (!newValues[type]) {
-            newValues[type] = [];
-        }
+            if (!newValues[type]) {
+                newValues[type] = [];
+            }
 
-        if (type === 'dateInputs') {
-            newValues[type][index].value = selectedDate;
-        } else {
-            newValues[type][index].value = event.target.value;
-        }
+            if (!newValues[type][index]) {
+                newValues[type][index] = { value: '' };
+            }
 
-        setFormValues(newValues);
+            if (type === 'dateInputs') {
+                newValues[type][index].value = selectedDate;
+            } else {
+                newValues[type][index].value = event.target.value;
+            }
+
+            return newValues;
+        });
     };
 
     const handleRatingChange = (rating) => {
@@ -186,7 +192,7 @@ const Formbot = () => {
                     <label>{type.replace('Inputs', '')} URL:</label>
                     <input
                         type="text"
-                        value={value}
+                        value={formValues[type]?.[index]?.value || ''}
                         onChange={(e) => handleInputChange(type, index, e)}
                         style={inputStyle}
                     />
@@ -199,7 +205,7 @@ const Formbot = () => {
                 <label>{type.replace('Inputs', '')}:</label>
                 <input
                     type="text"
-                    value={value}
+                    value={formValues[type]?.[index]?.value || ''}
                     onChange={(e) => handleInputChange(type, index, e)}
                     style={inputStyle}
                 />
@@ -259,8 +265,8 @@ const calendarStyle = {
 
 const ratingContainerStyle = {
     display: 'flex',
-    justifyContent: 'space-around',
-    marginBottom: '20px'
+    justifyContent: 'center',
+    alignItems: 'center'
 };
 
 const navigationStyle = {
