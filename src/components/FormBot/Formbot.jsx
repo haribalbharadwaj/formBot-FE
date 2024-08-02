@@ -20,12 +20,39 @@ const Formbot = () => {
                 if (!backendUrl) {
                     throw new Error('Backend URL is not defined');
                 }
-
+    
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
-
-                // Combine and sort inputs
+    
+                const initialValues = {
+                    textInputs: data.textInputs || [],
+                    imageInputs: data.imageInputs || [],
+                    videoInputs: data.videoInputs || [],
+                    gifInputs: data.gifInputs || [],
+                    numberInputs: data.numberInputs || [],
+                    emailInputs: data.emailInputs || [],
+                    dateInputs: data.dateInputs || [],
+                    phoneInputs: data.phoneInputs || [],
+                    ratingInputs: data.ratingInputs || [],
+                    buttonInputs: data.buttonInputs || []
+                };
+    
+                const priorityOrder = {
+                    ratingInputs: 1,
+                    phoneInputs: 2,
+                    textInputs: 3,
+                    imageInputs: 4,
+                    videoInputs: 5,
+                    gifInputs: 6,
+                    numberInputs: 7,
+                    emailInputs: 8,
+                    dateInputs: 9,
+                    buttonInputs: 10
+                };
+    
                 const combined = [
+                    ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
+                    ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
                     ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
                     ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
                     ...data.videoInputs.map(input => ({ ...input, type: 'videoInputs' })),
@@ -33,29 +60,24 @@ const Formbot = () => {
                     ...data.numberInputs.map(input => ({ ...input, type: 'numberInputs' })),
                     ...data.emailInputs.map(input => ({ ...input, type: 'emailInputs' })),
                     ...data.dateInputs.map(input => ({ ...input, type: 'dateInputs' })),
-                    ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
-                    ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
                     ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.position - b.position);  // Ensure correct sorting if you have a position property
-
-                setFormData(data);
-                setFormValues({
-                    textInputs: data.textInputs || [],
-                    numberInputs: data.numberInputs || [],
-                    emailInputs: data.emailInputs || [],
-                    dateInputs: data.dateInputs || [],
-                    phoneInputs: data.phoneInputs || [],
-                    ratingInputs: data.ratingInputs || [],
-                    buttonInputs: data.buttonInputs || []
+                ].sort((a, b) => {
+                    const priorityA = priorityOrder[a.type] || 100;
+                    const priorityB = priorityOrder[b.type] || 100;
+                    return priorityA - priorityB || a.position - b.position;
                 });
+    
+                setFormData(data);
+                setFormValues(initialValues);
                 setCombinedInputs(combined);
             } catch (error) {
                 console.error('Error fetching form data:', error);
             }
         };
-
+    
         fetchFormData();
     }, [formId]);
+    
 
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
@@ -164,7 +186,6 @@ const Formbot = () => {
                 </div>
             );
         }
-        
 
         if (type === 'imageInputs') {
             return (
@@ -220,85 +241,6 @@ const Formbot = () => {
             </form>
         </div>
     );
-
-    const containerStyle = {
-        padding: '20px',
-        maxWidth: '800px',
-        margin: '0 auto',
-    };
-    
-    const inputContainerStyle = {
-        marginBottom: '10px',
-    };
-    
-    const buttonStyle = {
-        padding: '10px 20px',
-        margin: '5px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
-        cursor: 'pointer',
-    };
-    
-    const ratingContainerStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-    };
-    
-    const ratingCircleStyle = {
-        width: '30px',
-        height: '30px',
-        borderRadius: '50%',
-        border: '1px solid #ddd',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        margin: '0 5px',
-        cursor: 'pointer',
-    };
-    
-    const selectedRatingStyle = {
-        backgroundColor: '#007bff',
-        color: '#fff',
-    };
-    
-    const imageStyle = {
-        width: '100%',
-        height: 'auto',
-    };
-    
-    const videoStyle = {
-        width: '100%',
-        height: 'auto',
-    };
-    
-    const gifStyle = {
-        width: '100%',
-        height: 'auto',
-    };
-    
-    const inputStyle = {
-        width: '100%',
-        padding: '8px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
-    };
-    
-    const formContainerStyle = {
-        marginTop: '20px',
-    };
-    
-    const descriptionStyle = {
-        fontSize: '18px',
-        marginBottom: '10px',
-    };
-    
-    const inputWrapperStyle = {
-        marginBottom: '20px',
-    };
-    
-    
-}
+};
 
 export default Formbot;
