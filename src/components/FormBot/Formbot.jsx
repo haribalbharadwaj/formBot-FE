@@ -111,7 +111,16 @@ const Formbot = () => {
     }
 
     const renderStaticInputs = () => (
-        <>
+        <>  
+            {formData.textInputs.length>0 && formData.textInputs.map((input,index)=>(
+                <div key={input.id}  style={{ display: visibleIndex === -1 ? 'block' : 'none' }}>
+                    <h2>{input.value}</h2>
+                    {index=== formData.textInputs.length-1&&(
+                        <button type='button' onClick={handleNextClick} style={buttonStyle}>Next</button>
+                    )}
+
+                </div>
+            ))}
             {formData.imageInputs.length > 0 && formData.imageInputs.map((input, index) => (
                 <div key={input.id} style={{ display: visibleIndex === -1 ? 'block' : 'none' }}>
                     <img src={input.value} alt={`image-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
