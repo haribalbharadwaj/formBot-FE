@@ -38,37 +38,19 @@ const Formbot = () => {
                     buttonInputs: data.buttonInputs || []
                 };
 
-                // Define the priority order for sorting
-                const priorityOrder = {
-                    ratingInputs: 1,
-                    phoneInputs: 2,
-                    textInputs: 3,
-                    imageInputs: 4,
-                    videoInputs: 5,
-                    gifInputs: 6,
-                    numberInputs: 7,
-                    emailInputs: 8,
-                    dateInputs: 9,
-                    buttonInputs: 10
-                };
-
-                // Combine inputs into a single array with type information
+                // Combine inputs into a single array with type information and index
                 const combined = [
-                    ...data.ratingInputs.map((input, index) => ({ ...input, type: 'ratingInputs', position: index })),
-                    ...data.phoneInputs.map((input, index) => ({ ...input, type: 'phoneInputs', position: index })),
-                    ...data.textInputs.map((input, index) => ({ ...input, type: 'textInputs', position: index })),
-                    ...data.imageInputs.map((input, index) => ({ ...input, type: 'imageInputs', position: index })),
-                    ...data.videoInputs.map((input, index) => ({ ...input, type: 'videoInputs', position: index })),
-                    ...data.gifInputs.map((input, index) => ({ ...input, type: 'gifInputs', position: index })),
-                    ...data.numberInputs.map((input, index) => ({ ...input, type: 'numberInputs', position: index })),
-                    ...data.emailInputs.map((input, index) => ({ ...input, type: 'emailInputs', position: index })),
-                    ...data.dateInputs.map((input, index) => ({ ...input, type: 'dateInputs', position: index })),
-                    ...data.buttonInputs.map((input, index) => ({ ...input, type: 'buttonInputs', position: index }))
-                ].sort((a, b) => {
-                    const priorityA = priorityOrder[a.type] || 100;
-                    const priorityB = priorityOrder[b.type] || 100;
-                    return priorityA - priorityB || a.position - b.position;
-                });
+                    ...data.textInputs.map((input, index) => ({ ...input, type: 'textInputs', order: index })),
+                    ...data.imageInputs.map((input, index) => ({ ...input, type: 'imageInputs', order: index })),
+                    ...data.videoInputs.map((input, index) => ({ ...input, type: 'videoInputs', order: index })),
+                    ...data.gifInputs.map((input, index) => ({ ...input, type: 'gifInputs', order: index })),
+                    ...data.numberInputs.map((input, index) => ({ ...input, type: 'numberInputs', order: index })),
+                    ...data.emailInputs.map((input, index) => ({ ...input, type: 'emailInputs', order: index })),
+                    ...data.dateInputs.map((input, index) => ({ ...input, type: 'dateInputs', order: index })),
+                    ...data.phoneInputs.map((input, index) => ({ ...input, type: 'phoneInputs', order: index })),
+                    ...data.ratingInputs.map((input, index) => ({ ...input, type: 'ratingInputs', order: index })),
+                    ...data.buttonInputs.map((input, index) => ({ ...input, type: 'buttonInputs', order: index }))
+                ].sort((a, b) => a.order - b.order); // Sort by order
 
                 setFormData(data);
                 setFormValues(initialValues);
