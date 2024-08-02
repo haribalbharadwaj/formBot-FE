@@ -119,7 +119,6 @@ const Formbot = () => {
                                     type={type === 'number' ? 'number' : 'text'}
                                     value={input.value || ''}
                                     onChange={(e) => handleInputChange(type, index, e)}
-                                    placeholder={`Enter ${type}`}
                                     style={{ display: 'block', margin: '10px 0' }}
                                 />
                             </>
