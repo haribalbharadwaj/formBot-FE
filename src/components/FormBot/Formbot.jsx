@@ -20,10 +20,11 @@ const Formbot = () => {
                 if (!backendUrl) {
                     throw new Error('Backend URL is not defined');
                 }
-    
+
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
-    
+
+                // Prepare initial values for all inputs
                 const initialValues = {
                     textInputs: data.textInputs || [],
                     imageInputs: data.imageInputs || [],
@@ -36,7 +37,8 @@ const Formbot = () => {
                     ratingInputs: data.ratingInputs || [],
                     buttonInputs: data.buttonInputs || []
                 };
-    
+
+                // Define the priority order for sorting
                 const priorityOrder = {
                     ratingInputs: 1,
                     phoneInputs: 2,
@@ -49,24 +51,25 @@ const Formbot = () => {
                     dateInputs: 9,
                     buttonInputs: 10
                 };
-    
+
+                // Combine inputs into a single array with type information
                 const combined = [
-                    ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
-                    ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
-                    ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
-                    ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
-                    ...data.videoInputs.map(input => ({ ...input, type: 'videoInputs' })),
-                    ...data.gifInputs.map(input => ({ ...input, type: 'gifInputs' })),
-                    ...data.numberInputs.map(input => ({ ...input, type: 'numberInputs' })),
-                    ...data.emailInputs.map(input => ({ ...input, type: 'emailInputs' })),
-                    ...data.dateInputs.map(input => ({ ...input, type: 'dateInputs' })),
-                    ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
+                    ...data.ratingInputs.map((input, index) => ({ ...input, type: 'ratingInputs', position: index })),
+                    ...data.phoneInputs.map((input, index) => ({ ...input, type: 'phoneInputs', position: index })),
+                    ...data.textInputs.map((input, index) => ({ ...input, type: 'textInputs', position: index })),
+                    ...data.imageInputs.map((input, index) => ({ ...input, type: 'imageInputs', position: index })),
+                    ...data.videoInputs.map((input, index) => ({ ...input, type: 'videoInputs', position: index })),
+                    ...data.gifInputs.map((input, index) => ({ ...input, type: 'gifInputs', position: index })),
+                    ...data.numberInputs.map((input, index) => ({ ...input, type: 'numberInputs', position: index })),
+                    ...data.emailInputs.map((input, index) => ({ ...input, type: 'emailInputs', position: index })),
+                    ...data.dateInputs.map((input, index) => ({ ...input, type: 'dateInputs', position: index })),
+                    ...data.buttonInputs.map((input, index) => ({ ...input, type: 'buttonInputs', position: index }))
                 ].sort((a, b) => {
                     const priorityA = priorityOrder[a.type] || 100;
                     const priorityB = priorityOrder[b.type] || 100;
                     return priorityA - priorityB || a.position - b.position;
                 });
-    
+
                 setFormData(data);
                 setFormValues(initialValues);
                 setCombinedInputs(combined);
@@ -74,10 +77,9 @@ const Formbot = () => {
                 console.error('Error fetching form data:', error);
             }
         };
-    
+
         fetchFormData();
     }, [formId]);
-    
 
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
@@ -211,8 +213,6 @@ const Formbot = () => {
             );
         }
 
-        
-
         return (
             <div key={id} style={inputContainerStyle}>
                 <input
@@ -230,100 +230,87 @@ const Formbot = () => {
         maxWidth: '800px',
         margin: '0 auto',
     };
-    
+
     const inputContainerStyle = {
         marginBottom: '10px',
     };
-    
+
     const buttonStyle = {
         padding: '10px 20px',
-        margin: '5px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '4px',
+        marginTop: '10px',
         cursor: 'pointer',
     };
-    
+
+    const calendarStyle = {
+        marginBottom: '10px',
+    };
+
     const ratingContainerStyle = {
         display: 'flex',
-        justifyContent: 'center',
+        gap: '10px',
     };
-    
+
     const ratingCircleStyle = {
         width: '30px',
         height: '30px',
         borderRadius: '50%',
-        border: '1px solid #ddd',
+        backgroundColor: '#ddd',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        margin: '0 5px',
         cursor: 'pointer',
     };
-    
+
     const selectedRatingStyle = {
-        backgroundColor: '#007bff',
-        color: '#fff',
+        backgroundColor: '#ff0',
     };
-    
+
     const imageStyle = {
-        width: '100%',
+        maxWidth: '100%',
         height: 'auto',
     };
-    
+
     const videoStyle = {
-        width: '100%',
+        maxWidth: '100%',
         height: 'auto',
     };
-    
+
     const gifStyle = {
-        width: '100%',
+        maxWidth: '100%',
         height: 'auto',
     };
-    
+
     const inputStyle = {
         width: '100%',
         padding: '8px',
-        borderRadius: '4px',
-        border: '1px solid #ddd',
+        boxSizing: 'border-box',
     };
-    
-    const formContainerStyle = {
-        marginTop: '20px',
-    };
-    
-    const descriptionStyle = {
-        fontSize: '18px',
-        marginBottom: '10px',
-    };
-    
-    const inputWrapperStyle = {
-        marginBottom: '20px',
-    };
-    
 
     return (
         <div style={containerStyle}>
-            <h1>Welcome</h1>
-            <form onSubmit={handleSubmit} style={formContainerStyle}>
-                <div>
-                    <h2 style={descriptionStyle}>{combinedInputs[visibleIndex]?.description || 'No Description'}</h2>
-                    <div></div>
-                </div>
-                <div style={inputWrapperStyle}>
-                    {combinedInputs.slice(visibleIndex, visibleIndex + 1).map(renderInput)}
-                </div>
-                <div>
-                    <button type="button" onClick={handlePreviousClick} disabled={visibleIndex === 0} style={buttonStyle}>Previous</button>
-                    <button type="button" onClick={handleNextClick} disabled={visibleIndex >= combinedInputs.length - 1} style={buttonStyle}>Next</button>
-                    <button type="submit" style={buttonStyle}>Submit</button>
-                </div>
-            </form>
+            {combinedInputs.length > 0 && renderInput(combinedInputs[visibleIndex])}
+            <button
+                onClick={handlePreviousClick}
+                disabled={visibleIndex === 0}
+                style={buttonStyle}
+            >
+                Previous
+            </button>
+            <button
+                onClick={handleNextClick}
+                disabled={visibleIndex === combinedInputs.length - 1}
+                style={buttonStyle}
+            >
+                Next
+            </button>
+            <button
+                onClick={handleSubmit}
+                style={buttonStyle}
+            >
+                Submit
+            </button>
         </div>
     );
-
-    
 };
 
 export default Formbot;
