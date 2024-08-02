@@ -130,6 +130,9 @@ const Formbot = () => {
                             </>
                         )}
                         <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
+                        <div>
+                            
+                        </div>
                     </div>
                 ));
             };
