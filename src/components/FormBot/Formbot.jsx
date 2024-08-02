@@ -106,6 +106,7 @@ const Formbot = () => {
                 return inputs.map((input, index) => (
                     <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
                         <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
+                        
                         {type === 'image' && input.value && (
                             <img src={input.value} alt={`Image ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
                         )}
@@ -132,7 +133,6 @@ const Formbot = () => {
                     </div>
                 ));
             };
-            
             
         
             const handleButtonClick = (type, index) => {
