@@ -119,7 +119,7 @@ const Formbot = () => {
 
         try {
             await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`, formDataToSend);
-            console.log('Form updated successfully');
+            console.log('Form updated successfully',response.data);
 
             const initialValues = {
                 textInputs: formData.textInputs.map(input => ({ ...input, value: '' })),
