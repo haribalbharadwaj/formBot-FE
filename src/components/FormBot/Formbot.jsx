@@ -198,8 +198,7 @@ const Formbot = () => {
                 <input
                     type={type === 'emailInputs' ? 'email' : type === 'numberInputs' ? 'number' : 'text'}
                     value={formValues[type][index]?.value || ''}
-                    onChange={(e) => handleInputChange(type, index, e)}
-                    placeholder={type === 'buttonInputs' ? 'Click here' : 'Enter text'}
+                    onChange={(event) => handleInputChange(type, index, event)}
                     style={inputStyle}
                 />
             </div>
@@ -208,29 +207,19 @@ const Formbot = () => {
 
     return (
         <div style={containerStyle}>
-            <h1>{formData.formName}</h1>
-            <div style={descriptionStyle}>Above are rating and phone number</div>
-            <form onSubmit={handleSubmit}>
-                <div style={formContainerStyle}>
-                    {combinedInputs.slice(0, visibleIndex + 1).map((input, index) => (
-                        <div key={index} style={inputWrapperStyle}>
-                            {renderInput(input, index)}
-                        </div>
-                    ))}
+            <h1>Welcome</h1>
+            <form onSubmit={handleSubmit} style={formContainerStyle}>
+                <div>
+                    <h2 style={descriptionStyle}>{combinedInputs[visibleIndex]?.description || 'No Description'}</h2>
                 </div>
-                {visibleIndex < combinedInputs.length - 1 && (
-                    <button type="button" onClick={handleNextClick} style={buttonStyle}>
-                        Next
-                    </button>
-                )}
-                {visibleIndex > 0 && (
-                    <button type="button" onClick={handlePreviousClick} style={buttonStyle}>
-                        Previous
-                    </button>
-                )}
-                {visibleIndex >= combinedInputs.length - 1 && (
+                <div style={inputWrapperStyle}>
+                    {combinedInputs.slice(visibleIndex, visibleIndex + 1).map(renderInput)}
+                </div>
+                <div>
+                    <button type="button" onClick={handlePreviousClick} disabled={visibleIndex === 0} style={buttonStyle}>Previous</button>
+                    <button type="button" onClick={handleNextClick} disabled={visibleIndex >= combinedInputs.length - 1} style={buttonStyle}>Next</button>
                     <button type="submit" style={buttonStyle}>Submit</button>
-                )}
+                </div>
             </form>
         </div>
     );
@@ -273,5 +262,47 @@ const buttonStyle = {
     padding: '10px 20px',
     margin: '5px'
 };
+
+const ratingContainerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    maxWidth: '200px',
+    marginBottom: '10px'
+};
+
+const ratingCircleStyle = {
+    width: '30px',
+    height: '30px',
+    borderRadius: '50%',
+    backgroundColor: '#ccc',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer'
+};
+
+const selectedRatingStyle = {
+    backgroundColor: '#FFD700'
+};
+
+const calendarStyle = {
+    width: '100%'
+};
+
+const imageStyle = {
+    maxWidth: '100%',
+    height: 'auto'
+};
+
+const videoStyle = {
+    maxWidth: '100%',
+    height: 'auto'
+};
+
+const gifStyle = {
+    maxWidth: '100%',
+    height: 'auto'
+};
+
 
 export default Formbot;
