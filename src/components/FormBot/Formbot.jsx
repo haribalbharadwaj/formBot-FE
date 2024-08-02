@@ -12,6 +12,7 @@ const Formbot = () => {
     const [showStartMessage, setShowStartMessage] = useState(true);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedRating, setSelectedRating] = useState(null); // State for rating
+    const [combinedInputs, setCombinedInputs] = useState([]); // New state to hold combined inputs
 
     useEffect(() => {
         const fetchFormData = async () => {
@@ -38,8 +39,23 @@ const Formbot = () => {
                     buttonInputs: data.buttonInputs || []
                 };
 
+                // Combine inputs into a single array
+                const combined = [
+                    ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
+                    ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
+                    ...data.videoInputs.map(input => ({ ...input, type: 'videoInputs' })),
+                    ...data.gifInputs.map(input => ({ ...input, type: 'gifInputs' })),
+                    ...data.numberInputs.map(input => ({ ...input, type: 'numberInputs' })),
+                    ...data.emailInputs.map(input => ({ ...input, type: 'emailInputs' })),
+                    ...data.dateInputs.map(input => ({ ...input, type: 'dateInputs' })),
+                    ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
+                    ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
+                    ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
+                ].sort((a, b) => a.position - b.position); // Assuming each input has a 'position' property
+
                 setFormData(data);
                 setFormValues(initialValues);
+                setCombinedInputs(combined); // Set combined inputs
             } catch (error) {
                 console.error('Error fetching form data:', error);
             }
@@ -110,100 +126,85 @@ const Formbot = () => {
         return <div>Loading...</div>;
     }
 
-    const renderStaticInputs = () => (
-        <>  
-            {formData.textInputs.length>0 && formData.textInputs.map((input,index)=>(
-                <div key={input.id}  style={{ display: visibleIndex === -1 ? 'block' : 'none' }}>
-                    <h2>{input.value}</h2>
-                    {index=== formData.textInputs.length-1&&(
-                        <button type='button' onClick={handleNextClick} style={buttonStyle}>Next</button>
-                    )}
+    const renderInput = (input, index) => {
+        const { type, id, value } = input;
 
+        if (type === 'dateInputs') {
+            return (
+                <div key={id}>
+                    <Calendar
+                        onChange={setSelectedDate}
+                        value={selectedDate}
+                        selectRange={false}
+                        style={calendarStyle}
+                    />
+                    <button
+                        type="button"
+                        onClick={() => handleInputChange(type, index)}
+                        disabled={!selectedDate}
+                        style={buttonStyle}
+                    >
+                        Set Date
+                    </button>
                 </div>
-            ))}
-            {formData.imageInputs.length > 0 && formData.imageInputs.map((input, index) => (
-                <div key={input.id} style={{ display: visibleIndex === -1 ? 'block' : 'none' }}>
-                    <img src={input.value} alt={`image-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
-                    {index === formData.imageInputs.length - 1 && (
-                        <button type="button" onClick={handleNextClick} style={buttonStyle}>Next</button>
-                    )}
-                </div>
-            ))}
-            {formData.videoInputs.length > 0 && formData.videoInputs.map((input, index) => (
-                <div key={input.id} style={{ display: visibleIndex === -1 ? 'block' : 'none' }}>
-                    <video src={input.value} controls style={{ maxWidth: '100%', height: 'auto' }} />
-                    {index === formData.videoInputs.length - 1 && (
-                        <button type="button" onClick={handleNextClick} style={buttonStyle}>Next</button>
-                    )}
-                </div>
-            ))}
-            {formData.gifInputs.length > 0 && formData.gifInputs.map((input, index) => (
-                <div key={input.id} style={{ display: visibleIndex === -1 ? 'block' : 'none' }}>
-                    <img src={input.value} alt={`gif-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
-                    {index === formData.gifInputs.length - 1 && (
-                        <button type="button" onClick={handleNextClick} style={buttonStyle}>Next</button>
-                    )}
-                </div>
-            ))}
-        </>
-    );
+            );
+        }
 
-    const renderInputs = (type, placeholder) => (
-        <div style={{ display: visibleIndex >= 0 ? 'block' : 'none' }}>
-            {formData[type]?.length > 0 && formData[type].map((input, index) => (
-                <div key={input.id}>
-                    {type === 'dateInputs' && (
-                        <div>
-                            <Calendar
-                                onChange={setSelectedDate}
-                                value={selectedDate}
-                                selectRange={false}
-                                style={calendarStyle}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => handleInputChange(type, index)}
-                                disabled={!selectedDate}
-                                style={buttonStyle}
-                            >
-                                Set Date
-                            </button>
+        if (type === 'ratingInputs') {
+            return (
+                <div key={id} style={ratingContainerStyle}>
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                        <div
+                            key={rating}
+                            style={{
+                                ...ratingCircleStyle,
+                                ...(selectedRating === rating ? selectedRatingStyle : {})
+                            }}
+                            onClick={() => handleRatingChange(rating)}
+                        >
+                            {rating}
                         </div>
-                    )}
-                    {type === 'ratingInputs' && (
-                        <div style={ratingContainerStyle}>
-                            {[1, 2, 3, 4, 5].map((rating) => (
-                                <div
-                                    key={rating}
-                                    style={{
-                                        ...ratingCircleStyle,
-                                        ...(selectedRating === rating ? selectedRatingStyle : {})
-                                    }}
-                                    onClick={() => handleRatingChange(rating)}
-                                >
-                                    {rating}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {type !== 'dateInputs' && type !== 'ratingInputs' && (
-                        <input
-                            type={type === 'emailInputs' ? 'email' : type === 'numberInputs' ? 'number' : 'text'}
-                            value={formValues[type][index]?.value || ''}
-                            onChange={(e) => handleInputChange(type, index, e)}
-                            placeholder={placeholder}
-                            style={inputStyle}
-                        />
-                    )}
-                    {index === formData[type].length - 1 && (
-                        <button type="button" onClick={handleNextClick} disabled={!formValues[type][index]?.value} style={buttonStyle}>
-                            Next
-                        </button>
-                    )}
+                    ))}
                 </div>
-            ))}
-        </div>
-    );
+            );
+        }
+
+        if (type === 'imageInputs') {
+            return (
+                <div key={id}>
+                    <img src={value} alt={`image-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                </div>
+            );
+        }
+
+        if (type === 'videoInputs') {
+            return (
+                <div key={id}>
+                    <video src={value} controls style={{ maxWidth: '100%', height: 'auto' }} />
+                </div>
+            );
+        }
+
+        if (type === 'gifInputs') {
+            return (
+                <div key={id}>
+                    <img src={value} alt={`gif-${index}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                </div>
+            );
+        }
+
+        return (
+            <div key={id}>
+                <input
+                    type={type === 'emailInputs' ? 'email' : type === 'numberInputs' ? 'number' : 'text'}
+                    value={formValues[type][index]?.value || ''}
+                    onChange={(e) => handleInputChange(type, index, e)}
+                    placeholder={type === 'buttonInputs' ? 'Click here' : 'Enter text'}
+                    style={inputStyle}
+                />
+            </div>
+        );
+    };
 
     return (
         <div>
@@ -220,15 +221,18 @@ const Formbot = () => {
                 </div>
             )}
             <form onSubmit={handleSubmit}>
-                {renderStaticInputs()}
-                {visibleIndex >= 0 && renderInputs('textInputs', 'Enter text')}
-                {visibleIndex >= 0 && renderInputs('numberInputs', 'Enter number')}
-                {visibleIndex >= 0 && renderInputs('emailInputs', 'Enter email')}
-                {visibleIndex >= 0 && renderInputs('dateInputs', 'Select date')}
-                {visibleIndex >= 0 && renderInputs('phoneInputs', 'Enter phone')}
-                {visibleIndex >= 0 && renderInputs('ratingInputs', 'Rate this')}
-                {visibleIndex >= 0 && renderInputs('buttonInputs', 'Click here')}
-                {visibleIndex >= 0 && (
+                {visibleIndex >= 0 && combinedInputs.map((input, index) => {
+                    if (index === visibleIndex) {
+                        return (
+                            <div key={index}>
+                                {renderInput(input, index)}
+                                <button type="button" onClick={handleNextClick} style={buttonStyle}>Next</button>
+                            </div>
+                        );
+                    }
+                    return null;
+                })}
+                {visibleIndex >= combinedInputs.length && (
                     <button type="submit" style={buttonStyle}>Submit</button>
                 )}
             </form>
@@ -246,32 +250,34 @@ const inputStyle = {
 const buttonStyle = {
     margin: '10px',
     padding: '10px 20px',
-    borderRadius: '5px',
-    border: 'none',
     backgroundColor: '#4CAF50',
     color: 'white',
+    border: 'none',
+    borderRadius: '5px',
     cursor: 'pointer'
 };
 
 const calendarStyle = {
-    margin: '10px'
+    margin: '10px',
+    padding: '5px',
+    borderRadius: '5px',
+    border: '1px solid #ccc'
 };
 
 const ratingContainerStyle = {
     display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    margin: '10px'
+    justifyContent: 'space-between',
+    width: '150px'
 };
 
 const ratingCircleStyle = {
-    width: '40px',
-    height: '40px',
+    width: '30px',
+    height: '30px',
     borderRadius: '50%',
+    backgroundColor: '#ccc',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#ccc',
     cursor: 'pointer'
 };
 
