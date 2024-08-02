@@ -24,19 +24,7 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-                const initialValues = {
-                    textInputs: data.textInputs || [],
-                    imageInputs: data.imageInputs || [],
-                    videoInputs: data.videoInputs || [],
-                    gifInputs: data.gifInputs || [],
-                    numberInputs: data.numberInputs || [],
-                    emailInputs: data.emailInputs || [],
-                    dateInputs: data.dateInputs || [],
-                    phoneInputs: data.phoneInputs || [],
-                    ratingInputs: data.ratingInputs || [],
-                    buttonInputs: data.buttonInputs || []
-                };
-
+                // Combine and sort inputs
                 const combined = [
                     ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
                     ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
@@ -48,10 +36,18 @@ const Formbot = () => {
                     ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
                     ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
                     ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.position - b.position);
+                ].sort((a, b) => a.position - b.position);  // Ensure correct sorting if you have a position property
 
                 setFormData(data);
-                setFormValues(initialValues);
+                setFormValues({
+                    textInputs: data.textInputs || [],
+                    numberInputs: data.numberInputs || [],
+                    emailInputs: data.emailInputs || [],
+                    dateInputs: data.dateInputs || [],
+                    phoneInputs: data.phoneInputs || [],
+                    ratingInputs: data.ratingInputs || [],
+                    buttonInputs: data.buttonInputs || []
+                });
                 setCombinedInputs(combined);
             } catch (error) {
                 console.error('Error fetching form data:', error);
@@ -223,7 +219,8 @@ const Formbot = () => {
             </form>
         </div>
     );
-};
+
+
 
 const containerStyle = {
     padding: '20px'
@@ -304,5 +301,6 @@ const gifStyle = {
     height: 'auto'
 };
 
+}
 
 export default Formbot;
