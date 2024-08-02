@@ -103,39 +103,39 @@ const Formbot = () => {
                     return null;
                 }
             
-                return inputs.map((input, index) => (
-                    <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
-                        <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
-                        
-                        {type === 'image' && input.value && (
-                            <img src={input.value} alt={`Image ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
-                        )}
-                        {type === 'video' && input.value && (
-                            <video controls src={input.value} style={{ maxWidth: '100%', height: 'auto' }} />
-                        )}
-                        {type === 'gif' && input.value && (
-                            <img src={input.value} alt={`GIF ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
-                        )}
-                        {type === 'text' && (
-                            <p style={{ margin: '10px 0' }}>{input.value || `No value provided for ${type} input ${index + 1}`}</p>
-                        )}
-                        {(type !== 'image' && type !== 'video' && type !== 'gif' && type !== 'text') && (
-                            <>
-                                <input
-                                    type={type === 'number' ? 'number' : 'text'}
-                                    value={input.value || ''}
-                                    onChange={(e) => handleInputChange(type, index, e)}
-                                    style={{ display: 'block', margin: '10px 0' }}
-                                />
-                            </>
-                        )}
-                        <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
-                        <div>
-                            
+                return inputs.map((input, index) => {
+                    console.log(`${type} Input ${index + 1}:`, input.value);
+                    return (
+                        <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
+                            <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
+                            {type === 'image' && input.value && (
+                                <img src={input.value} alt={`Image ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                            )}
+                            {type === 'video' && input.value && (
+                                <video controls src={input.value} style={{ maxWidth: '100%', height: 'auto' }} />
+                            )}
+                            {type === 'gif' && input.value && (
+                                <img src={input.value} alt={`GIF ${index + 1}`} style={{ maxWidth: '100%', height: 'auto' }} />
+                            )}
+                            {type === 'text' && (
+                                <p style={{ margin: '10px 0' }}>{input.value ? input.value : `No value provided for ${type} input ${index + 1}`}</p>
+                            )}
+                            {(type !== 'image' && type !== 'video' && type !== 'gif' && type !== 'text') && (
+                                <>
+                                    <input
+                                        type={type === 'number' ? 'number' : 'text'}
+                                        value={input.value || ''}
+                                        onChange={(e) => handleInputChange(type, index, e)}
+                                        style={{ display: 'block', margin: '10px 0' }}
+                                    />
+                                </>
+                            )}
+                            <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
                         </div>
-                    </div>
-                ));
+                    );
+                });
             };
+            
             
         
             const handleButtonClick = (type, index) => {
