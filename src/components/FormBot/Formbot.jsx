@@ -213,13 +213,13 @@ const Formbot = () => {
             <form onSubmit={handleSubmit}>
                 {renderStaticInputs()}
                 {visibleIndex >= 0 && renderInputs('textInputs', 'Enter text')}
-                {visibleIndex >= 1 && renderInputs('numberInputs', 'Enter number')}
-                {visibleIndex >= 2 && renderInputs('emailInputs', 'Enter email')}
-                {visibleIndex >= 3 && renderInputs('dateInputs', 'Select date')}
-                {visibleIndex >= 4 && renderInputs('phoneInputs', 'Enter phone')}
-                {visibleIndex >= 5 && renderInputs('ratingInputs', 'Rate')}
-                {visibleIndex >= 6 && renderInputs('buttonInputs', 'Click button')}
-                {visibleIndex >= 7 && (
+                {visibleIndex >= 0 && renderInputs('numberInputs', 'Enter number')}
+                {visibleIndex >= 0 && renderInputs('emailInputs', 'Enter email')}
+                {visibleIndex >= 0 && renderInputs('dateInputs', 'Select date')}
+                {visibleIndex >= 0 && renderInputs('phoneInputs', 'Enter phone')}
+                {visibleIndex >= 0 && renderInputs('ratingInputs', 'Rate this')}
+                {visibleIndex >= 0 && renderInputs('buttonInputs', 'Click here')}
+                {visibleIndex >= 0 && (
                     <button type="submit" style={buttonStyle}>Submit</button>
                 )}
             </form>
@@ -227,50 +227,48 @@ const Formbot = () => {
     );
 };
 
-const buttonStyle = {
-    backgroundColor: '#0044CC',
-    color: 'white',
-    border: 'none',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    borderRadius: '5px',
-    fontWeight: 'bold',
-    marginTop: '10px'
-};
-
 const inputStyle = {
-    display: 'block',
-    marginBottom: '10px',
-    padding: '10px',
+    margin: '10px',
+    padding: '5px',
     borderRadius: '5px',
     border: '1px solid #ccc'
 };
 
+const buttonStyle = {
+    margin: '10px',
+    padding: '10px 20px',
+    borderRadius: '5px',
+    border: 'none',
+    backgroundColor: '#4CAF50',
+    color: 'white',
+    cursor: 'pointer'
+};
+
 const calendarStyle = {
-    marginBottom: '10px'
+    margin: '10px'
 };
 
 const ratingContainerStyle = {
     display: 'flex',
     justifyContent: 'space-around',
-    marginBottom: '10px'
+    alignItems: 'center',
+    margin: '10px'
 };
 
 const ratingCircleStyle = {
-    width: '30px',
-    height: '30px',
+    width: '40px',
+    height: '40px',
     borderRadius: '50%',
-    backgroundColor: '#0044CC',
-    color: 'white',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    cursor: 'pointer',
-    fontWeight: 'bold'
+    backgroundColor: '#ccc',
+    cursor: 'pointer'
 };
 
 const selectedRatingStyle = {
-    backgroundColor: '#FFD700' // Yellow for selected rating
+    backgroundColor: '#4CAF50',
+    color: 'white'
 };
 
 export default Formbot;
