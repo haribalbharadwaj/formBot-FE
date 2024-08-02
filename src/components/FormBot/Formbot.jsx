@@ -64,11 +64,17 @@ const Formbot = () => {
 
     const handleInputChange = (type, index, event) => {
         const newValues = { ...formValues };
+
+        if (!newValues[type]) {
+            newValues[type] = [];
+        }
+
         if (type === 'dateInputs') {
             newValues[type][index].value = selectedDate;
         } else {
             newValues[type][index].value = event.target.value;
         }
+
         setFormValues(newValues);
     };
 
