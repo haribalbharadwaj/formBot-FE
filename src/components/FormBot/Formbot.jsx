@@ -8,7 +8,7 @@ const Formbot = () => {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
     const [formValues, setFormValues] = useState({});
-    const [visibleIndex, setVisibleIndex] = useState(0); // Start with index 0
+    const [visibleIndex, setVisibleIndex] = useState(0);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedRating, setSelectedRating] = useState(null);
     const [combinedInputs, setCombinedInputs] = useState([]);
@@ -48,7 +48,7 @@ const Formbot = () => {
                     ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
                     ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
                     ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.position - b.position); // Ensure correct ordering
+                ].sort((a, b) => a.position - b.position);
 
                 setFormData(data);
                 setFormValues(initialValues);
@@ -207,14 +207,17 @@ const Formbot = () => {
     };
 
     return (
-        <div>
+        <div style={containerStyle}>
             <h1>{formData.formName}</h1>
+            <div style={descriptionStyle}>Above are rating and phone number</div>
             <form onSubmit={handleSubmit}>
-                {combinedInputs.slice(0, visibleIndex + 1).map((input, index) => (
-                    <div key={index}>
-                        {renderInput(input, index)}
-                    </div>
-                ))}
+                <div style={formContainerStyle}>
+                    {combinedInputs.slice(0, visibleIndex + 1).map((input, index) => (
+                        <div key={index} style={inputWrapperStyle}>
+                            {renderInput(input, index)}
+                        </div>
+                    ))}
+                </div>
                 {visibleIndex < combinedInputs.length - 1 && (
                     <button type="button" onClick={handleNextClick} style={buttonStyle}>
                         Next
@@ -229,75 +232,46 @@ const Formbot = () => {
                     <button type="submit" style={buttonStyle}>Submit</button>
                 )}
             </form>
-            <p></p>
         </div>
     );
 };
 
+const containerStyle = {
+    padding: '20px'
+};
+
+const formContainerStyle = {
+    marginTop: '20px'
+};
+
+const descriptionStyle = {
+    marginBottom: '20px',
+    fontWeight: 'bold'
+};
+
 const inputContainerStyle = {
-    margin: '10px 0',
-    padding: '5px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
+    marginBottom: '10px'
+};
+
+const inputWrapperStyle = {
+    marginBottom: '20px'
 };
 
 const inputStyle = {
     width: '100%',
     padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc'
+    border: '1px solid #ccc',
+    borderRadius: '5px'
 };
 
 const buttonStyle = {
-    margin: '10px',
-    padding: '10px 20px',
     backgroundColor: '#4CAF50',
     color: 'white',
     border: 'none',
     borderRadius: '5px',
-    cursor: 'pointer'
-};
-
-const calendarStyle = {
-    width: '100%',
-    margin: '10px 0'
-};
-
-const imageStyle = {
-    width: '100%',
-    height: 'auto'
-};
-
-const videoStyle = {
-    width: '100%',
-    height: 'auto'
-};
-
-const gifStyle = {
-    width: '100%',
-    height: 'auto'
-};
-
-const ratingContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    width: '150px'
-};
-
-const ratingCircleStyle = {
-    width: '30px',
-    height: '30px',
-    borderRadius: '50%',
-    backgroundColor: '#ccc',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    cursor: 'pointer'
-};
-
-const selectedRatingStyle = {
-    backgroundColor: '#4CAF50',
-    color: 'white'
+    cursor: 'pointer',
+    padding: '10px 20px',
+    margin: '5px'
 };
 
 export default Formbot;
