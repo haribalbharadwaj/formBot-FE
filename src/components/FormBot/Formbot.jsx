@@ -5,7 +5,19 @@ import { useParams } from 'react-router-dom';
 const Formbot = () => {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
-    const [formValues, setFormValues] = useState({ });
+    const [formValues, setFormValues] = useState({
+        textInputs: [],
+        imageInputs: [],
+        videoInputs: [],
+        gifInputs: [],
+        tinputs: [],
+        numberInputs: [],
+        phoneInputs: [],
+        emailInputs: [],
+        dateInputs: [],
+        ratingInputs: [],
+        buttonInputs: []
+    });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
@@ -93,6 +105,7 @@ const Formbot = () => {
             
                 return inputs.map((input, index) => {
                     console.log(`${type} Input ${index + 1}:`, input.value);
+                    return (
                         <div key={`${type}-${index}`} style={{ marginBottom: '20px' }}>
                             <label>{`${type.charAt(0).toUpperCase() + type.slice(1)} Input ${index + 1}`}</label>
                             {type === 'image' && input.value && (
@@ -116,7 +129,10 @@ const Formbot = () => {
                                 <p style={{ margin: '10px 0' }}>{input.value ? input.value : `No value provided for ${type} input ${index + 1}`}</p>
                             )}
                             <button onClick={() => handleButtonClick(type, index)} style={{ marginTop: '10px' }}>Action</button>
+
+
                         </div>
+                    );
                 });
             };
             
