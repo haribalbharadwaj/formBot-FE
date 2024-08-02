@@ -37,6 +37,7 @@ const Formbot = () => {
                     buttonInputs: data.buttonInputs || []
                 };
 
+                // Combine all inputs and sort them by serialNo
                 const combined = [
                     ...data.textInputs.map(input => ({ ...input, type: 'textInputs' })),
                     ...data.imageInputs.map(input => ({ ...input, type: 'imageInputs' })),
@@ -48,7 +49,7 @@ const Formbot = () => {
                     ...data.phoneInputs.map(input => ({ ...input, type: 'phoneInputs' })),
                     ...data.ratingInputs.map(input => ({ ...input, type: 'ratingInputs' })),
                     ...data.buttonInputs.map(input => ({ ...input, type: 'buttonInputs' }))
-                ].sort((a, b) => a.position - b.position);
+                ].sort((a, b) => a.serialNo - b.serialNo); // Sort by serialNo
 
                 setFormData(data);
                 setFormValues(initialValues);
@@ -245,33 +246,67 @@ const formContainerStyle = {
 };
 
 const descriptionStyle = {
-    marginBottom: '20px',
-    fontWeight: 'bold'
-};
-
-const inputContainerStyle = {
-    marginBottom: '10px'
+    marginBottom: '20px'
 };
 
 const inputWrapperStyle = {
     marginBottom: '20px'
 };
 
-const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    border: '1px solid #ccc',
-    borderRadius: '5px'
+const inputContainerStyle = {
+    marginBottom: '10px'
 };
 
 const buttonStyle = {
-    backgroundColor: '#4CAF50',
-    color: 'white',
-    border: 'none',
+    marginTop: '20px'
+};
+
+const inputStyle = {
+    width: '100%',
+    padding: '10px',
     borderRadius: '5px',
+    border: '1px solid #ccc'
+};
+
+const calendarStyle = {
+    width: '100%'
+};
+
+const ratingContainerStyle = {
+    display: 'flex',
+    marginBottom: '10px'
+};
+
+const ratingCircleStyle = {
+    width: '30px',
+    height: '30px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '5px',
     cursor: 'pointer',
-    padding: '10px 20px',
-    margin: '5px'
+    backgroundColor: '#f0f0f0'
+};
+
+const selectedRatingStyle = {
+    backgroundColor: '#7EA6FF',
+    color: '#fff'
+};
+
+const imageStyle = {
+    width: '100%',
+    height: 'auto'
+};
+
+const videoStyle = {
+    width: '100%',
+    height: 'auto'
+};
+
+const gifStyle = {
+    width: '100%',
+    height: 'auto'
 };
 
 export default Formbot;

@@ -48,20 +48,28 @@ function Formspace() {
             setSuccess('');
             return;
         }
+
+        const assignSerialNumbers = (inputs) => {
+            let serialNo = 1;
+            return inputs.map(input => {
+                return { ...input, serialNo: serialNo++ };
+            });
+        };
     
         // Ensure inputs is structured correctly
         const formData = {
             formName,
-            textInputs: inputs.filter(input => input.type === 'text'),
-            imageInputs: inputs.filter(input => input.type === 'image'),
-            videoInputs: inputs.filter(input => input.type === 'video'),
-            gifInputs: inputs.filter(input => input.type === 'gif'),
-            numberInputs: inputs.filter(input => input.type === 'number'),
-            emailInputs: inputs.filter(input => input.type === 'email'),
-            dateInputs: inputs.filter(input => input.type === 'date'),
-            phoneInputs: inputs.filter(input => input.type === 'phone'),
-            ratingInputs: inputs.filter(input => input.type === 'rating'),
-            buttonInputs: inputs.filter(input => input.type === 'button')
+            textInputs: assignSerialNumbers(inputs.filter(input => input.type === 'text')),
+            imageInputs: assignSerialNumbers(inputs.filter(input => input.type === 'image')),
+            videoInputs: assignSerialNumbers(inputs.filter(input => input.type === 'video')),
+            gifInputs: assignSerialNumbers(inputs.filter(input => input.type === 'gif')),
+            numberInputs: assignSerialNumbers(inputs.filter(input => input.type === 'number')),
+            emailInputs: assignSerialNumbers(inputs.filter(input => input.type === 'email')),
+            dateInputs: assignSerialNumbers(inputs.filter(input => input.type === 'date')),
+            phoneInputs: assignSerialNumbers(inputs.filter(input => input.type === 'phone')),
+            ratingInputs: assignSerialNumbers(inputs.filter(input => input.type === 'rating')),
+            buttonInputs: assignSerialNumbers(inputs.filter(input => input.type === 'button'))
+            
         };
     
         console.log("Form submitted with data:", formData);
