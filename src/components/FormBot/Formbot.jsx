@@ -117,8 +117,15 @@ const Formbot = () => {
             buttonInputs: formValues.buttonInputs
         };
 
+        console.log('Payload to send:', formDataToSend); // Log the payload
+
         try {
-            await axios.put(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/updateForm/${formId}`, formDataToSend);
+
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+                if (!backendUrl) {
+                    throw new Error('Backend URL is not defined');
+                }
+            await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
             console.log('Form updated successfully',response.data);
 
             const initialValues = {
