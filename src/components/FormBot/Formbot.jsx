@@ -5,6 +5,7 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Textlogo from "../../assets/text.png";
 import Tlogo from "../../assets/Tlogo.png";
+import Send from "../../assets/send.png";
 
 const Formbot = () => {
     const { formId } = useParams();
@@ -15,6 +16,8 @@ const Formbot = () => {
     const [selectedRating, setSelectedRating] = useState(null);
     const [combinedInputs, setCombinedInputs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isClicked, setIsClicked] = useState(false);
+
 
 
     useEffect(() => {
@@ -108,6 +111,12 @@ const Formbot = () => {
     const handlePreviousClick = () => {
         setVisibleIndices(prevIndices => prevIndices.slice(0, -1));
     };
+
+    const handleImageClick = () => {
+        setIsClicked(!isClicked);
+        handleNextClick(); 
+    };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -213,7 +222,7 @@ const Formbot = () => {
                 );
             case 'tinputs':
                 return (
-                    <div key={id} style={inputContainerStyle}>
+                    <div key={id} style={{left:'70%'}}>
                         <label>{type.replace('Inputs', '')}:</label>
                         <div style={inputWithLogoStyle}>
                             <img src={Tlogo} alt="Logo" style={logoStyle} />
@@ -222,6 +231,15 @@ const Formbot = () => {
                                 value={formValues[type]?.[index]?.value || ''}
                                 onChange={(e) => handleInputChange(type, index, e)}
                                 style={inputStyle}
+                            />
+                             <img
+                                type="button"
+                                src={Send}
+                                alt="Logo"
+                                onClick={handleImageClick}
+                                style={{
+                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                }}
                             />
                         </div>
                     </div>
