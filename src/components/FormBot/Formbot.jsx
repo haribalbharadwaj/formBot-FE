@@ -172,13 +172,23 @@ const Formbot = () => {
                         >
                             Set Date
                         </button>
+                        <img
+                                type="button"
+                                src={Send}
+                                alt="Logo"
+                                onClick={handleImageClick}
+                                style={{
+                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                }}
+                            />
                     </div>
                 );
             case 'ratingInputs':
                 return (
                     <div key={id} style={ratingContainerStyle}>
                         {[1, 2, 3, 4, 5].map((circle) => (
-                            <span
+                            <div>
+                                <span
                                 key={circle}
                                 onClick={() => handleRatingChange(index, circle)}
                                 style={{
@@ -188,6 +198,16 @@ const Formbot = () => {
                             >
                                 {circle}
                             </span>
+                            <img
+                                type="button"
+                                src={Send}
+                                alt="Logo"
+                                onClick={handleImageClick}
+                                style={{
+                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                }}
+                            />
+                            </div>
                         ))}
                     </div>
                 );
@@ -223,7 +243,6 @@ const Formbot = () => {
             case 'tinputs':
                 return (
                     <div key={id} style={{left:'70%'}}>
-                        <label>{type.replace('Inputs', '')}:</label>
                         <div style={inputWithLogoStyle}>
                             <img src={Tlogo} alt="Logo" style={logoStyle} />
                             <input
@@ -245,7 +264,47 @@ const Formbot = () => {
                     </div>
                 );
             case 'numberInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <input
+                        type={type.replace('Inputs','')}
+                        value={formValues[type]?.[index]?.vlue || ''}
+                        onChange={(e)=>handleInputChange(type,index,e)}
+                        style={inputStyle}
+                        />
+                         <img
+                                type="button"
+                                src={Send}
+                                alt="Logo"
+                                onClick={handleImageClick}
+                                style={{
+                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                }}
+                            />
+                    </div>
+                )
+
             case 'emailInputs':
+                return( 
+                <div key={id} style={inputContainerStyle}>
+                     <input
+                        type={type.replace('Inputs','')}
+                        value={formValues[type]?.[index]?.vlue || ''}
+                        onChange={(e)=>handleInputChange(type,index,e)}
+                        style={inputStyle}
+                    />
+                    <img
+                    type="button"
+                    src={Send}
+                    alt="Logo"
+                    onClick={handleImageClick}
+                    style={{
+                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                    }}
+                            />
+
+
+                </div>)
             case 'phoneInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
@@ -256,13 +315,22 @@ const Formbot = () => {
                             onChange={(e) => handleInputChange(type, index, e)}
                             style={inputStyle}
                         />
+                         <img
+                                type="button"
+                                src={Send}
+                                alt="Logo"
+                                onClick={handleImageClick}
+                                style={{
+                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                }}
+                            />
                     </div>
                 );
             case 'buttonInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
                         <button style={{width:'45px',height:'37px',left:'75%',borderRadius:'6px',background: '#FF8E21',color:'#FFFFFF'
-                        }}>{value}</button>
+                        }}> onClick={handleNextClick}{value}</button>
                     </div>
                 );
             default:
