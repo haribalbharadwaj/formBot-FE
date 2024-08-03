@@ -120,15 +120,15 @@ const Formbot = () => {
         console.log('Payload to send:', formDataToSend); // Log the payload
 
         try {
-
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-                if (!backendUrl) {
-                    throw new Error('Backend URL is not defined');
-                }
+            if (!backendUrl) {
+                throw new Error('Backend URL is not defined');
+            }
             const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
-            console.log('Form updated successfully',response.data);
+            console.log('Form updated successfully', response.data);
 
-            const initialValues = {
+            // Reset form values after submission
+            setFormValues({
                 textInputs: formData.textInputs.map(input => ({ ...input, value: '' })),
                 numberInputs: formData.numberInputs.map(input => ({ ...input, value: '' })),
                 emailInputs: formData.emailInputs.map(input => ({ ...input, value: '' })),
@@ -136,9 +136,9 @@ const Formbot = () => {
                 phoneInputs: formData.phoneInputs.map(input => ({ ...input, value: '' })),
                 ratingInputs: formData.ratingInputs.map(input => ({ ...input, value: '' })),
                 buttonInputs: formData.buttonInputs.map(input => ({ ...input, value: '' }))
-            };
-
-            setFormValues(initialValues);
+            });
+            setSelectedDate(null);
+            setSelectedRating(null);
             setVisibleIndices([0]);
         } catch (error) {
             console.error('Error saving form data:', error);
@@ -230,77 +230,52 @@ const Formbot = () => {
     };
 
     return (
-        <div style={{width: '100%',height:'62.5%',margin:'0 auto'}}>
+        <div style={{ width: '100%', height: '62.5%', margin: '0 auto' }}>
             <div style={containerStyle}>
-            <h1>{formData.formName}</h1>
-            <form onSubmit={handleSubmit}>
-                {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
-                <div style={navigationStyle}>
-                    <button
-                        type="button"
-                        onClick={handleNextClick}
-                        disabled={visibleIndices[visibleIndices.length - 1] === combinedInputs.length - 1}
-                        style={buttonStyle}
-                    >
-                        Next
-                    </button>
-                </div>
-                <button type="submit" style={submitStyle}>Submit</button>
-            </form>
+                <h1>{formData.formName}</h1>
+                <form onSubmit={handleSubmit}>
+                    {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
+                    <div style={navigationStyle}>
+                        <button
+                            type="button"
+                            onClick={handlePreviousClick}
+                            disabled={visibleIndices[0] === 0}
+                            style={buttonStyle}
+                        >
+                            Previous
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleNextClick}
+                            disabled={visibleIndices[visibleIndices.length - 1] === combinedInputs.length - 1}
+                            style={buttonStyle}
+                        >
+                            Next
+                        </button>
+                        <button
+                            type="submit"
+                            style={submitButtonStyle}
+                        >
+                            Submit
+                        </button>
+                    </div>
+                </form>
+            </div>
             <p></p>
-        </div>
+            
         </div>
     );
 };
 
-const containerStyle = {
-    padding: '20px',
-    maxWidth: '600px',
-    margin: '0 auto'
-};
-
-const inputContainerStyle = {
-    marginBottom: '20px'
-};
-
-const inputStyle = {
-    width: '100%',
-    padding: '10px',
-    fontSize: '1em'
-};
-
-const calendarStyle = {
-    width: '100%',
-    marginBottom: '10px'
-};
-
-const ratingContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-};
-
-const mediaStyle = {
-    width: '100%',
-    maxWidth: '100%',
-    height: 'auto'
-};
-
-const navigationStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginBottom: '20px'
-};
-
-const buttonStyle = {
-    padding: '10px 20px',
-    fontSize: '1em'
-};
-
-const submitStyle = {
-    padding: '10px 20px',
-    fontSize: '1em',
-    width: '100%'
-};
+// Styles
+const containerStyle = { width: '80%', margin: '0 auto' };
+const inputContainerStyle = { margin: '10px 0' };
+const buttonStyle = { margin: '5px', padding: '10px', fontSize: '16px' };
+const submitButtonStyle = { margin: '5px', padding: '10px', fontSize: '16px', backgroundColor: '#007bff', color: 'white' };
+const calendarStyle = { width: '100%' };
+const mediaStyle = { width: '100%', maxHeight: '200px' };
+const inputStyle = { padding: '5px', fontSize: '16px' };
+const navigationStyle = { display: 'flex', justifyContent: 'space-between' };
+const ratingContainerStyle = { display: 'flex', cursor: 'pointer' };
 
 export default Formbot;
