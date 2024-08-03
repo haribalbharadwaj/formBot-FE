@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import Textlogo from "../../assets/textlogo-Copy.png";
+import Textlogo from "../../assets/textlogo.png";
 
 const Formbot = () => {
     const { formId } = useParams();
