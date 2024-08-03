@@ -15,56 +15,55 @@ const Formbot = () => {
 
     const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-    const fetchFormData = async () => {
-        try {
-            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-            if (!backendUrl) throw new Error('Backend URL is not defined');
+    useEffect(() => {
+        const fetchFormData = async () => {
+            try {
+                const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+                if (!backendUrl) throw new Error('Backend URL is not defined');
 
-            const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
-            const data = response.data.data || {};
+                const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
+                const data = response.data.data || {};
 
-            const combined = [
-                ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
-                ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
-                ...(data.videoInputs || []).map(input => ({ ...input, type: 'videoInputs' })),
-                ...(data.gifInputs || []).map(input => ({ ...input, type: 'gifInputs' })),
-                ...(data.numberInputs || []).map(input => ({ ...input, type: 'numberInputs' })),
-                ...(data.emailInputs || []).map(input => ({ ...input, type: 'emailInputs' })),
-                ...(data.dateInputs || []).map(input => ({ ...input, type: 'dateInputs' })),
-                ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
-                ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
-                ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' }))
-            ].sort((a, b) => a.id - b.id); // Sort by id
+                const combined = [
+                    ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
+                    ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
+                    ...(data.videoInputs || []).map(input => ({ ...input, type: 'videoInputs' })),
+                    ...(data.gifInputs || []).map(input => ({ ...input, type: 'gifInputs' })),
+                    ...(data.numberInputs || []).map(input => ({ ...input, type: 'numberInputs' })),
+                    ...(data.emailInputs || []).map(input => ({ ...input, type: 'emailInputs' })),
+                    ...(data.dateInputs || []).map(input => ({ ...input, type: 'dateInputs' })),
+                    ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
+                    ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
+                    ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' }))
+                ].sort((a, b) => a.id - b.id); // Sort by id
 
-            setFormData(data);
-            setFormValues({
-                textInputs: data.textInputs || [],
-                imageInputs: data.imageInputs || [],
-                videoInputs: data.videoInputs || [],
-                gifInputs: data.gifInputs || [],
-                numberInputs: data.numberInputs || [],
-                emailInputs: data.emailInputs || [],
-                dateInputs: data.dateInputs || [],
-                phoneInputs: data.phoneInputs || [],
-                ratingInputs: data.ratingInputs || [],
-                buttonInputs: data.buttonInputs || []
-            });
-            setCombinedInputs(combined);
-        } catch (error) {
-            console.error('Error fetching form data:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+                setFormData(data);
+                setFormValues({
+                    textInputs: data.textInputs || [],
+                    imageInputs: data.imageInputs || [],
+                    videoInputs: data.videoInputs || [],
+                    gifInputs: data.gifInputs || [],
+                    numberInputs: data.numberInputs || [],
+                    emailInputs: data.emailInputs || [],
+                    dateInputs: data.dateInputs || [],
+                    phoneInputs: data.phoneInputs || [],
+                    ratingInputs: data.ratingInputs || [],
+                    buttonInputs: data.buttonInputs || []
+                });
+                setCombinedInputs(combined);
+            } catch (error) {
+                console.error('Error fetching form data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchFormData();
-}, [formId]);
+        fetchFormData();
+    }, [formId]);
 
-if (loading) {
-    return <div>Loading...</div>;
-}
-
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     const handleInputChange = (type, index, event) => {
         setFormValues(prevValues => ({
@@ -215,7 +214,7 @@ if (loading) {
     return (
         <div style={{ width: '100%', height: '62.5%', margin: '0 auto' }}>
             <div style={containerStyle}>
-                <h1>{formData.formName}</h1>
+                <h1>{formData?.formName}</h1>
                 <form onSubmit={handleSubmit}>
                     {combinedInputs.map((input, index) => (
                         visibleIndices.includes(index) && renderInput(input, index)
@@ -258,7 +257,7 @@ const buttonStyle = { margin: '5px' };
 const submitButtonStyle = { margin: '10px', backgroundColor: '#007bff', color: '#fff' };
 const navigationStyle = { margin: '20px 0' };
 const calendarStyle = { width: '100%' };
-const ratingContainerStyle = { margin: '10px 0', fontSize: '2em' };
-const mediaStyle = { width: '100%', height: 'auto' };
+const ratingContainerStyle = { margin: '10px 0' };
+const mediaStyle = { maxWidth: '100%', maxHeight: '200px' };
 
 export default Formbot;
