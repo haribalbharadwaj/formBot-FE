@@ -117,28 +117,31 @@ const Formbot = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const formDataToSend = {
             formName: formData.formName,
             ...formValues
         };
-
+    
         try {
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
             if (!backendUrl) throw new Error('Backend URL is not defined');
-
+    
             await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
-
+    
             // Reset form values after submission
             setFormValues({
-                textInputs: formData.textInputs.map(input => ({ ...input, value: '' })),
-                numberInputs: formData.numberInputs.map(input => ({ ...input, value: '' })),
-                emailInputs: formData.emailInputs.map(input => ({ ...input, value: '' })),
-                dateInputs: formData.dateInputs.map(input => ({ ...input, value: null })),
-                phoneInputs: formData.phoneInputs.map(input => ({ ...input, value: '' })),
-                ratingInputs: formData.ratingInputs.map(input => ({ ...input, value: '' })),
-                buttonInputs: formData.buttonInputs.map(input => ({ ...input, value: '' })),
-                tinputs: formData.tinputs.map(input => ({ ...input, value: '' })) // Reset tinputs
+                textInputs: (formData.textInputs || []).map(input => ({ ...input, value: '' })),
+                imageInputs: (formData.imageInputs || []).map(input => ({ ...input, value: '' })),
+                videoInputs: (formData.videoInputs || []).map(input => ({ ...input, value: '' })),
+                gifInputs: (formData.gifInputs || []).map(input => ({ ...input, value: '' })),
+                numberInputs: (formData.numberInputs || []).map(input => ({ ...input, value: '' })),
+                emailInputs: (formData.emailInputs || []).map(input => ({ ...input, value: '' })),
+                dateInputs: (formData.dateInputs || []).map(input => ({ ...input, value: null })),
+                phoneInputs: (formData.phoneInputs || []).map(input => ({ ...input, value: '' })),
+                ratingInputs: (formData.ratingInputs || []).map(input => ({ ...input, value: '' })),
+                buttonInputs: (formData.buttonInputs || []).map(input => ({ ...input, value: '' })),
+                tinputs: (formData.tinputs || []).map(input => ({ ...input, value: '' })) // Reset tinputs
             });
             setSelectedDate(null);
             setSelectedRating(null);
@@ -147,6 +150,7 @@ const Formbot = () => {
             console.error('Error saving form data:', error);
         }
     };
+    
 
     const renderInput = (input, index) => {
         const { type, id, value } = input;
@@ -228,17 +232,50 @@ const Formbot = () => {
                         <img src={value} alt="GIF Input" style={mediaStyle} />
                     </div>
                 );
-            case 'textInputs':
+                case 'textInputs':
                 return (
-                    <div key={id} style={textInputStyle}>
-                        <div style={textAreaContainer}>
-                            <textarea
-                                style={textAreaStyle}
-                                value={formValues[type][index]?.value || ''}
-                                onChange={(e) => handleInputChange(type, index, e)}
-                                placeholder="Please enter your answer here..."
-                            />
-                            <img
+                    <div key={id} style={{height:'7%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
+                        width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',color:'#847F7F',
+                        marginTop:'2px',borderRadius:'2px'}}>
+                        <div style={inputWithLogoStyle}>
+                            <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
+                            <span>{value}</span>
+                        </div>
+                    </div>
+                );
+                case 'tinputs':
+                    return (
+                        <div key={id} style={{left:'70%',position:'absolute'}}>
+                            <div style={inputWithLogoStyle}>
+                                <img src={Tlogo} alt="Logo" style={logoStyle} />
+                                <input
+                                    type="text"
+                                    value={formValues[type]?.[index]?.value || ''}
+                                    onChange={(e) => handleInputChange(type, index, e)}
+                                    style={inputStyle}
+                                />
+                                 <img
+                                    type="button"
+                                    src={Send}
+                                    alt="Logo"
+                                    onClick={handleImageClick}
+                                    style={{
+                                        filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                    }}
+                                />
+                            </div>
+                        </div>
+                    );
+                    case 'numberInputs':
+                return (
+                    <div key={id} style={{left:'70%',position:'absolute'}}>
+                        <input
+                        type={type.replace('Inputs','')}
+                        value={formValues[type]?.[index]?.vlue || ''}
+                        onChange={(e)=>handleInputChange(type,index,e)}
+                        style={inputStyle}
+                        />
+                         <img
                                 type="button"
                                 src={Send}
                                 alt="Logo"
@@ -247,20 +284,93 @@ const Formbot = () => {
                                     filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
                                 }}
                             />
-                        </div>
                     </div>
                 );
-            default:
-                return null;
+                case 'emailInputs':
+                    return( 
+                    <div key={id} style={{left:'70%',position:'absolute'}}>
+                         <input
+                            type={type.replace('Inputs','')}
+                            value={formValues[type]?.[index]?.vlue || ''}
+                            onChange={(e)=>handleInputChange(type,index,e)}
+                            style={inputStyle}
+                        />
+                        <img
+                        type="button"
+                        src={Send}
+                        alt="Logo"
+                        onClick={handleImageClick}
+                        style={{
+                        filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                        }}
+                                />
+    
+    
+                    </div>)
+                case 'phoneInputs':
+                    return (
+                        <div key={id} style={{left:'70%',position:'absolute'}}>
+                            <label>{type.replace('Inputs', '')}:</label>
+                            <input
+                                type={type.replace('Inputs', '')}
+                                value={formValues[type]?.[index]?.value || ''}
+                                onChange={(e) => handleInputChange(type, index, e)}
+                                style={inputStyle}
+                            />
+                             <img
+                                    type="button"
+                                    src={Send}
+                                    alt="Logo"
+                                    onClick={handleImageClick}
+                                    style={{
+                                        filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                                    }}
+                                />
+                        </div>
+                    );
+                case 'buttonInputs':
+                    return (
+                        <div key={id} style={{left:'70%',position:'absolute'}}>
+                            <button style={{width:'45px',height:'37px',left:'75%',borderRadius:'6px',background: '#FF8E21',color:'#FFFFFF'
+                            }}> onClick={handleNextClick}{value}</button>
+                        </div>
+                    );
+                default:
+                    return null;
+                       
         }
     };
 
     return (
         <div>
+            <div style={{top:'12%',width:'auto',left:'20%',padding: '1rem',position:'absolute'}}>
             <form onSubmit={handleSubmit}>
-                {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
-                <button type="submit">Submit</button>
+                {visibleIndices.map((index) => (
+                    renderInput(combinedInputs[index], index)
+                ))}
+                <div style={navigationContainerStyle}>
+                    <button
+                        type="button"
+                        onClick={handlePreviousClick}
+                        disabled={visibleIndices.length === 1}
+                        style={buttonStyle}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleNextClick}
+                        disabled={visibleIndices.length === combinedInputs.length}
+                        style={buttonStyle}
+                    >
+                        Next
+                    </button>
+                    <button type="submit" style={buttonStyle}>
+                        Submit
+                    </button>
+                </div>
             </form>
+            </div>
         </div>
     );
 };
