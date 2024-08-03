@@ -202,8 +202,8 @@ const Formbot = () => {
                 );
             case 'textInputs':
                 return (
-                    <div key={id} style={{left:'20%',height:'7%',top:'12%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
-                        width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',position:'absolute',color:'#847F7F',
+                    <div key={id} style={{height:'7%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
+                        width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',color:'#847F7F',
                         marginTop:'2px'}}>
                         <div style={inputWithLogoStyle}>
                             <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
@@ -253,6 +253,7 @@ const Formbot = () => {
 
     return (
         <div>
+            <div style={{top:'12%',width:'20%'}}>
             <form onSubmit={handleSubmit}>
                 {visibleIndices.map((index) => (
                     renderInput(combinedInputs[index], index)
@@ -279,6 +280,7 @@ const Formbot = () => {
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     );
 };
