@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import Textlogo from "../../assets/textlogo-Copy.png";
 
 const Formbot = () => {
     const { formId } = useParams();
@@ -199,12 +200,15 @@ const Formbot = () => {
                 return (
                     <div key={id} style={inputContainerStyle}>
                         <label>{type.replace('Inputs', '')}:</label>
-                        <input
-                            type="text"
-                            value={formValues[type]?.[index]?.value || ''}
-                            onChange={(e) => handleInputChange(type, index, e)}
-                            style={type === 'textInputs' ? textInputStyle : inputStyle}
-                        />
+                        <div style={textInputContainerStyle}>
+                            {type === 'textInputs' && <img src={Textlogo} alt="Logo" style={logoStyle} />}
+                            <input
+                                type="text"
+                                value={formValues[type]?.[index]?.value || ''}
+                                onChange={(e) => handleInputChange(type, index, e)}
+                                style={type === 'textInputs' ? textInputStyle : inputStyle}
+                            />
+                        </div>
                     </div>
                 );
         }
@@ -235,33 +239,121 @@ const Formbot = () => {
                         >
                             Next
                         </button>
+                        </div>
                         <button
                             type="submit"
                             style={submitButtonStyle}
                         >
                             Submit
                         </button>
-                    </div>
+                
                 </form>
             </div>
         </div>
     );
 };
 
-// Styles
-const containerStyle = { padding: '20px' };
-const inputContainerStyle = { margin: '10px 0' };
-const inputStyle = { width: '100%', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' };
-const textInputStyle = { ...inputStyle, border: 'none', background: 'none' };
-const mediaStyle = { maxWidth: '100%', height: 'auto' };
-const calendarStyle = { marginBottom: '10px' };
-const ratingContainerStyle = { display: 'flex', justifyContent: 'space-around', margin: '10px 0' };
-const circleStyle = { display: 'inline-block', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer',  display: 'flex',
+const containerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'center',
-    color: 'white' };
-const buttonStyle = { margin: '10px', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px' };
-const submitButtonStyle = { ...buttonStyle, backgroundColor: '#28a745' };
-const navigationStyle = { display: 'flex', justifyContent: 'space-between', marginTop: '20px' };
+    padding: '20px',
+    backgroundColor: '#f5f5f5',
+    borderRadius: '10px',
+    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
+    marginTop: '20px'
+};
 
+const inputContainerStyle = {
+    margin: '10px 0',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+};
+
+const textInputContainerStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%'
+};
+
+const inputStyle = {
+    width: '300px',
+    padding: '10px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    fontSize: '16px'
+};
+
+const textInputStyle = {
+    width: 'calc(100% - 40px)', // Adjust for the logo size
+    padding: '10px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    fontSize: '16px'
+};
+
+const logoStyle = {
+    width: '30px',
+    height: '30px',
+    marginRight: '10px',
+    borderRadius: '50%'
+};
+
+const calendarStyle = {
+    marginBottom: '10px'
+};
+
+const buttonStyle = {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    border: 'none',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    fontSize: '16px',
+    cursor: 'pointer'
+};
+
+const submitButtonStyle = {
+    padding: '10px 20px',
+    borderRadius: '5px',
+    border: 'none',
+    backgroundColor: '#28a745',
+    color: '#fff',
+    fontSize: '16px',
+    cursor: 'pointer',
+    marginTop: '20px'
+};
+
+const navigationStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: '20px'
+};
+
+const ratingContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+};
+
+const circleStyle = {
+    width: '30px',
+    height: '30px',
+    borderRadius: '50%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#007bff',
+    color: '#fff',
+    fontSize: '16px',
+    margin: '0 5px',
+    cursor: 'pointer'
+};
+
+const mediaStyle = {
+    maxWidth: '300px',
+    maxHeight: '300px'
+};
 export default Formbot;
