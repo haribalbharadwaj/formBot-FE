@@ -146,14 +146,14 @@ const Formbot = () => {
                     <div key={id} style={inputContainerStyle}>
                         <Calendar
                             onChange={(date) => handleDateChange(index, date)}
-                            value={selectedDate}
+                            value={formValues.dateInputs[index]?.value || null}
                             selectRange={false}
                             style={calendarStyle}
                         />
                         <button
                             type="button"
                             onClick={() => handleInputChange(type, index)}
-                            disabled={!selectedDate}
+                            disabled={!formValues.dateInputs[index]?.value}
                             style={buttonStyle}
                         >
                             Set Date
@@ -169,9 +169,15 @@ const Formbot = () => {
                                 onClick={() => handleRatingChange(index,circle)}
                                 style={{
                                     ...circleStyle,
-                                    backgroundColor: selectedRating >= circle ? '#FFD700' : '#007bff'
+                                    backgroundColor: formValues.ratingInputs[index]?.value === circle ? '#FFD700' : '#007bff',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
                                 }}
-                            />
+                                >
+                                {circle}
+                            </span>
                         ))}
                     </div>
                 );
@@ -254,7 +260,10 @@ const textInputStyle = { ...inputStyle, border: 'none', background: 'none' };
 const mediaStyle = { maxWidth: '100%', height: 'auto' };
 const calendarStyle = { marginBottom: '10px' };
 const ratingContainerStyle = { display: 'flex', justifyContent: 'space-around', margin: '10px 0' };
-const circleStyle = { display: 'inline-block', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer' };
+const circleStyle = { display: 'inline-block', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer',  display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white' };
 const buttonStyle = { margin: '10px', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px' };
 const submitButtonStyle = { ...buttonStyle, backgroundColor: '#28a745' };
 const navigationStyle = { display: 'flex', justifyContent: 'space-between', marginTop: '20px' };
