@@ -146,14 +146,14 @@ const Formbot = () => {
                     <div key={id} style={inputContainerStyle}>
                         <Calendar
                             onChange={(date) => handleDateChange(index, date)}
-                            value={formValues.dateInputs[index]?.value || null}
+                            value={selectedDate}
                             selectRange={false}
                             style={calendarStyle}
                         />
                         <button
                             type="button"
                             onClick={() => handleInputChange(type, index)}
-                            disabled={!formValues.dateInputs[index]?.value}
+                            disabled={!selectedDate}
                             style={buttonStyle}
                         >
                             Set Date
@@ -170,10 +170,6 @@ const Formbot = () => {
                                 style={{
                                     ...circleStyle,
                                     backgroundColor: formValues.ratingInputs[index]?.value === circle ? '#FFD700' : '#007bff',
-                                    color: 'white',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
                                 }}
                                 >
                                 {circle}
