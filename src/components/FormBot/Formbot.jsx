@@ -253,7 +253,7 @@ const Formbot = () => {
 
     return (
         <div>
-            <div style={{top:'12%',width:'20%'}}>
+            <div style={{top:'12%',width:'20%',padding: '1rem',position:'absolute'}}>
             <form onSubmit={handleSubmit}>
                 {visibleIndices.map((index) => (
                     renderInput(combinedInputs[index], index)
