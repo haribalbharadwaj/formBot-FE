@@ -243,7 +243,8 @@ const Formbot = () => {
             case 'buttonInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
-                        <button style={buttonStyle}>{value}</button>
+                        <button style={{width:'45px',height:'37px',left:'75%',borderRadius:'6px',background: '#FF8E21',color:'#FFFFFF'
+                        }}>{value}</button>
                     </div>
                 );
             default:
