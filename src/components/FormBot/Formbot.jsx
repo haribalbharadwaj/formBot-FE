@@ -186,16 +186,47 @@ const Formbot = () => {
             );
         }
 
-        if (type === 'imageInputs' || type === 'videoInputs' || type === 'gifInputs') {
+        if (type === 'imageInputs') {
             return (
                 <div key={id} style={inputContainerStyle}>
-                    <label>{type.replace('Inputs', '')} URL:</label>
+                    <label>Image URL:</label>
                     <input
                         type="text"
                         value={formValues[type]?.[index]?.value || ''}
                         onChange={(e) => handleInputChange(type, index, e)}
                         style={inputStyle}
                     />
+                    {value && <img src={value} alt="image" style={{ width: '100%', marginTop: '10px' }} />}
+                </div>
+            );
+        }
+
+        if (type === 'videoInputs') {
+            return (
+                <div key={id} style={inputContainerStyle}>
+                    <label>Video URL:</label>
+                    <input
+                        type="text"
+                        value={formValues[type]?.[index]?.value || ''}
+                        onChange={(e) => handleInputChange(type, index, e)}
+                        style={inputStyle}
+                    />
+                    {value && <video src={value} controls style={{ width: '100%', marginTop: '10px' }} />}
+                </div>
+            );
+        }
+
+        if (type === 'gifInputs') {
+            return (
+                <div key={id} style={inputContainerStyle}>
+                    <label>GIF URL:</label>
+                    <input
+                        type="text"
+                        value={formValues[type]?.[index]?.value || ''}
+                        onChange={(e) => handleInputChange(type, index, e)}
+                        style={inputStyle}
+                    />
+                    {value && <img src={value} alt="gif" style={{ width: '100%', marginTop: '10px' }} />}
                 </div>
             );
         }
@@ -214,19 +245,12 @@ const Formbot = () => {
     };
 
     return (
-        <div style={containerStyle}>
+        <div style={{width: '100%',height:'62.5%',margin:'0 auto'}}>
+            <div style={containerStyle}>
             <h1>{formData.formName}</h1>
             <form onSubmit={handleSubmit}>
                 {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
                 <div style={navigationStyle}>
-                    <button
-                        type="button"
-                        onClick={handlePreviousClick}
-                        disabled={visibleIndices.length === 1}
-                        style={buttonStyle}
-                    >
-                        Previous
-                    </button>
                     <button
                         type="button"
                         onClick={handleNextClick}
@@ -238,6 +262,7 @@ const Formbot = () => {
                 </div>
                 <button type="submit" style={submitStyle}>Submit</button>
             </form>
+        </div>
         </div>
     );
 };
