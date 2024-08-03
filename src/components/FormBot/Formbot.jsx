@@ -125,7 +125,7 @@ const Formbot = () => {
                 if (!backendUrl) {
                     throw new Error('Backend URL is not defined');
                 }
-            await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
+            const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
             console.log('Form updated successfully',response.data);
 
             const initialValues = {
@@ -247,6 +247,7 @@ const Formbot = () => {
                 </div>
                 <button type="submit" style={submitStyle}>Submit</button>
             </form>
+            <p></p>
         </div>
         </div>
     );
