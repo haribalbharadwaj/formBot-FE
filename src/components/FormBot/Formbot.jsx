@@ -157,7 +157,8 @@ const Formbot = () => {
         switch (type) {
             case 'dateInputs':
                 return (
-                    <div key={id} style={inputContainerStyle}>
+                    <div>
+                        <div key={id} style={inputContainerStyle}>
                         <Calendar
                             onChange={(date) => handleDateChange(index, date)}
                             value={selectedDate}
@@ -172,6 +173,7 @@ const Formbot = () => {
                         >
                             Set Date
                         </button>
+                        </div>
                         <img
                                 type="button"
                                 src={Send}
@@ -182,6 +184,7 @@ const Formbot = () => {
                                 }}
                             />
                     </div>
+                    
                 );
             case 'ratingInputs':
                 return (
