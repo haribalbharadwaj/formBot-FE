@@ -18,8 +18,6 @@ const Formbot = () => {
     const [loading, setLoading] = useState(true);
     const [isClicked, setIsClicked] = useState(false);
 
-
-
     useEffect(() => {
         const fetchFormData = async () => {
             try {
@@ -116,7 +114,6 @@ const Formbot = () => {
         setIsClicked(!isClicked);
         handleNextClick(); 
     };
-    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -157,39 +154,38 @@ const Formbot = () => {
         switch (type) {
             case 'dateInputs':
                 return (
-                    <div style={{left:'70%',position:'absolute'}}>
-                        <div key={id} style={inputContainerStyle}>
-                        <Calendar
-                            onChange={(date) => handleDateChange(index, date)}
-                            value={selectedDate}
-                            selectRange={false}
-                            style={calendarStyle}
-                        />
-                        <button
-                            type="button"
-                            onClick={() => handleInputChange(type, index)}
-                            disabled={!selectedDate}
-                            style={buttonStyle}
-                        >
-                            Set Date
-                        </button>
+                    <div key={id} style={{left:'70%',position:'absolute'}}>
+                        <div style={inputContainerStyle}>
+                            <Calendar
+                                onChange={(date) => handleDateChange(index, date)}
+                                value={selectedDate}
+                                selectRange={false}
+                                style={calendarStyle}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => handleInputChange(type, index)}
+                                disabled={!selectedDate}
+                                style={buttonStyle}
+                            >
+                                Set Date
+                            </button>
                         </div>
                         <img
-                                type="button"
-                                src={Send}
-                                alt="Logo"
-                                onClick={handleImageClick}
-                                style={{
-                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
-                                }}
-                            />
+                            type="button"
+                            src={Send}
+                            alt="Logo"
+                            onClick={handleImageClick}
+                            style={{
+                                filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
+                            }}
+                        />
                     </div>
-                    
                 );
-
-                case 'ratingInputs':
-                    return (
-                        <div key={id} style={ratingContainerStyle}>
+            case 'ratingInputs':
+                return (
+                    <div key={id} style={{left:'70%',position:'absolute'}}>
+                        <div style={ratingContainerStyle}>
                             {[1, 2, 3, 4, 5].map((circle) => (
                                 <span
                                     key={circle}
@@ -208,13 +204,12 @@ const Formbot = () => {
                                 alt="Logo"
                                 onClick={handleImageClick}
                                 style={{
-                                    ...logoStyle,
                                     filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
                                 }}
                             />
                         </div>
-                    );
-            
+                    </div>
+                );
             case 'imageInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
@@ -235,27 +230,15 @@ const Formbot = () => {
                 );
             case 'textInputs':
                 return (
-                    <div key={id} style={{height:'7%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
-                        width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',color:'#847F7F',
-                        marginTop:'2px',borderRadius:'2px'}}>
-                        <div style={inputWithLogoStyle}>
-                            <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
-                            <span>{value}</span>
-                        </div>
-                    </div>
-                );
-            case 'tinputs':
-                return (
-                    <div key={id} style={{left:'70%'}}>
-                        <div style={inputWithLogoStyle}>
-                            <img src={Tlogo} alt="Logo" style={logoStyle} />
-                            <input
-                                type="text"
-                                value={formValues[type]?.[index]?.value || ''}
+                    <div key={id} style={textInputStyle}>
+                        <div style={textAreaContainer}>
+                            <textarea
+                                style={textAreaStyle}
+                                value={formValues[type][index]?.value || ''}
                                 onChange={(e) => handleInputChange(type, index, e)}
-                                style={inputStyle}
+                                placeholder="Please enter your answer here..."
                             />
-                             <img
+                            <img
                                 type="button"
                                 src={Send}
                                 alt="Logo"
@@ -265,76 +248,6 @@ const Formbot = () => {
                                 }}
                             />
                         </div>
-                    </div>
-                );
-            case 'numberInputs':
-                return (
-                    <div key={id} style={inputContainerStyle}>
-                        <input
-                        type={type.replace('Inputs','')}
-                        value={formValues[type]?.[index]?.vlue || ''}
-                        onChange={(e)=>handleInputChange(type,index,e)}
-                        style={inputStyle}
-                        />
-                         <img
-                                type="button"
-                                src={Send}
-                                alt="Logo"
-                                onClick={handleImageClick}
-                                style={{
-                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
-                                }}
-                            />
-                    </div>
-                )
-
-            case 'emailInputs':
-                return( 
-                <div key={id} style={inputContainerStyle}>
-                     <input
-                        type={type.replace('Inputs','')}
-                        value={formValues[type]?.[index]?.vlue || ''}
-                        onChange={(e)=>handleInputChange(type,index,e)}
-                        style={inputStyle}
-                    />
-                    <img
-                    type="button"
-                    src={Send}
-                    alt="Logo"
-                    onClick={handleImageClick}
-                    style={{
-                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
-                    }}
-                            />
-
-
-                </div>)
-            case 'phoneInputs':
-                return (
-                    <div key={id} style={inputContainerStyle}>
-                        <label>{type.replace('Inputs', '')}:</label>
-                        <input
-                            type={type.replace('Inputs', '')}
-                            value={formValues[type]?.[index]?.value || ''}
-                            onChange={(e) => handleInputChange(type, index, e)}
-                            style={inputStyle}
-                        />
-                         <img
-                                type="button"
-                                src={Send}
-                                alt="Logo"
-                                onClick={handleImageClick}
-                                style={{
-                                    filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
-                                }}
-                            />
-                    </div>
-                );
-            case 'buttonInputs':
-                return (
-                    <div key={id} style={inputContainerStyle}>
-                        <button style={{width:'45px',height:'37px',left:'75%',borderRadius:'6px',background: '#FF8E21',color:'#FFFFFF'
-                        }}> onClick={handleNextClick}{value}</button>
                     </div>
                 );
             default:
@@ -344,100 +257,87 @@ const Formbot = () => {
 
     return (
         <div>
-            <div style={{top:'12%',width:'auto',left:'20%',padding: '1rem',position:'absolute'}}>
             <form onSubmit={handleSubmit}>
-                {visibleIndices.map((index) => (
-                    renderInput(combinedInputs[index], index)
-                ))}
-                <div style={navigationContainerStyle}>
-                    <button
-                        type="button"
-                        onClick={handlePreviousClick}
-                        disabled={visibleIndices.length === 1}
-                        style={buttonStyle}
-                    >
-                        Previous
-                    </button>
-                    <button
-                        type="button"
-                        onClick={handleNextClick}
-                        disabled={visibleIndices.length === combinedInputs.length}
-                        style={buttonStyle}
-                    >
-                        Next
-                    </button>
-                    <button type="submit" style={buttonStyle}>
-                        Submit
-                    </button>
-                </div>
+                {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
+                <button type="submit">Submit</button>
             </form>
-            </div>
         </div>
     );
 };
 
+// Styles
 const inputContainerStyle = {
-    marginBottom: '1rem',
-};
-
-const inputWithLogoStyle = {
     display: 'flex',
     alignItems: 'center',
-};
-
-const logoStyle = {
-    width: '24px',
-    height: '24px',
-    marginRight: '8px',
-};
-
-const inputStyle = {
-    padding: '0.5rem',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    flex: 1,
-};
-
-const buttonStyle = {
-    padding: '0.5rem 1rem',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-};
-
-const navigationContainerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    marginTop: '1rem',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    marginBottom: '20px'
 };
 
 const calendarStyle = {
-    marginBottom: '1rem',
+    marginBottom: '10px'
+};
+
+const buttonStyle = {
+    padding: '10px 20px',
+    backgroundColor: '#007bff',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    cursor: 'pointer'
 };
 
 const ratingContainerStyle = {
     display: 'flex',
-    justifyContent: 'space-around',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '20px'
 };
 
 const circleStyle = {
     width: '30px',
     height: '30px',
+    borderRadius: '50%',
+    backgroundColor: '#007bff',
+    color: 'white',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '50%',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    cursor: 'pointer',
     margin: '0 5px',
+    cursor: 'pointer'
 };
 
 const mediaStyle = {
-    maxWidth: '100%',
-    maxHeight: '200px',
+    width: '100%',
+    maxWidth: '500px',
+    height: 'auto',
+    marginBottom: '20px'
+};
+
+const textInputStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '20px'
+};
+
+const textAreaContainer = {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%'
+};
+
+const textAreaStyle = {
+    width: '100%',
+    maxWidth: '500px',
+    height: '100px',
+    padding: '10px',
+    fontSize: '16px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    marginBottom: '10px'
 };
 
 export default Formbot;
