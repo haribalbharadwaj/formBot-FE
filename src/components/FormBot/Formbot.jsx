@@ -74,22 +74,22 @@ const Formbot = () => {
         }));
     };
 
-    const handleDateChange = (date) => {
+    const handleDateChange = (index,date) => {
         setSelectedDate(date);
         setFormValues(prevValues => ({
             ...prevValues,
-            dateInputs: prevValues.dateInputs.map(input =>
-                ({ ...input, value: date })
+            dateInputs: prevValues.dateInputs.map((input,idx) =>
+            idx === index ? { ...input, value: date } : input
             )
         }));
     };
 
-    const handleRatingChange = (rating) => {
+    const handleRatingChange = (index,rating) => {
         setSelectedRating(rating);
         setFormValues(prevValues => ({
             ...prevValues,
-            ratingInputs: prevValues.ratingInputs.map(input =>
-                ({ ...input, value: rating })
+            ratingInputs: prevValues.ratingInputs.map((input,idx) =>
+            idx === index ? { ...input, value: rating } : input
             )
         }));
     };
@@ -145,7 +145,7 @@ const Formbot = () => {
                 return (
                     <div key={id} style={inputContainerStyle}>
                         <Calendar
-                            onChange={handleDateChange}
+                            onChange={(date) => handleDateChange(index, date)}
                             value={selectedDate}
                             selectRange={false}
                             style={calendarStyle}
@@ -166,7 +166,7 @@ const Formbot = () => {
                         {[1, 2, 3, 4, 5].map((circle) => (
                             <span
                                 key={circle}
-                                onClick={() => handleRatingChange(circle)}
+                                onClick={() => handleRatingChange(index,circle)}
                                 style={{
                                     ...circleStyle,
                                     backgroundColor: selectedRating >= circle ? '#FFD700' : '#007bff'
