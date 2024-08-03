@@ -203,15 +203,9 @@ const Formbot = () => {
             case 'textInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
-                        <label>{type.replace('Inputs', '')}:</label>
                         <div style={inputWithLogoStyle}>
                             <img src={Textlogo} alt="Logo" style={logoStyle} />
-                            <input
-                                type="text"
-                                value={formValues[type]?.[index]?.value || ''}
-                                onChange={(e) => handleInputChange(type, index, e)}
-                                style={inputStyle}
-                            />
+                            <span>{value}</span>
                         </div>
                     </div>
                 );
