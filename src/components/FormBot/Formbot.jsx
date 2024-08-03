@@ -17,27 +17,11 @@ const Formbot = () => {
         const fetchFormData = async () => {
             try {
                 const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-                if (!backendUrl) {
-                    throw new Error('Backend URL is not defined');
-                }
+                if (!backendUrl) throw new Error('Backend URL is not defined');
 
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-                const initialValues = {
-                    textInputs: data.textInputs || [],
-                    imageInputs: data.imageInputs || [],
-                    videoInputs: data.videoInputs || [],
-                    gifInputs: data.gifInputs || [],
-                    numberInputs: data.numberInputs || [],
-                    emailInputs: data.emailInputs || [],
-                    dateInputs: data.dateInputs || [],
-                    phoneInputs: data.phoneInputs || [],
-                    ratingInputs: data.ratingInputs || [],
-                    buttonInputs: data.buttonInputs || []
-                };
-
-                // Combine all inputs and sort them by id
                 const combined = [
                     ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
                     ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
@@ -52,7 +36,18 @@ const Formbot = () => {
                 ].sort((a, b) => a.id - b.id); // Sort by id
 
                 setFormData(data);
-                setFormValues(initialValues);
+                setFormValues({
+                    textInputs: data.textInputs || [],
+                    imageInputs: data.imageInputs || [],
+                    videoInputs: data.videoInputs || [],
+                    gifInputs: data.gifInputs || [],
+                    numberInputs: data.numberInputs || [],
+                    emailInputs: data.emailInputs || [],
+                    dateInputs: data.dateInputs || [],
+                    phoneInputs: data.phoneInputs || [],
+                    ratingInputs: data.ratingInputs || [],
+                    buttonInputs: data.buttonInputs || []
+                });
                 setCombinedInputs(combined);
             } catch (error) {
                 console.error('Error fetching form data:', error);
@@ -63,32 +58,31 @@ const Formbot = () => {
     }, [formId]);
 
     const handleInputChange = (type, index, event) => {
-        setFormValues(prevValues => {
-            const newValues = { ...prevValues };
+        setFormValues(prevValues => ({
+            ...prevValues,
+            [type]: prevValues[type].map((input, idx) =>
+                idx === index ? { ...input, value: event.target.value } : input
+            )
+        }));
+    };
 
-            if (!newValues[type]) {
-                newValues[type] = [];
-            }
-
-            if (!newValues[type][index]) {
-                newValues[type][index] = { value: '' };
-            }
-
-            if (type === 'dateInputs') {
-                newValues[type][index].value = selectedDate;
-            } else {
-                newValues[type][index].value = event.target.value;
-            }
-
-            return newValues;
-        });
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+        setFormValues(prevValues => ({
+            ...prevValues,
+            dateInputs: prevValues.dateInputs.map(input =>
+                ({ ...input, value: date })
+            )
+        }));
     };
 
     const handleRatingChange = (rating) => {
         setSelectedRating(rating);
         setFormValues(prevValues => ({
             ...prevValues,
-            ratingInputs: [{ ...prevValues.ratingInputs[0], value: rating }]
+            ratingInputs: prevValues.ratingInputs.map(input =>
+                ({ ...input, value: rating })
+            )
         }));
     };
 
@@ -108,24 +102,14 @@ const Formbot = () => {
 
         const formDataToSend = {
             formName: formData.formName,
-            textInputs: formValues.textInputs,
-            numberInputs: formValues.numberInputs,
-            emailInputs: formValues.emailInputs,
-            dateInputs: formValues.dateInputs,
-            phoneInputs: formValues.phoneInputs,
-            ratingInputs: formValues.ratingInputs,
-            buttonInputs: formValues.buttonInputs
+            ...formValues
         };
-
-        console.log('Payload to send:', formDataToSend); // Log the payload
 
         try {
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-            if (!backendUrl) {
-                throw new Error('Backend URL is not defined');
-            }
-            const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
-            console.log('Form updated successfully', response.data);
+            if (!backendUrl) throw new Error('Backend URL is not defined');
+
+            await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
 
             // Reset form values after submission
             setFormValues({
@@ -145,88 +129,80 @@ const Formbot = () => {
         }
     };
 
-    if (!formData) {
-        return <div>Loading...</div>;
-    }
+    if (!formData) return <div>Loading...</div>;
 
     const renderInput = (input, index) => {
         const { type, id, value } = input;
 
-        if (type === 'dateInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <Calendar
-                        onChange={setSelectedDate}
-                        value={selectedDate}
-                        selectRange={false}
-                        style={calendarStyle}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => handleInputChange(type, index)}
-                        disabled={!selectedDate}
-                        style={buttonStyle}
-                    >
-                        Set Date
-                    </button>
-                </div>
-            );
-        }
-
-        if (type === 'ratingInputs') {
-            return (
-                <div key={id} style={ratingContainerStyle}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <span
-                            key={star}
-                            onClick={() => handleRatingChange(star)}
-                            style={{
-                                fontSize: '2em',
-                                cursor: 'pointer',
-                                color: selectedRating >= star ? '#FFD700' : '#e4e5e9'
-                            }}
+        switch (type) {
+            case 'dateInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <Calendar
+                            onChange={handleDateChange}
+                            value={selectedDate}
+                            selectRange={false}
+                            style={calendarStyle}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => handleInputChange(type, index)}
+                            disabled={!selectedDate}
+                            style={buttonStyle}
                         >
-                            &#9733;
-                        </span>
-                    ))}
-                </div>
-            );
+                            Set Date
+                        </button>
+                    </div>
+                );
+            case 'ratingInputs':
+                return (
+                    <div key={id} style={ratingContainerStyle}>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <span
+                                key={star}
+                                onClick={() => handleRatingChange(star)}
+                                style={{
+                                    fontSize: '2em',
+                                    cursor: 'pointer',
+                                    color: selectedRating >= star ? '#FFD700' : '#e4e5e9'
+                                }}
+                            >
+                                &#9733;
+                            </span>
+                        ))}
+                    </div>
+                );
+            case 'imageInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <img src={value} alt="Image Input" style={mediaStyle} />
+                    </div>
+                );
+            case 'videoInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <video controls src={value} style={mediaStyle} />
+                    </div>
+                );
+            case 'gifInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <img src={value} alt="GIF Input" style={mediaStyle} />
+                    </div>
+                );
+            default:
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <label>{type.replace('Inputs', '')}:</label>
+                        <input
+                            type="text"
+                            value={formValues[type]?.[index]?.value || ''}
+                            onChange={(e) => handleInputChange(type, index, e)}
+                            style={inputStyle}
+                        />
+                    </div>
+                );
         }
-
-        if (type === 'imageInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <img src={value} alt="Image Input" style={mediaStyle} />
-                </div>
-            );
-        }
-
-        if (type === 'videoInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <video controls src={value} style={mediaStyle} />
-                </div>
-            );
-        }
-
-        if (type === 'gifInputs') {
-            return (
-                <div key={id} style={inputContainerStyle}>
-                    <img src={value} alt="GIF Input" style={mediaStyle} />
-                </div>
-            );
-        }
-        return (
-            <div key={id} style={inputContainerStyle}>
-                <label>{type.replace('Inputs', '')}:</label>
-                <input
-                    type="text"
-                    value={formValues[type]?.[index]?.value || ''}
-                    onChange={(e) => handleInputChange(type, index, e)}
-                    style={inputStyle}
-                />
-            </div>
-        );
     };
 
     return (
@@ -261,8 +237,6 @@ const Formbot = () => {
                     </div>
                 </form>
             </div>
-            <p></p>
-            
         </div>
     );
 };
@@ -270,12 +244,12 @@ const Formbot = () => {
 // Styles
 const containerStyle = { width: '80%', margin: '0 auto' };
 const inputContainerStyle = { margin: '10px 0' };
-const buttonStyle = { margin: '5px', padding: '10px', fontSize: '16px' };
-const submitButtonStyle = { margin: '5px', padding: '10px', fontSize: '16px', backgroundColor: '#007bff', color: 'white' };
+const inputStyle = { width: '100%' };
+const buttonStyle = { margin: '5px' };
+const submitButtonStyle = { margin: '10px', backgroundColor: '#007bff', color: '#fff' };
+const navigationStyle = { margin: '20px 0' };
 const calendarStyle = { width: '100%' };
-const mediaStyle = { width: '100%', maxHeight: '200px' };
-const inputStyle = { padding: '5px', fontSize: '16px' };
-const navigationStyle = { display: 'flex', justifyContent: 'space-between' };
-const ratingContainerStyle = { display: 'flex', cursor: 'pointer' };
+const ratingContainerStyle = { margin: '10px 0', fontSize: '2em' };
+const mediaStyle = { width: '100%', height: 'auto' };
 
 export default Formbot;
