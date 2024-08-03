@@ -129,8 +129,6 @@ const Formbot = () => {
         }
     };
 
-    if (!formData) return <div>Loading...</div>;
-
     const renderInput = (input, index) => {
         const { type, id, value } = input;
 
@@ -210,7 +208,9 @@ const Formbot = () => {
             <div style={containerStyle}>
                 <h1>{formData.formName}</h1>
                 <form onSubmit={handleSubmit}>
-                    {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
+                    {combinedInputs.map((input, index) => (
+                        visibleIndices.includes(index) && renderInput(input, index)
+                    ))}
                     <div style={navigationStyle}>
                         <button
                             type="button"
@@ -242,7 +242,7 @@ const Formbot = () => {
 };
 
 // Styles
-const containerStyle = { width: '80%', margin: '0 auto' };
+const containerStyle = { padding: '20px' };
 const inputContainerStyle = { margin: '10px 0' };
 const inputStyle = { width: '100%' };
 const buttonStyle = { margin: '5px' };
