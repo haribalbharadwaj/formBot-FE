@@ -216,13 +216,13 @@ const Formbot = () => {
                 );
             case 'imageInputs':
                 return (
-                    <div key={id} style={inputContainerStyle}>
+                    <div key={id}>
                         <img src={value} alt="Image Input" style={mediaStyle} />
                     </div>
                 );
             case 'videoInputs':
                 return (
-                    <div key={id} style={inputContainerStyle}>
+                    <div key={id}>
                         <video controls src={value} style={mediaStyle} />
                     </div>
                 );
@@ -237,7 +237,7 @@ const Formbot = () => {
                     <div key={id} style={{height:'7%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
                         width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',color:'#847F7F',
                         marginTop:'2px',borderRadius:'2px'}}>
-                        <div style={inputWithLogoStyle}>
+                        <div>
                             <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
                             <span>{value}</span>
                         </div>
@@ -246,7 +246,7 @@ const Formbot = () => {
                 case 'tinputs':
                     return (
                         <div key={id} style={{left:'70%',position:'absolute'}}>
-                            <div style={inputWithLogoStyle}>
+                            <div>
                                 <img src={Tlogo} alt="Logo" style={logoStyle} />
                                 <input
                                     type="text"
@@ -348,7 +348,7 @@ const Formbot = () => {
                 {visibleIndices.map((index) => (
                     renderInput(combinedInputs[index], index)
                 ))}
-                <div style={navigationContainerStyle}>
+                <div>
                     <button
                         type="button"
                         onClick={handlePreviousClick}
