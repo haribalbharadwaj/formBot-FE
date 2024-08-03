@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import Textlogo from "../../assets/text.png";
+import Tlogo from "../../assets/Tlogo.png";
 
 const Formbot = () => {
     const { formId } = useParams();
@@ -13,8 +14,8 @@ const Formbot = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedRating, setSelectedRating] = useState(null);
     const [combinedInputs, setCombinedInputs] = useState([]);
-
     const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         const fetchFormData = async () => {
@@ -35,7 +36,8 @@ const Formbot = () => {
                     ...(data.dateInputs || []).map(input => ({ ...input, type: 'dateInputs' })),
                     ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
                     ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
-                    ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' }))
+                    ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' })),
+                    ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Add tinputs
                 ].sort((a, b) => a.id - b.id); // Sort by id
 
                 setFormData(data);
@@ -49,7 +51,8 @@ const Formbot = () => {
                     dateInputs: data.dateInputs || [],
                     phoneInputs: data.phoneInputs || [],
                     ratingInputs: data.ratingInputs || [],
-                    buttonInputs: data.buttonInputs || []
+                    buttonInputs: data.buttonInputs || [],
+                    tinputs: data.tinputs || [] // Initialize tinputs
                 });
                 setCombinedInputs(combined);
             } catch (error) {
@@ -75,22 +78,22 @@ const Formbot = () => {
         }));
     };
 
-    const handleDateChange = (index,date) => {
+    const handleDateChange = (index, date) => {
         setSelectedDate(date);
         setFormValues(prevValues => ({
             ...prevValues,
-            dateInputs: prevValues.dateInputs.map((input,idx) =>
-            idx === index ? { ...input, value: date } : input
+            dateInputs: prevValues.dateInputs.map((input, idx) =>
+                idx === index ? { ...input, value: date } : input
             )
         }));
     };
 
-    const handleRatingChange = (index,rating) => {
+    const handleRatingChange = (index, rating) => {
         setSelectedRating(rating);
         setFormValues(prevValues => ({
             ...prevValues,
-            ratingInputs: prevValues.ratingInputs.map((input,idx) =>
-            idx === index ? { ...input, value: rating } : input
+            ratingInputs: prevValues.ratingInputs.map((input, idx) =>
+                idx === index ? { ...input, value: rating } : input
             )
         }));
     };
@@ -128,7 +131,8 @@ const Formbot = () => {
                 dateInputs: formData.dateInputs.map(input => ({ ...input, value: null })),
                 phoneInputs: formData.phoneInputs.map(input => ({ ...input, value: '' })),
                 ratingInputs: formData.ratingInputs.map(input => ({ ...input, value: '' })),
-                buttonInputs: formData.buttonInputs.map(input => ({ ...input, value: '' }))
+                buttonInputs: formData.buttonInputs.map(input => ({ ...input, value: '' })),
+                tinputs: formData.tinputs.map(input => ({ ...input, value: '' })) // Reset tinputs
             });
             setSelectedDate(null);
             setSelectedRating(null);
@@ -167,12 +171,12 @@ const Formbot = () => {
                         {[1, 2, 3, 4, 5].map((circle) => (
                             <span
                                 key={circle}
-                                onClick={() => handleRatingChange(index,circle)}
+                                onClick={() => handleRatingChange(index, circle)}
                                 style={{
                                     ...circleStyle,
                                     backgroundColor: formValues.ratingInputs[index]?.value === circle ? '#FFD700' : '#007bff',
                                 }}
-                                >
+                            >
                                 {circle}
                             </span>
                         ))}
@@ -196,164 +200,155 @@ const Formbot = () => {
                         <img src={value} alt="GIF Input" style={mediaStyle} />
                     </div>
                 );
-            default:
+            case 'textInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
                         <label>{type.replace('Inputs', '')}:</label>
-                        <div style={textInputContainerStyle}>
-                            {type === 'textInputs' && <img src={Textlogo} alt="Logo" style={logoStyle} />}
+                        <div style={inputWithLogoStyle}>
+                            <img src={Textlogo} alt="Logo" style={logoStyle} />
                             <input
                                 type="text"
                                 value={formValues[type]?.[index]?.value || ''}
                                 onChange={(e) => handleInputChange(type, index, e)}
-                                style={type === 'textInputs' ? textInputStyle : inputStyle}
+                                style={inputStyle}
                             />
                         </div>
                     </div>
                 );
+            case 'tinputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <label>{type.replace('Inputs', '')}:</label>
+                        <div style={inputWithLogoStyle}>
+                            <img src={Tlogo} alt="Logo" style={logoStyle} />
+                            <input
+                                type="text"
+                                value={formValues[type]?.[index]?.value || ''}
+                                onChange={(e) => handleInputChange(type, index, e)}
+                                style={inputStyle}
+                            />
+                        </div>
+                    </div>
+                );
+            case 'numberInputs':
+            case 'emailInputs':
+            case 'phoneInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <label>{type.replace('Inputs', '')}:</label>
+                        <input
+                            type={type.replace('Inputs', '')}
+                            value={formValues[type]?.[index]?.value || ''}
+                            onChange={(e) => handleInputChange(type, index, e)}
+                            style={inputStyle}
+                        />
+                    </div>
+                );
+            case 'buttonInputs':
+                return (
+                    <div key={id} style={inputContainerStyle}>
+                        <button style={buttonStyle}>{value}</button>
+                    </div>
+                );
+            default:
+                return null;
         }
     };
 
     return (
-        <div style={{ width: '100%', height: '62.5%', margin: '0 auto' }}>
-            <div style={containerStyle}>
-                <h1>{formData?.formName}</h1>
-                <form onSubmit={handleSubmit}>
-                    {combinedInputs.map((input, index) => (
-                        visibleIndices.includes(index) && renderInput(input, index)
-                    ))}
-                    <div style={navigationStyle}>
-                        <button
-                            type="button"
-                            onClick={handlePreviousClick}
-                            disabled={visibleIndices[0] === 0}
-                            style={buttonStyle}
-                        >
-                            Previous
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleNextClick}
-                            disabled={visibleIndices[visibleIndices.length - 1] === combinedInputs.length - 1}
-                            style={buttonStyle}
-                        >
-                            Next
-                        </button>
-                        </div>
-                        <button
-                            type="submit"
-                            style={submitButtonStyle}
-                        >
-                            Submit
-                        </button>
-                
-                </form>
-            </div>
+        <div>
+            <form onSubmit={handleSubmit}>
+                {visibleIndices.map((index) => (
+                    renderInput(combinedInputs[index], index)
+                ))}
+                <div style={navigationContainerStyle}>
+                    <button
+                        type="button"
+                        onClick={handlePreviousClick}
+                        disabled={visibleIndices.length === 1}
+                        style={buttonStyle}
+                    >
+                        Previous
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleNextClick}
+                        disabled={visibleIndices.length === combinedInputs.length}
+                        style={buttonStyle}
+                    >
+                        Next
+                    </button>
+                    <button type="submit" style={buttonStyle}>
+                        Submit
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };
 
-const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    padding: '20px',
-    backgroundColor: '#f5f5f5',
-    borderRadius: '10px',
-    boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)',
-    marginTop: '20px'
-};
-
 const inputContainerStyle = {
-    margin: '10px 0',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
+    marginBottom: '1rem',
 };
 
-const textInputContainerStyle = {
+const inputWithLogoStyle = {
     display: 'flex',
     alignItems: 'center',
-    width: '100%'
-};
-
-const inputStyle = {
-    width: '300px',
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    fontSize: '16px'
-};
-
-const textInputStyle = {
-    width: 'calc(100% - 40px)', // Adjust for the logo size
-    padding: '10px',
-    borderRadius: '5px',
-    border: '1px solid #ccc',
-    fontSize: '16px'
 };
 
 const logoStyle = {
-    width: '30px',
-    height: '30px',
-    marginRight: '10px',
-    borderRadius: '50%'
+    width: '24px',
+    height: '24px',
+    marginRight: '8px',
 };
 
-const calendarStyle = {
-    marginBottom: '10px'
+const inputStyle = {
+    padding: '0.5rem',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    flex: 1,
 };
 
 const buttonStyle = {
-    padding: '10px 20px',
-    borderRadius: '5px',
-    border: 'none',
+    padding: '0.5rem 1rem',
     backgroundColor: '#007bff',
     color: '#fff',
-    fontSize: '16px',
-    cursor: 'pointer'
-};
-
-const submitButtonStyle = {
-    padding: '10px 20px',
-    borderRadius: '5px',
     border: 'none',
-    backgroundColor: '#28a745',
-    color: '#fff',
-    fontSize: '16px',
+    borderRadius: '4px',
     cursor: 'pointer',
-    marginTop: '20px'
 };
 
-const navigationStyle = {
+const navigationContainerStyle = {
     display: 'flex',
     justifyContent: 'space-between',
-    width: '100%',
-    marginTop: '20px'
+    marginTop: '1rem',
+};
+
+const calendarStyle = {
+    marginBottom: '1rem',
 };
 
 const ratingContainerStyle = {
     display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
+    justifyContent: 'space-around',
 };
 
 const circleStyle = {
     width: '30px',
     height: '30px',
-    borderRadius: '50%',
     display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '50%',
     backgroundColor: '#007bff',
     color: '#fff',
-    fontSize: '16px',
+    cursor: 'pointer',
     margin: '0 5px',
-    cursor: 'pointer'
 };
 
 const mediaStyle = {
-    maxWidth: '300px',
-    maxHeight: '300px'
+    maxWidth: '100%',
+    maxHeight: '200px',
 };
+
 export default Formbot;
