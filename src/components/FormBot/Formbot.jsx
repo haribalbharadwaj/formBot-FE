@@ -158,7 +158,7 @@ const Formbot = () => {
         switch (type) {
             case 'dateInputs':
                 return (
-                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                         <div style={inputContainerStyle}>
                             <Calendar
                                 onChange={(date) => handleDateChange(index, date)}
@@ -188,7 +188,7 @@ const Formbot = () => {
                 );
             case 'ratingInputs':
                 return (
-                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                    <div key={id} style={{left:'90%',position:'absolute',marginBottom:'40px'}}>
                         <div style={ratingContainerStyle}>
                             {[1, 2, 3, 4, 5].map((circle) => (
                                 <span
@@ -236,7 +236,7 @@ const Formbot = () => {
                 return (
                     <div key={id} style={{height:'7%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
                         width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',color:'#847F7F',
-                        marginTop:'2px',borderRadius:'2px',marginBottom:'20px'}}>
+                        marginTop:'2px',borderRadius:'2px',marginBottom:'40px'}}>
                         <div>
                             <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
                             <span>{value}</span>
@@ -245,7 +245,7 @@ const Formbot = () => {
                 );
                 case 'tinputs':
                     return (
-                        <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                        <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                             <div>
                                 <img src={Tlogo} alt="Logo" style={logoStyle} />
                                 <input
@@ -268,7 +268,7 @@ const Formbot = () => {
                     );
                     case 'numberInputs':
                 return (
-                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                         <input
                         type={type.replace('Inputs','')}
                         value={formValues[type]?.[index]?.vlue || ''}
@@ -288,7 +288,7 @@ const Formbot = () => {
                 );
                 case 'emailInputs':
                     return( 
-                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                    <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                          <input
                             type={type.replace('Inputs','')}
                             value={formValues[type]?.[index]?.vlue || ''}
@@ -309,7 +309,7 @@ const Formbot = () => {
                     </div>)
                 case 'phoneInputs':
                     return (
-                        <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                        <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                             <label>{type.replace('Inputs', '')}:</label>
                             <input
                                 type={type.replace('Inputs', '')}
@@ -330,7 +330,7 @@ const Formbot = () => {
                     );
                 case 'buttonInputs':
                     return (
-                        <div key={id} style={{left:'70%',position:'absolute',marginBottom:'20px'}}>
+                        <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                             <button style={{width:'45px',height:'37px',left:'75%',borderRadius:'6px',background: '#FF8E21',color:'#FFFFFF'
                             }}> onClick={handleNextClick}{value}</button>
                         </div>
