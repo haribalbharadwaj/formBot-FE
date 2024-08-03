@@ -189,14 +189,7 @@ const Formbot = () => {
         if (type === 'imageInputs') {
             return (
                 <div key={id} style={inputContainerStyle}>
-                    <label>Image URL:</label>
-                    <input
-                        type="text"
-                        value={formValues[type]?.[index]?.value || ''}
-                        onChange={(e) => handleInputChange(type, index, e)}
-                        style={inputStyle}
-                    />
-                    {value && <img src={value} alt="image" style={{ width: '100%', marginTop: '10px' }} />}
+                    <img src={value} alt="Image Input" style={mediaStyle} />
                 </div>
             );
         }
@@ -204,14 +197,7 @@ const Formbot = () => {
         if (type === 'videoInputs') {
             return (
                 <div key={id} style={inputContainerStyle}>
-                    <label>Video URL:</label>
-                    <input
-                        type="text"
-                        value={formValues[type]?.[index]?.value || ''}
-                        onChange={(e) => handleInputChange(type, index, e)}
-                        style={inputStyle}
-                    />
-                    {value && <video src={value} controls style={{ width: '100%', marginTop: '10px' }} />}
+                    <video controls src={value} style={mediaStyle} />
                 </div>
             );
         }
@@ -219,18 +205,10 @@ const Formbot = () => {
         if (type === 'gifInputs') {
             return (
                 <div key={id} style={inputContainerStyle}>
-                    <label>GIF URL:</label>
-                    <input
-                        type="text"
-                        value={formValues[type]?.[index]?.value || ''}
-                        onChange={(e) => handleInputChange(type, index, e)}
-                        style={inputStyle}
-                    />
-                    {value && <img src={value} alt="gif" style={{ width: '100%', marginTop: '10px' }} />}
+                    <img src={value} alt="GIF Input" style={mediaStyle} />
                 </div>
             );
         }
-
         return (
             <div key={id} style={inputContainerStyle}>
                 <label>{type.replace('Inputs', '')}:</label>
