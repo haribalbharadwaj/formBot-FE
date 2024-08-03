@@ -206,7 +206,7 @@ const Formbot = () => {
                         width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',position:'absolute',color:'#847F7F',
                         marginTop:'2px'}}>
                         <div style={inputWithLogoStyle}>
-                            <img src={Textlogo} alt="Logo" style={logoStyle} />
+                            <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
                             <span>{value}</span>
                         </div>
                     </div>
