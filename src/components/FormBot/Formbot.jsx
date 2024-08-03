@@ -157,7 +157,7 @@ const Formbot = () => {
         switch (type) {
             case 'dateInputs':
                 return (
-                    <div>
+                    <div style={{left:'70%'}}>
                         <div key={id} style={inputContainerStyle}>
                         <Calendar
                             onChange={(date) => handleDateChange(index, date)}
