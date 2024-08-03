@@ -186,34 +186,35 @@ const Formbot = () => {
                     </div>
                     
                 );
-            case 'ratingInputs':
-                return (
-                    <div key={id} style={ratingContainerStyle}>
-                        {[1, 2, 3, 4, 5].map((circle) => (
-                            <div>
+
+                case 'ratingInputs':
+                    return (
+                        <div key={id} style={ratingContainerStyle}>
+                            {[1, 2, 3, 4, 5].map((circle) => (
                                 <span
-                                key={circle}
-                                onClick={() => handleRatingChange(index, circle)}
-                                style={{
-                                    ...circleStyle,
-                                    backgroundColor: formValues.ratingInputs[index]?.value === circle ? '#FFD700' : '#007bff',
-                                }}
-                            >
-                                {circle}
-                            </span>
+                                    key={circle}
+                                    onClick={() => handleRatingChange(index, circle)}
+                                    style={{
+                                        ...circleStyle,
+                                        backgroundColor: formValues.ratingInputs[index]?.value === circle ? '#FFD700' : '#007bff',
+                                    }}
+                                >
+                                    {circle}
+                                </span>
+                            ))}
                             <img
                                 type="button"
                                 src={Send}
                                 alt="Logo"
                                 onClick={handleImageClick}
                                 style={{
+                                    ...logoStyle,
                                     filter: isClicked ? 'invert(34%) sepia(5%) saturate(0%) hue-rotate(189deg) brightness(91%) contrast(94%)' : 'invert(35%) sepia(100%) saturate(748%) hue-rotate(184deg) brightness(96%) contrast(101%)'
                                 }}
                             />
-                            </div>
-                        ))}
-                    </div>
-                );
+                        </div>
+                    );
+            
             case 'imageInputs':
                 return (
                     <div key={id} style={inputContainerStyle}>
