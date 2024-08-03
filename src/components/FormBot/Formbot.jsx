@@ -204,7 +204,7 @@ const Formbot = () => {
                 return (
                     <div key={id} style={{height:'7%',background:'#EEEEEE',fontFamily:'Open Sans,sans-serif',padding:'10px',
                         width:'auto',fontSize:'15px',fontWeight:'600',lineHeight:'20.43px',textAlign: 'left',color:'#847F7F',
-                        marginTop:'2px'}}>
+                        marginTop:'2px',borderRadius:'2px'}}>
                         <div style={inputWithLogoStyle}>
                             <img src={Textlogo} alt="Logo" style={{height:'7%'}} />
                             <span>{value}</span>
