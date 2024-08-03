@@ -272,6 +272,12 @@ const ratingContainerStyle = {
     alignItems: 'center'
 };
 
+const mediaStyle = {
+    width: '100%',
+    maxWidth: '100%',
+    height: 'auto'
+};
+
 const navigationStyle = {
     display: 'flex',
     justifyContent: 'space-between',
