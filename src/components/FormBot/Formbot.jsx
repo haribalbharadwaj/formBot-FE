@@ -163,18 +163,15 @@ const Formbot = () => {
             case 'ratingInputs':
                 return (
                     <div key={id} style={ratingContainerStyle}>
-                        {[1, 2, 3, 4, 5].map((star) => (
+                        {[1, 2, 3, 4, 5].map((circle) => (
                             <span
-                                key={star}
-                                onClick={() => handleRatingChange(star)}
+                                key={circle}
+                                onClick={() => handleRatingChange(circle)}
                                 style={{
-                                    fontSize: '2em',
-                                    cursor: 'pointer',
-                                    color: selectedRating >= star ? '#FFD700' : '#e4e5e9'
+                                    ...circleStyle,
+                                    backgroundColor: selectedRating >= circle ? '#FFD700' : '#007bff'
                                 }}
-                            >
-                                &#9733;
-                            </span>
+                            />
                         ))}
                     </div>
                 );
@@ -204,7 +201,7 @@ const Formbot = () => {
                             type="text"
                             value={formValues[type]?.[index]?.value || ''}
                             onChange={(e) => handleInputChange(type, index, e)}
-                            style={inputStyle}
+                            style={type === 'textInputs' ? textInputStyle : inputStyle}
                         />
                     </div>
                 );
@@ -252,12 +249,14 @@ const Formbot = () => {
 // Styles
 const containerStyle = { padding: '20px' };
 const inputContainerStyle = { margin: '10px 0' };
-const inputStyle = { width: '100%' };
-const buttonStyle = { margin: '5px' };
-const submitButtonStyle = { margin: '10px', backgroundColor: '#007bff', color: '#fff' };
-const navigationStyle = { margin: '20px 0' };
-const calendarStyle = { width: '100%' };
-const ratingContainerStyle = { margin: '10px 0' };
-const mediaStyle = { maxWidth: '100%', maxHeight: '200px' };
+const inputStyle = { width: '100%', border: '1px solid #ccc', padding: '10px', borderRadius: '4px' };
+const textInputStyle = { ...inputStyle, border: 'none', background: 'none' };
+const mediaStyle = { maxWidth: '100%', height: 'auto' };
+const calendarStyle = { marginBottom: '10px' };
+const ratingContainerStyle = { display: 'flex', justifyContent: 'space-around', margin: '10px 0' };
+const circleStyle = { display: 'inline-block', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer' };
+const buttonStyle = { margin: '10px', padding: '10px 20px', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '4px' };
+const submitButtonStyle = { ...buttonStyle, backgroundColor: '#28a745' };
+const navigationStyle = { display: 'flex', justifyContent: 'space-between', marginTop: '20px' };
 
 export default Formbot;
