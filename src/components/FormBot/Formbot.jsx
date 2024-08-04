@@ -41,7 +41,7 @@ const Formbot = () => {
                     ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
                     ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' })),
                     ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Add tinputs
-                ].sort((a, b) => a.id - b.id); // Sort by id
+                ].filter(item => item !== undefined).sort((a, b) => a.id - b.id); //Sort by id
 
                 setFormData(data);
                 setFormValues({
