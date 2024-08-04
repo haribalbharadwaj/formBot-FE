@@ -39,9 +39,12 @@ const Formbot = () => {
                     ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
                     ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
                     ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' })),
-                    ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Add tinputs
-                ].filter(item => item !== undefined).sort((a, b) => a.id - b.id); //Sort by id
-
+                    ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Include tinputs
+                ].filter(item => item && item.id) // Ensure items have IDs
+                .sort((a, b) => a.id - b.id);
+                
+                console.log('Combined Inputs:', combined);
+                
                 setFormData(data);
                 setFormValues({
                     textInputs: data.textInputs || [],
@@ -58,21 +61,8 @@ const Formbot = () => {
                 });
                 setCombinedInputs(combined);
                 console.log('Combined Inputs:', combinedInputs);
-                const datas = {
-                    textInputs: data.textInputs || [],
-                    imageInputs: data.imageInputs || [],
-                    videoInputs: data.videoInputs || [],
-                    gifInputs: data.gifInputs || [],
-                    numberInputs: data.numberInputs || [],
-                    emailInputs: data.emailInputs || [],
-                    dateInputs: data.dateInputs || [],
-                    phoneInputs: data.phoneInputs || [],
-                    ratingInputs: data.ratingInputs || [],
-                    buttonInputs: data.buttonInputs || [],
-                    tinputs: data.tinputs || []
-                };
-                
-                console.log("Data:",datas);
+    
+            
                 console.log('Fetched Form Data:', data);
 
 
