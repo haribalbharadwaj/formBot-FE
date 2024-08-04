@@ -365,11 +365,12 @@ const Formbot = () => {
                     >
                         Next
                     </button>
-                    <button type="submit" style={buttonStyle}>
-                        Submit
-                    </button>
+
                 </div>
             </form>
+            <button type="submit" style={buttonStyle} onClick={handleSubmit}>
+                        Submit
+                    </button>
             </div>
         </div>
     );
