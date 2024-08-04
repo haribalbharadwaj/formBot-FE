@@ -49,14 +49,37 @@ function Formspace() {
             return;
         }
 
-        const assignEmptyValues = (inputs,defaultValue='') => {
-            return inputs.map(input => ({
-                id: input.id || new mongoose.Types.ObjectId().toString(), // Generate unique ID if not already present
-                value: input.value || defaultValue,
-                visible: input.visible !== undefined ? input.visible : true
-            }));
+        const assignEmptyValues = (inputs, defaultValue = '') => {
+            console.log('Inputs:', inputs); // Debugging line
+            return inputs.map(input => {
+                if (!input) {
+                    console.error('Undefined input detected'); // Debugging line
+                }
+                return {
+                    id: input?.id || new mongoose.Types.ObjectId().toString(), // Safe access with optional chaining
+                    value: input?.value || defaultValue,
+                    visible: input?.visible !== undefined ? input.visible : true,
+                    type: input?.type // Ensure type is always present
+                };
+            });
         };
-    
+
+        const addSerialNumbers = (inputs) => {
+            let serialNo = 1;
+            return (inputs || []).map(input => {
+                if (!input) {
+                    console.error('Undefined input detected during serial number assignment'); // Debugging line
+                }
+                return { ...input, serialNo: serialNo++ };
+            });
+        };
+        
+        const validateInputData = (inputs) => {
+            return inputs.every(input => input && input.type);
+        };
+        
+
+        
         // Ensure inputs is structured correctly
         const formData = {
             formName,
@@ -115,6 +138,7 @@ function Formspace() {
         console.log('Form ID:', formId);
 
         if (formId) {
+            console.log('Form ID:', formId);
             return formId;
         } else {
             console.error('Form ID is not defined or was not returned.');
