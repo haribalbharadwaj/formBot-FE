@@ -250,7 +250,7 @@ const Formbot = () => {
                                 <img src={Tlogo} alt="Logo" style={logoStyle} />
                                 <input
                                     type="text"
-                                    value={formValues[type]?.[index]?.value}
+                                    value={formValues[type]?.[index]?.value || ''}
                                     onChange={(e) => handleInputChange(type, index, e)}
                                     style={{width:'331px',height:'61px',gap:'0px',borderRadius:'4px',
                                         boxShadow: '0px 4px 6.3px 0px #00000040',color:'#847F7F'
@@ -273,7 +273,7 @@ const Formbot = () => {
                     <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                         <input
                         type={type.replace('Inputs','')}
-                        value={formValues[type]?.[index]?.value || ''}
+                        value={formValues[type]?.[index]?.vlue || ''}
                         onChange={(e)=>handleInputChange(type,index,e)}
                         style={inputStyle}
                         />
@@ -293,7 +293,7 @@ const Formbot = () => {
                     <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                          <input
                             type={type.replace('Inputs','')}
-                            value={formValues[type]?.[index]?.value || ''}
+                            value={formValues[type]?.[index]?.vlue || ''}
                             onChange={(e)=>handleInputChange(type,index,e)}
                             style={inputStyle}
                         />
