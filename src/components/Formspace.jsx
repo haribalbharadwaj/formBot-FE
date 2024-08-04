@@ -13,8 +13,6 @@ import Rating from '../assets/New folder/Rating.png';
 import Buttons from '../assets/New folder/Buttons.png';
 import Phone from '../assets/New folder/Phone.png';
 import Close from "../assets/close.png";
-import Start from "../assets/startLogo.png";
-import Deleete from "../assets/delete.png";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFormContext } from "../components/FormContext";
 
@@ -39,10 +37,10 @@ function Formspace() {
         if (event && event.preventDefault) {
             event.preventDefault();
         }
-    
+
         const token = localStorage.getItem('token');
         console.log("Retrieved token:", token);
-    
+
         if (!token) {
             setError('Authentication token not found. Please log in again.');
             setSuccess('');
@@ -55,57 +53,49 @@ function Formspace() {
                 return { ...input, serialNo: serialNo++ };
             });
         };
-    
-        // Ensure inputs is structured correctly
+
         const formData = {
             formName,
             textInputs: assignSerialNumbers(inputs.filter(input => input.type === 'text')),
             imageInputs: assignSerialNumbers(inputs.filter(input => input.type === 'image')),
             videoInputs: assignSerialNumbers(inputs.filter(input => input.type === 'video')),
             gifInputs: assignSerialNumbers(inputs.filter(input => input.type === 'gif')),
-            numberInputs: assignSerialNumbers(inputs.filter(input => input.type === 'number')),
-            emailInputs: assignSerialNumbers(inputs.filter(input => input.type === 'email')),
-            dateInputs: assignSerialNumbers(inputs.filter(input => input.type === 'date')),
-            phoneInputs: assignSerialNumbers(inputs.filter(input => input.type === 'phone')),
-            ratingInputs: assignSerialNumbers(inputs.filter(input => input.type === 'rating')),
             buttonInputs: assignSerialNumbers(inputs.filter(input => input.type === 'button'))
-            
         };
-    
+
         console.log("Form submitted with data:", formData);
-    
+
         try {
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
             if (!backendUrl) {
                 throw new Error('Backend URL is not defined');
             }
-    
+
             const response = await axios.post(`${backendUrl}/form/addForm`, formData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 }
             });
-    
+
             console.log('Form added successfully:', response.data);
             setSuccess('Form added successfully');
             setError('');
-    
-            // Clear form fields
+
             setFormName('');
             setInputs([]);
             localStorage.setItem('userId', response.data.data._id); 
-    
+
             console.log('formId:', response.data.data._id);
             return response.data.data._id;
-    
+
         } catch (error) {
             console.log('Error adding form:', error.response ? error.response.data : error.message);
             setError('Error adding form. Please try again');
             setSuccess('');
         }
     };
-    
+
     const handleSave = async (e) => {
         if (e && e.preventDefault) {
             e.preventDefault();
@@ -138,7 +128,7 @@ function Formspace() {
             alert('Failed to retrieve form ID');
         }
     };
-    
+
     const handleInputClick = (type) => {
         setInputs([...inputs, { id: inputs.length + 1, type, value: '', visible: true }]);
     };
@@ -152,7 +142,6 @@ function Formspace() {
     };
 
     const handleCancel = () => {
-        // Reset form fields
         setFormName('');
         setInputs([]);
     };
@@ -161,16 +150,20 @@ function Formspace() {
         width: '58px',
         height: '32px',
         padding: '7.1px 13px 7.9px 13px',
-        borderRadius: '6px 6px 6px 6px',
+        borderRadius: '6px',
         background: 'transparent',
         color: '#FFFFFF',
         cursor: 'pointer'
     };
 
-
-    const inputStyle={
-    width:'calc(50% - 5px)',height:'39px',top:'29px',padding:'9px 17px 9px 17px',borderRadius:'8px',border:'1px',flex: '0 0 calc(50% - 10px)'
-    }
+    const inputStyle = {
+        width: 'calc(50% - 5px)',
+        height: '39px',
+        padding: '9px 17px',
+        borderRadius: '8px',
+        border: '1px solid #ccc',
+        flex: '0 0 calc(50% - 10px)'
+    };
 
     const sectionStyle = {
         display: 'flex',
@@ -184,7 +177,6 @@ function Formspace() {
         gap: '10px'
     };
 
-
     const activeButtonStyle = {
         ...buttonStyle,
         color: '#7EA6FF',
@@ -196,14 +188,14 @@ function Formspace() {
     };
 
     const handleResponseClick = (formId) => {
-        console.log('formId:', formId); // Log formId to verify it is correct
+        console.log('formId:', formId);
         handleClick('Response');
         navigate(`/response/${formId}`);
     };
 
     const handleThemeClick = () => {
         handleClick('Theme');
-        navigate('/theme')
+        navigate('/theme');
     };
 
     const handleFlowClick = () => {
@@ -216,8 +208,7 @@ function Formspace() {
             position: 'relative' }}>
             
             <div style={{ width: '1440px', height: '56px', border: '0px 0px 1px 0px', background: '#18181B', borderBottom: '1px solid #FFFFFF29',
-                    fontFamily: 'Open Sans,sans-serif', fontSize: '12px', fontWeight: '600', lineHeight: '21px', textAlign: 'left'
-                }}>
+                    fontFamily: 'Open Sans, sans-serif', fontSize: '12px', fontWeight: '600', lineHeight: '21px', textAlign: 'left' }}>
                 <div>
                     <input
                         type="text"
@@ -238,108 +229,215 @@ function Formspace() {
                             position: 'absolute'
                         }}
                     />
-                    {error.name && <p style={{ color: 'red' }}>{error.name}</p>}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                 </div>
                 <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', marginTop: '2px' }}>
                     <span onClick={handleFlowClick} style={activeButton === 'Flow' ? activeButtonStyle : buttonStyle}>Flow</span>
                     <span onClick={handleThemeClick} style={activeButton === 'Theme' ? activeButtonStyle : buttonStyle}>Theme</span>
-                    <span onClick={handleResponseClick} style={activeButton === 'Response' ? activeButtonStyle : buttonStyle}>Response</span>
+                    <span onClick={() => handleResponseClick(formId)} style={activeButton === 'Response' ? activeButtonStyle : buttonStyle}>Response</span>
                 </div>
                 <div style={{ left: '82%', position: 'absolute', top: '0%', display: 'flex', flexDirection: 'row', gap: '30px' }}>
                     <button onClick={handleSave} style={{ width: '71px', height: '32px', borderRadius: '6px', background: '#4ADE80CC', color: '#FFFFFF', fontSize: '14px', fontWeight: '600',
                         lineHeight: '21px', border: 'none', marginTop: '10px' }} type="submit">Save</button>
 
-                    <button style={{ width: '65px', height: '25px', borderRadius: '4px 0px 0px 0px', marginTop: '10px', background: '#848890'}}
-                        onClick={handleShare}>Share</button>
-                    <img src={Close} onClick={handleCancel} style={{ width: '14px', height: '14px', marginTop: '20px' }} />
+                    <button onClick={handleCancel} style={{ width: '86px', height: '32px', borderRadius: '6px', background: '#18181B', color: '#FFFFFF', fontSize: '14px', fontWeight: '600',
+                        lineHeight: '21px', border: '1px solid #FFFFFF', marginTop: '10px' }}>Cancel</button>
+
+                    <button onClick={handleShare} style={{ width: '89px', height: '32px', borderRadius: '6px', background: '#2563EB', color: '#FFFFFF', fontSize: '14px', fontWeight: '600',
+                        lineHeight: '21px', border: 'none', marginTop: '10px' }}>Share</button>
                 </div>
             </div>
 
-            <div style={{
-    width: '344px',
-    height: '812px',
-    top: '72px',
-    left: '16px',
-    padding: '65px 17px 0px 17px',
-    borderRadius: '8px',
-    border: '1px solid #ccc',
-    background: '#18181B',
-    position: 'absolute'
-}}>
-    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-        <p style={{fontFamily: 'Open Sans,sans-serif',fontSize:'14px',fontWeight: '600',lineHeight:'21px',textAlign:'left',color:'#FFFFFFEB'}}>Bubbles</p>
-        <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('text')} src={Text} alt="Text" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('image')} src={Image} alt="Image" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('video')} src={Video} alt="Video" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('gif')} src={Gif} alt="Gif" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-        </div>
-    </div>
-
-    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
-        <p style={{fontFamily: 'Open Sans,sans-serif',fontSize:'14px',fontWeight: '600',lineHeight:'21px',textAlign:'left',color:'#FFFFFFEB'}}>Inputs</p>
-        <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('textInput')} src={InputText} alt="Text Input" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('number')} src={Number} alt="Number" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('email')} src={Email} alt="Email" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('phone')} src={Phone} alt="Phone" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('date')} src={Date} alt="Date" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('rating')} src={Rating} alt="Rating" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
-                <img onClick={() => handleInputClick('buttons')} src={Buttons} alt="Buttons" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
-            </div>
-        </div>
-    </div>
-</div>
-
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px',width: '315px',top:'200px',
-                left:'655px',borderRadius: '8px',position:'absolute' }}>
-                {inputs.map(input => (
-                    <div key={input.id} style={{ margin: '10px 0', display: 'flex', alignItems: 'center', gap: '10px',height:'119px',
-                        background:'#18181B',position:'relative'
-                     }}>
-                        <span style={{fontFamily: 'Open Sans,sans-serif',fontSize: '20px',fontWeight:'600',lineHeight:'21px',
-                            textAlign:'left',color:'#FFFFFF',top:'-35px',left:'20px',position:'relative'}}>{input.type}</span>
-                        <input
-                            type={input.type === 'textInput' ? 'text' : input.type === 'number' ? 'number' : 'text'}
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                            placeholder={`Enter ${input.type}`}
-                            style={{width: '283px',height:'45px',top:'252px',left:'672px',borderRadius: '5px',
-                             background:'#1F1F23',border: '1px solid #F55050'  }}
-                        />
-                        <img src={Deleete} alt="Delete" onClick={() => handleDeleteClick(input.id)} 
-                        style={{ cursor: 'pointer',top:'0px',left:'310px' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '20px' }}>
+                <div style={{ width: '48%', display: 'flex', flexDirection: 'column', gap: '20px', paddingTop: '70px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '20px' }}>
+                        <div>
+                            <img src={Text} alt="Text" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('text')} />
+                        </div>
+                        <div>
+                            <img src={Image} alt="Image" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('image')} />
+                        </div>
+                        <div>
+                            <img src={Video} alt="Video" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('video')} />
+                        </div>
+                        <div>
+                            <img src={Gif} alt="Gif" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('gif')} />
+                        </div>
+                        <div>
+                            <img src={Buttons} alt="Buttons" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('button')} />
+                        </div>
                     </div>
-                ))}
-            </div>
 
-            <div style={{ position: 'absolute',width: '309px',height:'60px',top: '134px',left: '655px',borderRadius: '16px' }}>
-                <img src={Start} alt="Start" />
+                    <div style={sectionStyle}>
+                        <div style={{ fontFamily: 'Open Sans', fontSize: '14px', fontWeight: '600', lineHeight: '19px', textAlign: 'left', color: '#FFFFFF' }}>Options</div>
+                        <div style={itemsContainerStyle}>
+                            {inputs.filter(input => input.type === 'text').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Text${inputs.filter(i => i.type === 'text').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'image').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Image${inputs.filter(i => i.type === 'image').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'video').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Video${inputs.filter(i => i.type === 'video').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'gif').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Gif${inputs.filter(i => i.type === 'gif').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'button').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Button${inputs.filter(i => i.type === 'button').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
+                <div style={{ width: '48%', display: 'flex', flexDirection: 'column', gap: '20px', paddingTop: '70px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '20px' }}>
+                        <div>
+                            <img src={InputText} alt="Input Text" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('text')} />
+                        </div>
+                        <div>
+                            <img src={Number} alt="Number" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('number')} />
+                        </div>
+                        <div>
+                            <img src={Email} alt="Email" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('email')} />
+                        </div>
+                        <div>
+                            <img src={Phone} alt="Phone" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('phone')} />
+                        </div>
+                        <div>
+                            <img src={Date} alt="Date" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('date')} />
+                        </div>
+                        <div>
+                            <img src={Rating} alt="Rating" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('rating')} />
+                        </div>
+                    </div>
+
+                    <div style={sectionStyle}>
+                        <div style={{ fontFamily: 'Open Sans', fontSize: '14px', fontWeight: '600', lineHeight: '19px', textAlign: 'left', color: '#FFFFFF' }}>Inputs</div>
+                        <div style={itemsContainerStyle}>
+                            {inputs.filter(input => input.type === 'text').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Text${inputs.filter(i => i.type === 'text').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'number').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Number${inputs.filter(i => i.type === 'number').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'email').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Email${inputs.filter(i => i.type === 'email').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'phone').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Phone${inputs.filter(i => i.type === 'phone').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'date').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Date${inputs.filter(i => i.type === 'date').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                            {inputs.filter(input => input.type === 'rating').map(input => (
+                                <div key={input.id}>
+                                    <input
+                                        type="text"
+                                        value={input.value}
+                                        onChange={(e) => handleInputChange(input.id, e.target.value)}
+                                        placeholder={`Rating${inputs.filter(i => i.type === 'rating').indexOf(input) + 1}`}
+                                        style={inputStyle}
+                                    />
+                                    <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
-}
+};
 
-export default Formspace;
+export default FormSpace;
