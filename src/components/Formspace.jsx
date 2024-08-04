@@ -211,6 +211,155 @@ function Formspace() {
         navigate(`/formspace/${formId}`);
     };
 
+
+    const renderInput = (input) => {
+        switch (input.type) {
+            case 'text':
+                return (
+                    <div key={input.id}>
+                        <span>Text Input</span>
+                        <input
+                            type="text"
+                            value={input.value}
+                            onChange={(e) => handleInputChange(input.id, e.target.value)}
+                            placeholder="Click here to edit"
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'number':
+                return (
+                    <div key={input.id}>
+                        <span>Number Input</span>
+                        <input
+                            type="number"
+                            value={input.value}
+                            onChange={(e) => handleInputChange(input.id, e.target.value)}
+                            placeholder="Click here to edit"
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'email':
+                return (
+                    <div key={input.id}>
+                        <span>Email Input</span>
+                        <input
+                            type="email"
+                            value={input.value}
+                            onChange={(e) => handleInputChange(input.id, e.target.value)}
+                            placeholder="Click here to edit"
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'phone':
+                return (
+                    <div key={input.id}>
+                        <span>Phone Input</span>
+                        <input
+                            type="tel"
+                            value={input.value}
+                            onChange={(e) => handleInputChange(input.id, e.target.value)}
+                            placeholder="Click here to edit"
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'date':
+                return (
+                    <div key={input.id}>
+                        <span>Date Input</span>
+                        <input
+                            type="date"
+                            value={input.value}
+                            onChange={(e) => handleInputChange(input.id, e.target.value)}
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'rating':
+                return (
+                    <div key={input.id}>
+                        <span>Rating Input</span>
+                        <input
+                            type="number"
+                            min="1"
+                            max="5"
+                            value={input.value}
+                            onChange={(e) => handleInputChange(input.id, e.target.value)}
+                            placeholder="Enter rating (1-5)"
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'button':
+                return (
+                    <div key={input.id}>
+                        <span>Button</span>
+                        <button
+                            type="button"
+                            onClick={(e) => handleInputChange(input.id, e.target.innerText)}
+                        >
+                            {input.value || 'Click me'}
+                        </button>
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'image':
+                return (
+                    <div key={input.id}>
+                        <span>Image Input</span>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'video':
+                return (
+                    <div key={input.id}>
+                        <span>Video Input</span>
+                        <input
+                            type="file"
+                            accept="video/*"
+                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            case 'gif':
+                return (
+                    <div key={input.id}>
+                        <span>GIF Input</span>
+                        <input
+                            type="file"
+                            accept="image/gif"
+                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+
+                case 'textInput':
+                return (
+                    <div key={input.id}>
+                        <span>GIF Input</span>
+                        <input
+                            type="text"
+                            accept="image/gif"
+                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
+                        />
+                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
+                    </div>
+                );
+            default:
+                return null;
+            }
+        };
+
     return (
         <div style={{ width: '1440px', height: '900px', margin: '0 auto', background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',
             position: 'relative' }}>
@@ -310,7 +459,9 @@ function Formspace() {
             </div>
         </div>
     </div>
-</div>
+</div>  
+
+        
 
 
              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px', width: '315px', top: '200px', left: '655px', borderRadius: '8px', position: 'absolute' }}>
