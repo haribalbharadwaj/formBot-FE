@@ -13,6 +13,8 @@ import Rating from '../assets/New folder/Rating.png';
 import Buttons from '../assets/New folder/Buttons.png';
 import Phone from '../assets/New folder/Phone.png';
 import Close from "../assets/close.png";
+import Start from "../assets/startLogo.png";
+import Deleete from "../assets/delete.png";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useFormContext } from "../components/FormContext";
 
@@ -54,6 +56,7 @@ function Formspace() {
             });
         };
     
+        // Ensure inputs is structured correctly
         const formData = {
             formName,
             textInputs: assignSerialNumbers(inputs.filter(input => input.type === 'text')),
@@ -66,6 +69,7 @@ function Formspace() {
             phoneInputs: assignSerialNumbers(inputs.filter(input => input.type === 'phone')),
             ratingInputs: assignSerialNumbers(inputs.filter(input => input.type === 'rating')),
             buttonInputs: assignSerialNumbers(inputs.filter(input => input.type === 'button'))
+            
         };
     
         console.log("Form submitted with data:", formData);
@@ -87,6 +91,7 @@ function Formspace() {
             setSuccess('Form added successfully');
             setError('');
     
+            // Clear form fields
             setFormName('');
             setInputs([]);
             localStorage.setItem('userId', response.data.data._id); 
@@ -147,6 +152,7 @@ function Formspace() {
     };
 
     const handleCancel = () => {
+        // Reset form fields
         setFormName('');
         setInputs([]);
     };
@@ -161,15 +167,23 @@ function Formspace() {
         cursor: 'pointer'
     };
 
-    const inputStyle = {
-        width: 'calc(50% - 5px)',
-        height: '39px',
-        top: '29px',
-        padding: '9px 17px 9px 17px',
-        borderRadius: '8px',
-        border: '1px',
-        flex: '0 0 calc(50% - 10px)'
+
+    const inputStyle={
+    width:'calc(50% - 5px)',height:'39px',top:'29px',padding:'9px 17px 9px 17px',borderRadius:'8px',border:'1px',flex: '0 0 calc(50% - 10px)'
+    }
+
+    const sectionStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
     };
+
+    const itemsContainerStyle = {
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: '10px'
+    };
+
 
     const activeButtonStyle = {
         ...buttonStyle,
@@ -197,209 +211,121 @@ function Formspace() {
         navigate(`/formspace/${formId}`);
     };
 
-    const renderInput = (input) => {
-        switch (input.type) {
-            case 'text':
-                return (
-                    <div key={input.id}>
-                        <span>Text Input</span>
-                        <input
-                            type="text"
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                            placeholder="Enter text"
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'number':
-                return (
-                    <div key={input.id}>
-                        <span>Number Input</span>
-                        <input
-                            type="number"
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                            placeholder="Enter number"
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'email':
-                return (
-                    <div key={input.id}>
-                        <span>Email Input</span>
-                        <input
-                            type="email"
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                            placeholder="Enter email"
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'phone':
-                return (
-                    <div key={input.id}>
-                        <span>Phone Input</span>
-                        <input
-                            type="tel"
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                            placeholder="Enter phone number"
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'date':
-                return (
-                    <div key={input.id}>
-                        <span>Date Input</span>
-                        <input
-                            type="date"
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'rating':
-                return (
-                    <div key={input.id}>
-                        <span>Rating Input</span>
-                        <input
-                            type="number"
-                            min="1"
-                            max="5"
-                            value={input.value}
-                            onChange={(e) => handleInputChange(input.id, e.target.value)}
-                            placeholder="Enter rating (1-5)"
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'button':
-                return (
-                    <div key={input.id}>
-                        <span>Button</span>
-                        <button
-                            type="button"
-                            onClick={(e) => handleInputChange(input.id, e.target.innerText)}
-                        >
-                            {input.value || 'Click me'}
-                        </button>
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'image':
-                return (
-                    <div key={input.id}>
-                        <span>Image Input</span>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'video':
-                return (
-                    <div key={input.id}>
-                        <span>Video Input</span>
-                        <input
-                            type="file"
-                            accept="video/*"
-                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            case 'gif':
-                return (
-                    <div key={input.id}>
-                        <span>GIF Input</span>
-                        <input
-                            type="file"
-                            accept="image/gif"
-                            onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
-                        />
-                        <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
-                    </div>
-                );
-            default:
-                return null;
-        }
-    };
-
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <h2 style={{ padding: '10px 0', color: 'white', fontSize: '14px', textAlign: 'center', position: 'absolute', left: '68px', top: '15px' }}>Flow</h2>
-                <h2 style={{ padding: '10px 0', color: 'white', fontSize: '14px', textAlign: 'center', position: 'absolute', left: '154px', top: '15px' }}>Theme</h2>
-                <h2 style={{ padding: '10px 0', color: 'white', fontSize: '14px', textAlign: 'center', position: 'absolute', left: '250px', top: '15px' }}>Response</h2>
+        <div style={{ width: '1440px', height: '900px', margin: '0 auto', background: 'linear-gradient(0deg, #121212, #121212), linear-gradient(0deg, #18181B, #18181B)',
+            position: 'relative' }}>
+            
+            <div style={{ width: '1440px', height: '56px', border: '0px 0px 1px 0px', background: '#18181B', borderBottom: '1px solid #FFFFFF29',
+                    fontFamily: 'Open Sans,sans-serif', fontSize: '12px', fontWeight: '600', lineHeight: '21px', textAlign: 'left'
+                }}>
                 <div>
-                    <button
-                        style={{ position: 'absolute', left: '10px', top: '11px', ...activeButton === 'Flow' ? activeButtonStyle : buttonStyle }}
-                        onClick={() => handleFlowClick(formId)}
-                    >
-                        Flow
-                    </button>
-                    <button
-                        style={{ position: 'absolute', left: '94px', top: '11px', ...activeButton === 'Theme' ? activeButtonStyle : buttonStyle }}
-                        onClick={handleThemeClick}
-                    >
-                        Theme
-                    </button>
-                    <button
-                        style={{ position: 'absolute', left: '187px', top: '11px', ...activeButton === 'Response' ? activeButtonStyle : buttonStyle }}
-                        onClick={() => handleResponseClick(formId)}
-                    >
-                        Response
-                    </button>
+                    <input
+                        type="text"
+                        value={formName}
+                        onChange={(e) => setFormName(e.target.value)}
+                        placeholder="Enter Form Name"
+                        style={{
+                            width: '222px',
+                            height: '23px',
+                            borderRadius: '6px',
+                            background: '#37373E',
+                            color: '#FFFFFF',
+                            fontSize: '14px',
+                            fontWeight: '400',
+                            lineHeight: '21px',
+                            border: 'none',
+                            top: '17px', left: '19px',
+                            position: 'absolute'
+                        }}
+                    />
+                    {error.name && <p style={{ color: 'red' }}>{error.name}</p>}
                 </div>
-                <div style={{ padding: '10px 0', position: 'absolute', right: '30px', top: '11px' }}>
-                    <button style={{ ...buttonStyle, background: '#7EA6FF' }} onClick={handleCancel}>Cancel</button>
-                    <button style={{ ...buttonStyle, background: '#7EA6FF' }} onClick={handleSave}>Save</button>
-                    <button style={{ ...buttonStyle, background: '#7EA6FF' }} onClick={handleShare}>Share</button>
+                <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'center', marginTop: '2px' }}>
+                    <span onClick={handleFlowClick} style={activeButton === 'Flow' ? activeButtonStyle : buttonStyle}>Flow</span>
+                    <span onClick={handleThemeClick} style={activeButton === 'Theme' ? activeButtonStyle : buttonStyle}>Theme</span>
+                    <span onClick={handleResponseClick} style={activeButton === 'Response' ? activeButtonStyle : buttonStyle}>Response</span>
                 </div>
-            </div>
-            <div style={{ height: '100%', display: 'flex', justifyContent: 'space-between' }}>
-                <div style={{ flex: '1 1 25%', backgroundColor: '#1A202C', padding: '20px', borderRadius: '8px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <img src={Text} alt="Text" onClick={() => handleInputClick('text')} />
-                        <img src={Image} alt="Image" onClick={() => handleInputClick('image')} />
-                        <img src={Video} alt="Video" onClick={() => handleInputClick('video')} />
-                        <img src={Gif} alt="Gif" onClick={() => handleInputClick('gif')} />
-                        <img src={InputText} alt="InputText" onClick={() => handleInputClick('text')} />
-                        <img src={Number} alt="Number" onClick={() => handleInputClick('number')} />
-                        <img src={Email} alt="Email" onClick={() => handleInputClick('email')} />
-                        <img src={Date} alt="Date" onClick={() => handleInputClick('date')} />
-                        <img src={Rating} alt="Rating" onClick={() => handleInputClick('rating')} />
-                        <img src={Buttons} alt="Buttons" onClick={() => handleInputClick('button')} />
-                        <img src={Phone} alt="Phone" onClick={() => handleInputClick('phone')} />
-                    </div>
-                </div>
-                <div style={{ flex: '3 1 75%', backgroundColor: '#2D3748', padding: '20px', borderRadius: '8px', marginLeft: '10px' }}>
-                    <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                        <input
-                            type="text"
-                            value={formName}
-                            onChange={(e) => setFormName(e.target.value)}
-                            placeholder="Enter Form Name"
-                            style={inputStyle}
-                        />
-                        <div style={{ marginTop: '20px', width: '100%', display: 'flex', flexDirection: 'column' }}>
-                            {inputs.map(renderInput)}
-                        </div>
-                        <div style={{ marginTop: '20px' }}>
-                            <button type="submit" style={{ ...buttonStyle, background: '#7EA6FF' }}>Save Form</button>
-                        </div>
-                    </form>
+                <div style={{ left: '82%', position: 'absolute', top: '0%', display: 'flex', flexDirection: 'row', gap: '30px' }}>
+                    <button onClick={handleSave} style={{ width: '71px', height: '32px', borderRadius: '6px', background: '#4ADE80CC', color: '#FFFFFF', fontSize: '14px', fontWeight: '600',
+                        lineHeight: '21px', border: 'none', marginTop: '10px' }} type="submit">Save</button>
+
+                    <button style={{ width: '65px', height: '25px', borderRadius: '4px 0px 0px 0px', marginTop: '10px', background: '#848890'}}
+                        onClick={handleShare}>Share</button>
+                    <img src={Close} onClick={handleCancel} style={{ width: '14px', height: '14px', marginTop: '20px' }} />
                 </div>
             </div>
-            {success && <p style={{ color: 'green' }}>{success}</p>}
-            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+            <div style={{
+    width: '344px',
+    height: '812px',
+    top: '72px',
+    left: '16px',
+    padding: '65px 17px 0px 17px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    background: '#18181B',
+    position: 'absolute'
+}}>
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+        <p style={{fontFamily: 'Open Sans,sans-serif',fontSize:'14px',fontWeight: '600',lineHeight:'21px',textAlign:'left',color:'#FFFFFFEB'}}>Bubbles</p>
+        <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('text')} src={Text} alt="Text" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('image')} src={Image} alt="Image" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('video')} src={Video} alt="Video" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('gif')} src={Gif} alt="Gif" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+        </div>
+    </div>
+
+    <div style={{display: 'flex', flexDirection: 'column', gap: '20px'}}>
+        <p style={{fontFamily: 'Open Sans,sans-serif',fontSize:'14px',fontWeight: '600',lineHeight:'21px',textAlign:'left',color:'#FFFFFFEB'}}>Inputs</p>
+        <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px'}}>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('textInput')} src={InputText} alt="Text Input" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('number')} src={Number} alt="Number" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('email')} src={Email} alt="Email" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('phone')} src={Phone} alt="Phone" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('date')} src={Date} alt="Date" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('rating')} src={Rating} alt="Rating" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+            <div style={{width: 'calc(50% - 5px)', display: 'flex', justifyContent: 'center'}}>
+                <img onClick={() => handleInputClick('buttons')} src={Buttons} alt="Buttons" style={{width: '100%', height: 'auto', cursor: 'pointer'}} />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px', width: '315px', top: '200px', left: '655px', borderRadius: '8px', position: 'absolute' }}>
+            {inputs.map(input => (
+                <div key={input.id} style={{ margin: '10px 0', display: 'flex', alignItems: 'center', gap: '10px', height: '119px', background: '#18181B', position: 'relative' }}>
+                    <span style={{ fontFamily: 'Open Sans, sans-serif', fontSize: '20px', fontWeight: '600', lineHeight: '21px', textAlign: 'left', color: '#FFFFFF', top: '-35px', left: '20px', position: 'relative' }}>{input.type}</span>
+                    {renderInput(input)}
+                    <img src={Deleete} alt="Delete" onClick={() => handleDeleteClick(input.id)} style={{ cursor: 'pointer', top: '0px', left: '310px' }} />
+                </div>
+            ))}
+        </div>
+
+            <div style={{ position: 'absolute',width: '309px',height:'60px',top: '134px',left: '655px',borderRadius: '16px' }}>
+                <img src={Start} alt="Start" />
+            </div>
         </div>
     );
 }
