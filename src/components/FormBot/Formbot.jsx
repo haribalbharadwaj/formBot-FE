@@ -59,6 +59,21 @@ const Formbot = () => {
                 });
                 setCombinedInputs(combined);
                 console.log('Combined Inputs:', combinedInputs);
+                const datas = {
+                    textInputs: data.textInputs || [],
+                    imageInputs: data.imageInputs || [],
+                    videoInputs: data.videoInputs || [],
+                    gifInputs: data.gifInputs || [],
+                    numberInputs: data.numberInputs || [],
+                    emailInputs: data.emailInputs || [],
+                    dateInputs: data.dateInputs || [],
+                    phoneInputs: data.phoneInputs || [],
+                    ratingInputs: data.ratingInputs || [],
+                    buttonInputs: data.buttonInputs || [],
+                    tinputs: data.tinputs || []
+                };
+                
+                console.log("Data:",datas);
 
             } catch (error) {
                 console.error('Error fetching form data:', error);
