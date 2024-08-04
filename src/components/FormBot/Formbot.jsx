@@ -27,7 +27,6 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-                console.log(data); 
 
                 const combined = [
                     ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
@@ -74,6 +73,8 @@ const Formbot = () => {
                 };
                 
                 console.log("Data:",datas);
+                console.log('Fetched Form Data:', data);
+
 
             } catch (error) {
                 console.error('Error fetching form data:', error);
