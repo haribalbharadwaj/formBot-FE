@@ -49,26 +49,27 @@ function Formspace() {
             return;
         }
 
-        const assignSerialNumbers = (inputs) => {
-            let serialNo = 1;
-            return inputs.map(input => {
-                return { ...input, serialNo: serialNo++ };
-            });
+        const assignEmptyValues = (inputs,defaultValue='') => {
+            return inputs.map(input => ({
+                id: input.id || new mongoose.Types.ObjectId().toString(), // Generate unique ID if not already present
+                value: input.value || defaultValue,
+                visible: input.visible !== undefined ? input.visible : true
+            }));
         };
     
         // Ensure inputs is structured correctly
         const formData = {
             formName,
-            textInputs: assignSerialNumbers(inputs.filter(input => input.type === 'text')),
-            imageInputs: assignSerialNumbers(inputs.filter(input => input.type === 'image')),
-            videoInputs: assignSerialNumbers(inputs.filter(input => input.type === 'video')),
-            gifInputs: assignSerialNumbers(inputs.filter(input => input.type === 'gif')),
-            numberInputs: assignSerialNumbers(inputs.filter(input => input.type === 'number')),
-            emailInputs: assignSerialNumbers(inputs.filter(input => input.type === 'email')),
-            dateInputs: assignSerialNumbers(inputs.filter(input => input.type === 'date')),
-            phoneInputs: assignSerialNumbers(inputs.filter(input => input.type === 'phone')),
-            ratingInputs: assignSerialNumbers(inputs.filter(input => input.type === 'rating')),
-            buttonInputs: assignSerialNumbers(inputs.filter(input => input.type === 'button'))
+            textInputs: assignEmptyValues(inputs.filter(input => input.type === 'text'), 'default text'),
+            imageInputs: assignEmptyValues(inputs.filter(input => input.type === 'image'), 'default image'),
+            videoInputs: assignEmptyValues(inputs.filter(input => input.type === 'video'), 'default video'),
+            gifInputs: assignEmptyValues(inputs.filter(input => input.type === 'gif'), 'default gif'),
+            buttonInputs: assignEmptyValues(inputs.filter(input => input.type === 'button'), 'default button'),
+            numberInputs: assignEmptyValues(inputs.filter(input => input.type === 'number')),
+            emailInputs: assignEmptyValues(inputs.filter(input => input.type === 'email')),
+            dateInputs: assignEmptyValues(inputs.filter(input => input.type === 'date')),
+            phoneInputs: assignEmptyValues(inputs.filter(input => input.type === 'phone')),
+            ratingInputs: assignEmptyValues(inputs.filter(input => input.type === 'rating'))
             
         };
     
