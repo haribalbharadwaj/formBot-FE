@@ -338,7 +338,7 @@ function Formspace() {
                 <div style={{ width: '48%', display: 'flex', flexDirection: 'column', gap: '20px', paddingTop: '70px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '20px' }}>
                         <div>
-                            <img src={InputText} alt="Input Text" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('text')} />
+                            <img src={InputText} alt="Input Text" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('inputText')} />
                         </div>
                         <div>
                             <img src={Number} alt="Number" style={{ cursor: 'pointer' }} onClick={() => handleInputClick('number')} />
@@ -360,13 +360,13 @@ function Formspace() {
                     <div style={sectionStyle}>
                         <div style={{ fontFamily: 'Open Sans', fontSize: '14px', fontWeight: '600', lineHeight: '19px', textAlign: 'left', color: '#FFFFFF' }}>Inputs</div>
                         <div style={itemsContainerStyle}>
-                            {inputs.filter(input => input.type === 'text').map(input => (
+                            {inputs.filter(input => input.type === 'inputText').map(input => (
                                 <div key={input.id}>
                                     <input
                                         type="text"
                                         value={input.value}
                                         onChange={(e) => handleInputChange(input.id, e.target.value)}
-                                        placeholder={`Text${inputs.filter(i => i.type === 'text').indexOf(input) + 1}`}
+                                        placeholder={`Text${inputs.filter(i => i.type === 'inputText').indexOf(input) + 1}`}
                                         style={inputStyle}
                                     />
                                     <img src={Close} alt="Delete" style={{ cursor: 'pointer' }} onClick={() => handleDeleteClick(input.id)} />
