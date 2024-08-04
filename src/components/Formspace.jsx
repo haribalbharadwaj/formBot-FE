@@ -298,7 +298,7 @@ function Formspace() {
                     <div key={input.id}>
                         <span>Button</span>
                         <button
-                            type="button"
+                            type="text"
                             onClick={(e) => handleInputChange(input.id, e.target.innerText)}
                         >
                             {input.value || 'Click me'}
@@ -311,8 +311,8 @@ function Formspace() {
                     <div key={input.id}>
                         <span>Image Input</span>
                         <input
-                            type="file"
-                            accept="image/*"
+                            type="text"
+                            accept="text"
                             onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
                         />
                         <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
@@ -323,8 +323,8 @@ function Formspace() {
                     <div key={input.id}>
                         <span>Video Input</span>
                         <input
-                            type="file"
-                            accept="video/*"
+                            type="text"
+                            accept="text"
                             onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
                         />
                         <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
@@ -335,8 +335,8 @@ function Formspace() {
                     <div key={input.id}>
                         <span>GIF Input</span>
                         <input
-                            type="file"
-                            accept="image/gif"
+                            type="text"
+                            accept="text"
                             onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
                         />
                         <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
@@ -349,7 +349,7 @@ function Formspace() {
                         <span>GIF Input</span>
                         <input
                             type="text"
-                            accept="image/gif"
+                            accept="text"
                             onChange={(e) => handleInputChange(input.id, e.target.files[0].name)}
                         />
                         <button onClick={() => handleDeleteClick(input.id)}>Delete</button>
