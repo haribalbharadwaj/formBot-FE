@@ -273,7 +273,7 @@ const Formbot = () => {
                     <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                         <input
                         type={type.replace('Inputs','')}
-                        value={formValues[type]?.[index]?.vlue || ''}
+                        value={formValues[type]?.[index]?.value || ''}
                         onChange={(e)=>handleInputChange(type,index,e)}
                         style={inputStyle}
                         />
@@ -293,7 +293,7 @@ const Formbot = () => {
                     <div key={id} style={{left:'70%',position:'absolute',marginBottom:'40px'}}>
                          <input
                             type={type.replace('Inputs','')}
-                            value={formValues[type]?.[index]?.vlue || ''}
+                            value={formValues[type]?.[index]?.value || ''}
                             onChange={(e)=>handleInputChange(type,index,e)}
                             style={inputStyle}
                         />
