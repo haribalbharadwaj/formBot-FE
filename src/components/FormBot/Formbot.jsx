@@ -27,7 +27,6 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-
                 const combined = [
                     ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
                     ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
@@ -39,12 +38,9 @@ const Formbot = () => {
                     ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
                     ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
                     ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' })),
-                    ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Include tinputs
-                ].filter(item => item && item.id) // Ensure items have IDs
-                .sort((a, b) => a.id - b.id);
-                
-                console.log('Combined Inputs:', combined);
-                
+                    ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Add tinputs
+                ].sort((a, b) => a.id - b.id); // Sort by id
+
                 setFormData(data);
                 setFormValues({
                     textInputs: data.textInputs || [],
@@ -60,12 +56,6 @@ const Formbot = () => {
                     tinputs: data.tinputs || [] // Initialize tinputs
                 });
                 setCombinedInputs(combined);
-                console.log('Combined Inputs:', combinedInputs);
-    
-            
-                console.log('Fetched Form Data:', data);
-
-
             } catch (error) {
                 console.error('Error fetching form data:', error);
             } finally {
