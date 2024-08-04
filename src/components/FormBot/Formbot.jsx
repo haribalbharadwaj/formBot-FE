@@ -58,6 +58,8 @@ const Formbot = () => {
                     tinputs: data.tinputs || [] // Initialize tinputs
                 });
                 setCombinedInputs(combined);
+                console.log('Combined Inputs:', combinedInputs);
+
             } catch (error) {
                 console.error('Error fetching form data:', error);
             } finally {
