@@ -21,8 +21,6 @@ const Formbot = () => {
         }catch(error){
         
                 console.log('Error adding form:', error.response ? error.response.data : error.message);
-                setError('Error adding form. Please try again');
-                setSuccess('');
 
         }
     }, [formId]);
