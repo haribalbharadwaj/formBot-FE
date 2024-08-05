@@ -20,7 +20,6 @@ const Formbot = () => {
     const [themeColor, setThemeColor] = useState('#1F1F23'); // Default color
 
     useEffect(() => {
-        // Retrieve the saved color from localStorage when the component mounts
         const savedColor = localStorage.getItem('selectedThemeColor');
         if (savedColor) {
             setThemeColor(savedColor);
@@ -253,8 +252,14 @@ const Formbot = () => {
                         {nextButton}
                     </div>
                 );
-            case 'videoInputs':
             case 'gifInputs':
+                return (
+                    <div key={`${id}-${index}`} style={commonStyle}>
+                        <img src={value} alt="GIF Input" style={{ width: '100%' }} />
+                        {nextButton}
+                    </div>
+                );
+            case 'videoInputs':
             case 'numberInputs':
             case 'emailInputs':
             case 'phoneInputs':
@@ -267,8 +272,16 @@ const Formbot = () => {
                                 value={formValues[type][index]?.value || ''}
                                 onChange={(event) => handleInputChange(type, index, event)}
                                 style={inputStyle}
-                                placeholder={`Enter ${type.slice(0, -6)}`} // removes "Inputs" from the type
                             />
+                            {type === 'buttonInputs' && (
+                                <button
+                                    type="button"
+                                    onClick={() => handleInputChange(type, index)}
+                                    style={buttonStyle}
+                                >
+                                    {input.label || 'Button'}
+                                </button>
+                            )}
                         </div>
                         {nextButton}
                     </div>
@@ -278,62 +291,72 @@ const Formbot = () => {
         }
     };
 
+    const inputContainerStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '10px',
+    };
+
+    const calendarStyle = {
+        width: '100%',
+        border: '1px solid #ccc',
+    };
+
+    const buttonStyle = {
+        padding: '8px 16px',
+        backgroundColor: themeColor,
+        color: '#fff',
+        border: 'none',
+        cursor: 'pointer',
+    };
+
+    const ratingContainerStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '10px',
+    };
+
+    const circleStyle = {
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        display: 'inline-block',
+        lineHeight: '24px',
+        textAlign: 'center',
+        cursor: 'pointer',
+    };
+
+    const inputStyle = {
+        width: '100%',
+        padding: '8px',
+        border: '1px solid #ccc',
+    };
+
     return (
-        <div style={{
-            width: '100%',
-            height: '100%',
-            backgroundColor: themeColor, // Apply the theme color
-            color: themeColor === '#FFFFFF' ? '#000000' : '#FFFFFF', // Adjust text color for contrast
-            padding: '20px'}}>
+        <div className="formbot-container">
+            <h1>{formData.formName}</h1>
             <form onSubmit={handleSubmit}>
-                {visibleIndices.map(index => renderInput(combinedInputs[index], index))}
-                <button type="button" onClick={handlePreviousClick} disabled={visibleIndices.length <= 1}>
-                    Previous
+                {visibleIndices.map((index) => {
+                    const input = combinedInputs[index];
+                    return renderInput(input, index);
+                })}
+                {visibleIndices.length < combinedInputs.length && (
+                    <button type="button" onClick={() => handleNextClick(visibleIndices.length - 1)}>
+                        Next
+                    </button>
+                )}
+                {visibleIndices.length > 1 && (
+                    <button type="button" onClick={handlePreviousClick}>
+                        Previous
+                    </button>
+                )}
+                <button type="submit" style={buttonStyle}>
+                    Submit
                 </button>
-                <button type="submit">Save</button>
             </form>
         </div>
     );
-};
-
-const inputContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: '10px',
-};
-
-const calendarStyle = {
-    display: 'block',
-    margin: '0 auto',
-};
-
-const buttonStyle = {
-    marginTop: '10px',
-};
-
-const ratingContainerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-};
-
-const circleStyle = {
-    display: 'inline-block',
-    width: '20px',
-    height: '20px',
-    borderRadius: '50%',
-    backgroundColor: '#ddd',
-    cursor: 'pointer',
-    margin: '0 5px',
-};
-
-const inputStyle = {
-    padding: '10px',
-    width: '100%',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    marginRight: '10px',
 };
 
 export default Formbot;
