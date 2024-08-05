@@ -37,7 +37,19 @@ const Formbot = () => {
 
                 console.log('Fetched Data:', data);
 
-                const combined = data.inputs || [];
+                const combined = [
+                    ...(data.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
+                    ...(data.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
+                    ...(data.videoInputs || []).map(input => ({ ...input, type: 'videoInputs' })),
+                    ...(data.gifInputs || []).map(input => ({ ...input, type: 'gifInputs' })),
+                    ...(data.numberInputs || []).map(input => ({ ...input, type: 'numberInputs' })),
+                    ...(data.emailInputs || []).map(input => ({ ...input, type: 'emailInputs' })),
+                    ...(data.dateInputs || []).map(input => ({ ...input, type: 'dateInputs' })),
+                    ...(data.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
+                    ...(data.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
+                    ...(data.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' })),
+                    ...(data.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Add tinputs
+                ].sort((a, b) => a.id - b.id); // Sort by id
 
                 setFormData(data);
                 setCombinedInputs(combined);
@@ -241,30 +253,48 @@ const Formbot = () => {
                         {nextButton}
                     </div>
                 );
-            case 'videoInputs':
             case 'numberInputs':
+                return (
+                    <div key={`${_id}-${index}`} style={commonStyle}>
+                        <input
+                            type="number"
+                            value={formValues[_id] || value || ''}
+                            onChange={(event) => handleInputChange(_id, event)}
+                            style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
+                        />
+                        {nextButton}
+                    </div>
+                );
             case 'emailInputs':
+                return (
+                    <div key={`${_id}-${index}`} style={commonStyle}>
+                        <input
+                            type="email"
+                            value={formValues[_id] || value || ''}
+                            onChange={(event) => handleInputChange(_id, event)}
+                            style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
+                        />
+                        {nextButton}
+                    </div>
+                );
             case 'phoneInputs':
+                return (
+                    <div key={`${_id}-${index}`} style={commonStyle}>
+                        <input
+                            type="tel"
+                            value={formValues[_id] || value || ''}
+                            onChange={(event) => handleInputChange(_id, event)}
+                            style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
+                        />
+                        {nextButton}
+                    </div>
+                );
             case 'buttonInputs':
                 return (
                     <div key={`${_id}-${index}`} style={commonStyle}>
-                        <div style={inputContainerStyle}>
-                            <input
-                                type="text"
-                                value={formValues[_id] || value || ''}
-                                onChange={(event) => handleInputChange(_id, event)}
-                                style={inputStyle}
-                            />
-                            {type === 'buttonInputs' && (
-                                <button
-                                    type="button"
-                                    onClick={() => handleInputChange(_id, { target: { value: value || '' } })}
-                                    style={buttonStyle}
-                                >
-                                    {input.label || 'Button'}
-                                </button>
-                            )}
-                        </div>
+                        <button type="button" style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}>
+                            {value}
+                        </button>
                         {nextButton}
                     </div>
                 );
@@ -275,7 +305,6 @@ const Formbot = () => {
 
     const inputContainerStyle = {
         display: 'flex',
-        flexDirection: 'column',
         alignItems: 'center',
         gap: '10px',
     };
@@ -336,7 +365,6 @@ const Formbot = () => {
                 <button type="submit" style={buttonStyle}>
                     Submit
                 </button>
-                <p></p>
             </form>
         </div>
     );
