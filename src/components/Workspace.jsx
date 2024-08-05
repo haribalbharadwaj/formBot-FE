@@ -309,7 +309,7 @@ function Workspace() {
     }
 
     const formWorkspace=()=>{
-        navigate(`/formspace/${formId}`);
+        navigate(`/formspace`);
     }
 
     const handleDeleteFormClick = (formId) => {
@@ -386,7 +386,7 @@ function Workspace() {
                         forms.map(form => (
 
                             <div key={form._id} >
-                                <img src={Deleete} style={{marginLeft:'220px',marginBottom:'-10px'}} onClick={handleDeleteFormClick}/>
+                                <img src={Deleete} style={{marginLeft:'220px',marginBottom:'-10px'}} onClick={() => handleDeleteFormClick(form._id)}/>
                                 <div  className="form-item" style={{ width:'225px',height:'270px',border: '1px solid ', background:'#D3D3D3',brderRadius: '5px',
                              display: 'flex',justifyContent: 'center',alignItems: 'center'}} onClick={() => handleFormClick(form._id)}>
                             <h3 style={{ margin: 0 ,color:'#FFFFFF',fontFamily: 'Open Sans,sans-serif',fontSize: '18px',fontWeight: '400',lineHeight: '21.6px',

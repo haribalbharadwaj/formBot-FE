@@ -21,9 +21,9 @@ function Home() {
                     <Route path="/Signup" element={<Signup/>}/>
                     <Route path="/workspace" element={<Workspace/>}/>
                     <Route path="/settings" element={<Settings/>}/>
-                    <Route path="/formspace/:formId" element={<Formspace />} />
-                    <Route path="/response/:formId" element={<Response/>}/>
-                    <Route path="/theme" element={<Theme/>}/>
+                    <Route path="/formspace/:formId?" element={<Formspace />} />
+                    <Route path="/response/:formId?" element={<Response/>}/>
+                    <Route path="/theme/:formId?" element={<Theme/>}/>
                     <Route path="/form/:formId" element={<Formbot />} />
                 </Routes>
         </Router>
