@@ -27,8 +27,8 @@ const Formbot = () => {
         fetchFormData();
     }, [formId]);
 
-    // Combine all input types into a single array, preserving their order
-    const combinedInputs = (formData.inputs || []).sort((a, b) => a.serialNo - b.serialNo); // Sort by serialNo
+    // Combine all input types into a single array and sort by serialNo
+    const combinedInputs = (formData.inputs || []).sort((a, b) => a.serialNo - b.serialNo); 
 
     const handleInputChange = (id, event) => {
         setFormValues((prevValues) => ({
@@ -39,7 +39,11 @@ const Formbot = () => {
 
     const handleNextClick = (index) => {
         if (index < combinedInputs.length - 1) {
-            setVisibleIndices((prevIndices) => [...prevIndices, index + 1]);
+            setVisibleIndices((prevIndices) => {
+                const nextIndex = index + 1;
+                // Ensure we only add the next index if it's not already visible
+                return prevIndices.includes(nextIndex) ? prevIndices : [...prevIndices, nextIndex];
+            });
         }
     };
 
@@ -141,6 +145,7 @@ const Formbot = () => {
                 <button type="submit">
                     Submit
                 </button>
+                <p></p>
             </form>
         </div>
     );
