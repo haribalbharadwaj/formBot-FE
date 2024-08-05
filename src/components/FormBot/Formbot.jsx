@@ -16,9 +16,9 @@ const Formbot = () => {
 
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
-                
+
                 console.log('Fetched Data:', data);
-                setFormData(data); // Use data directly
+                setFormData(data);
             } catch (error) {
                 console.error('Error fetching form:', error.response ? error.response.data : error.message);
             }
@@ -27,19 +27,8 @@ const Formbot = () => {
         fetchFormData();
     }, [formId]);
 
-    const combinedInputs = [
-        ...(formData.textInputs || []).map(input => ({ ...input, type: 'textInputs' })),
-        ...(formData.imageInputs || []).map(input => ({ ...input, type: 'imageInputs' })),
-        ...(formData.videoInputs || []).map(input => ({ ...input, type: 'videoInputs' })),
-        ...(formData.gifInputs || []).map(input => ({ ...input, type: 'gifInputs' })),
-        ...(formData.numberInputs || []).map(input => ({ ...input, type: 'numberInputs' })),
-        ...(formData.emailInputs || []).map(input => ({ ...input, type: 'emailInputs' })),
-        ...(formData.dateInputs || []).map(input => ({ ...input, type: 'dateInputs' })),
-        ...(formData.phoneInputs || []).map(input => ({ ...input, type: 'phoneInputs' })),
-        ...(formData.ratingInputs || []).map(input => ({ ...input, type: 'ratingInputs' })),
-        ...(formData.buttonInputs || []).map(input => ({ ...input, type: 'buttonInputs' })),
-        ...(formData.tinputs || []).map(input => ({ ...input, type: 'tinputs' })) // Add tinputs
-    ].sort((a, b) => a.serialNo - b.serialNo); // Sort by serialNo
+    // Combine all input types into a single array, preserving their order
+    const combinedInputs = (formData.inputs || []).sort((a, b) => a.serialNo - b.serialNo); // Sort by serialNo
 
     const handleInputChange = (id, event) => {
         setFormValues((prevValues) => ({
