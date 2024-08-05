@@ -1,0 +1,21 @@
+.formbot-container {
+    padding: 20px;
+}
+
+.formbot-section {
+    margin-bottom: 20px;
+}
+
+.formbot-input {
+    margin-bottom: 10px;
+}
+
+.formbot-image, .formbot-video, .formbot-gif {
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
