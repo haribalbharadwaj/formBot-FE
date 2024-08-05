@@ -42,8 +42,7 @@ const Formbot = () => {
                 setFormData(data);
                 setCombinedInputs(combined);
                 setFormValues(combined.reduce((acc, input) => {
-                    acc[input.type] = acc[input.type] || [];
-                    acc[input.type].push({ id: input.id, value: input.value || '' });
+                    acc[input._id] = input.value || '';
                     return acc;
                 }, {}));
             } catch (error) {
@@ -60,32 +59,27 @@ const Formbot = () => {
         return <div>Loading...</div>;
     }
 
-    const handleInputChange = (type, index, event) => {
+    const handleInputChange = (id, event) => {
+        const { value } = event.target;
         setFormValues(prevValues => ({
             ...prevValues,
-            [type]: prevValues[type].map((input, idx) =>
-                idx === index ? { ...input, value: event.target.value } : input
-            )
+            [id]: value
         }));
     };
 
-    const handleDateChange = (index, date) => {
+    const handleDateChange = (id, date) => {
         setSelectedDate(date);
         setFormValues(prevValues => ({
             ...prevValues,
-            dateInputs: prevValues.dateInputs.map((input, idx) =>
-                idx === index ? { ...input, value: date } : input
-            )
+            [id]: date
         }));
     };
 
-    const handleRatingChange = (index, rating) => {
+    const handleRatingChange = (id, rating) => {
         setSelectedRating(rating);
         setFormValues(prevValues => ({
             ...prevValues,
-            ratingInputs: prevValues.ratingInputs.map((input, idx) =>
-                idx === index ? { ...input, value: rating } : input
-            )
+            [id]: rating
         }));
     };
 
@@ -123,19 +117,7 @@ const Formbot = () => {
             await axios.put(`${backendUrl}/form/updateForm/${formId}`, formDataToSend);
 
             // Reset form values after submission
-            setFormValues({
-                textInputs: [],
-                imageInputs: [],
-                videoInputs: [],
-                gifInputs: [],
-                numberInputs: [],
-                emailInputs: [],
-                dateInputs: [],
-                phoneInputs: [],
-                ratingInputs: [],
-                buttonInputs: [],
-                tinputs: []
-            });
+            setFormValues({});
             setSelectedDate(null);
             setSelectedRating(null);
             setVisibleIndices([0]);
@@ -150,7 +132,7 @@ const Formbot = () => {
             return null;
         }
 
-        const { type, id, value } = input;
+        const { type, _id, value } = input;
 
         const commonStyle = {
             position: 'relative',
@@ -169,17 +151,17 @@ const Formbot = () => {
         switch (type) {
             case 'dateInputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <div style={inputContainerStyle}>
                             <Calendar
-                                onChange={(date) => handleDateChange(index, date)}
+                                onChange={(date) => handleDateChange(_id, date)}
                                 value={selectedDate}
                                 selectRange={false}
                                 style={calendarStyle}
                             />
                             <button
                                 type="button"
-                                onClick={() => handleInputChange(type, index)}
+                                onClick={() => handleInputChange(_id, { target: { value: selectedDate } })}
                                 disabled={!selectedDate}
                                 style={buttonStyle}
                             >
@@ -200,16 +182,16 @@ const Formbot = () => {
                 );
             case 'ratingInputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <div style={ratingContainerStyle}>
                             {[1, 2, 3, 4, 5].map((circle) => (
                                 <span
-                                    key={`${id}-${index}-${circle}`}
+                                    key={`${_id}-${index}-${circle}`}
                                     style={{
                                         ...circleStyle,
                                         backgroundColor: circle <= selectedRating ? '#FFD700' : '#ddd',
                                     }}
-                                    onClick={() => handleRatingChange(index, circle)}
+                                    onClick={() => handleRatingChange(_id, circle)}
                                 >
                                     {circle}
                                 </span>
@@ -220,11 +202,11 @@ const Formbot = () => {
                 );
             case 'textInputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <input
                             type="text"
-                            value={formValues.textInputs[index]?.value || ''}
-                            onChange={(event) => handleInputChange(type, index, event)}
+                            value={formValues[_id] || value || ''}
+                            onChange={(event) => handleInputChange(_id, event)}
                             style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                         />
                         {nextButton}
@@ -232,20 +214,20 @@ const Formbot = () => {
                 );
             case 'imageInputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <img src={value} alt="Image Input" style={{ width: '100%' }} />
                         {nextButton}
                     </div>
                 );
             case 'tinputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <input
                                 type="text"
-                                value={formValues.tinputs[index]?.value || ''}
+                                value={formValues[_id] || value || ''}
                                 placeholder="Type here..."
-                                onChange={(event) => handleInputChange(type, index, event)}
+                                onChange={(event) => handleInputChange(_id, event)}
                                 style={{ width: '100%', padding: '8px', border: '1px solid #ccc' }}
                             />
                         </div>
@@ -254,7 +236,7 @@ const Formbot = () => {
                 );
             case 'gifInputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <img src={value} alt="GIF Input" style={{ width: '100%' }} />
                         {nextButton}
                     </div>
@@ -265,18 +247,18 @@ const Formbot = () => {
             case 'phoneInputs':
             case 'buttonInputs':
                 return (
-                    <div key={`${id}-${index}`} style={commonStyle}>
+                    <div key={`${_id}-${index}`} style={commonStyle}>
                         <div style={inputContainerStyle}>
                             <input
                                 type="text"
-                                value={formValues[type][index]?.value || ''}
-                                onChange={(event) => handleInputChange(type, index, event)}
+                                value={formValues[_id] || value || ''}
+                                onChange={(event) => handleInputChange(_id, event)}
                                 style={inputStyle}
                             />
                             {type === 'buttonInputs' && (
                                 <button
                                     type="button"
-                                    onClick={() => handleInputChange(type, index)}
+                                    onClick={() => handleInputChange(_id, { target: { value: value || '' } })}
                                     style={buttonStyle}
                                 >
                                     {input.label || 'Button'}
