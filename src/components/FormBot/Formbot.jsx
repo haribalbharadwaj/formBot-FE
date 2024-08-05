@@ -9,20 +9,22 @@ const Formbot = () => {
     const [visibleIndices, setVisibleIndices] = useState([0]);
 
     useEffect(() => {
-        try{
-            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+        const fetchFormData = async () => {
+            try {
+                const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
                 if (!backendUrl) throw new Error('Backend URL is not defined');
 
-                const response = axios.get(`${backendUrl}/form/getForm/${formId}`);
+                const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
-
+                
                 console.log('Fetched Data:', data);
-                setFormData(response.data);
-        }catch(error){
-        
-                console.log('Error adding form:', error.response ? error.response.data : error.message);
+                setFormData(data); // Use data directly
+            } catch (error) {
+                console.error('Error fetching form:', error.response ? error.response.data : error.message);
+            }
+        };
 
-        }
+        fetchFormData();
     }, [formId]);
 
     const combinedInputs = [
