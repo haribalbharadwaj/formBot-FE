@@ -1,21 +1,20 @@
-.formbot-container {
-    padding: 20px;
+.input-item.hidden {
+    display: none;
 }
 
-.formbot-section {
-    margin-bottom: 20px;
+.input-item.visible {
+    display: block;
 }
 
-.formbot-input {
+.inputs-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-item {
     margin-bottom: 10px;
 }
 
-.formbot-image, .formbot-video, .formbot-gif {
-    max-width: 100%;
-    height: auto;
-}
-
-h1, h2 {
-    font-size: 1.5em;
-    margin-bottom: 10px;
+.input-item button {
+    margin-left: 10px;
 }
