@@ -1,20 +1,92 @@
-.input-item.hidden {
-    display: none;
-}
-
-.input-item.visible {
-    display: block;
-}
-
-.inputs-container {
+/* Base styles for the container */
+.formbot-container {
     display: flex;
     flex-direction: column;
+    padding: 20px;
+    max-width: 100%;
+    margin: auto;
 }
 
-.input-item {
+/* Responsive styles for form inputs and buttons */
+.formbot-container div {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+input,
+button {
+    width: 23%;
+    box-sizing: border-box;
+}
+
+/* Responsive styles for images and videos */
+img,
+video {
+    max-width: auto;
+    height: auto;
+    display: block;
     margin-bottom: 10px;
 }
 
-.input-item button {
-    margin-left: 10px;
+/* Responsive styles for date picker */
+.custom-datepicker {
+    width: 23%;
+    box-sizing: border-box;
+}
+
+/* Responsive styles for rating container */
+.rating-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+/* Styles for small screens */
+@media (max-width: 768px) {
+    .formbot-container {
+        padding: 10px;
+    }
+
+    .formbot-container div {
+        margin-bottom: 15px;
+    }
+
+    input,
+    button {
+        padding: 8px;
+        font-size: 14px;
+    }
+
+    .rating-container {
+        flex-direction: row;
+    }
+
+    .rating-circle {
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+}
+
+/* Styles for extra small screens */
+@media (max-width: 480px) {
+    .formbot-container {
+        padding: 5px;
+    }
+
+    .formbot-container div {
+        margin-bottom: 10px;
+    }
+
+    input,
+    button {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .rating-circle {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+    }
 }

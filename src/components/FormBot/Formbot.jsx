@@ -1,32 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './Formbot.css'; // Ensure you have appropriate styles
+import './Formbot.css';
 import { useParams } from 'react-router-dom';
 import Send from "../../assets/send.png";
 import Textlogo from "../../assets/text.png";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 
-const Formbot = () => {
+function Formbot() {
     const { formId } = useParams();
     const [formData, setFormData] = useState(null);
     const [inputs, setInputs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [inputValues, setInputValues] = useState({});
-    const [visibleInputs, setVisibleInputs] = useState([true]); // Initialize with the first entity visible
+    const [visibleInputs, setVisibleInputs] = useState([]);
     const [buttonColors, setButtonColors] = useState([]);
     const [clickedButtons, setClickedButtons] = useState({});
-    const [inputColors,setInputColors]= useState([]);
+    const [inputColors, setInputColors] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
-    const [currentIndex, setCurrentIndex] = useState(-1); 
-
-    const noNextButtonTypes = [
-        'textInputs',
-        'buttonInputs',
-        'imageInputs',
-        'videoInputs',
-        'gifInputs'
-    ];
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [selectedRating, setSelectedRating] = useState(null);
+    const [formValues, setFormValues] = useState({});
+    const [isClicked, setIsClicked] = useState(false);
 
     useEffect(() => {
         const fetchFormData = async () => {
@@ -37,13 +32,11 @@ const Formbot = () => {
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
 
-                console.log('Fetched form data:', data);
-
                 const inputsArray = data.inputs || [];
                 const combinedInputs = inputsArray.map(input => ({
-                    ...input._doc, // Extract fields from _doc
+                    ...input._doc,
                     type: input.type
-                })).sort((a, b) => a.id - b.id); // Sort by id
+                })).sort((a, b) => a.id - b.id);
 
                 const initialValues = combinedInputs.reduce((acc, input) => {
                     acc[input._id] = input.value;
@@ -54,9 +47,14 @@ const Formbot = () => {
                 setFormData(data);
                 setInputs(combinedInputs);
                 setLoading(false);
-                setVisibleInputs(new Array(combinedInputs.length).fill(false).map((_, index) => index === 0)); // Only first visible
+                setVisibleInputs(new Array(combinedInputs.length).fill(false));
                 setButtonColors(new Array(combinedInputs.length).fill('#1A5FFF'));
-                setInputColors(new Array(combinedInputs.length).fill('#FFFFFF'))
+                setInputColors(new Array(combinedInputs.length).fill('#FFFFFF'));
+
+                setFormValues(prevValues => ({
+                    ...prevValues,
+                    ratingInputs: prevValues.ratingInputs || combinedInputs.filter(input => input.type === 'ratingInputs').map(input => ({ value: null }))
+                }));
             } catch (error) {
                 console.error('Error fetching form data:', error);
                 setLoading(false);
@@ -66,6 +64,12 @@ const Formbot = () => {
         fetchFormData();
     }, [formId]);
 
+    useEffect(() => {
+        if (inputs.length > 0) {
+            handleNext(0); // Show the first input and handle automatic progression
+        }
+    }, [inputs]);
+
     const handleChange = (id, value) => {
         setInputValues(prevValues => ({
             ...prevValues,
@@ -73,54 +77,14 @@ const Formbot = () => {
         }));
     };
 
-    const handleShowFirst = () => {
-        setCurrentIndex(0);
-    };
-
-    const handleNextEntity = () => {
-        if (currentIndex < inputs.length - 1) {
-            setCurrentIndex(prevIndex => prevIndex + 1);
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
-            if (!backendUrl) throw new Error('Backend URL is not defined');
-
-            const updatedInputs = inputs.map(input => ({
-                ...input,
-                value: inputValues[input._id]
-            }));
-
-            const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, {
-                ...formData,
-                inputs: updatedInputs
-            });
-
-            console.log('Form submitted successfully:', response.data);
-
-            setInputValues({});
-            setVisibleInputs(new Array(inputs.length).fill(false).map((_, index) => index === 0));
-        } catch (error) {
-            console.error('Error submitting form:', error);
-        }
-    };
-
-    const handleNext = (index) => {
-        setVisibleInputs(prevState => prevState.map((visible, i) => i <= index + 1 ? true : visible));
-        setButtonColors(prevColors => prevColors.map((color, i) => i === index ? '#777777' : color));
-        setInputColors(prevColors=>prevColors.map((color,i)=>i=== index ? '#777777':color ));
-        console.log('Next button clicked:', { index, visibleInputs });
-        handleNextEntity();
-    };
-
     const handleButtonClick = (id) => {
-        setClickedButtons((prev) => ({ ...prev, [id]: !prev[id] }));
+        setClickedButtons(prev => ({ ...prev, [id]: !prev[id] }));
         handleChange(id, inputValues[id] || '');
-        console.log('Button clicked:', { id, clickedButtons });
-        handleNextEntity();
+
+        const index = inputs.findIndex(input => input._id === id);
+        if (index !== -1) {
+            handleNext(index);
+        }
     };
 
     const handleDateChange = (date, id) => {
@@ -129,11 +93,86 @@ const Formbot = () => {
             ...prevValues,
             [id]: date ? date.toISOString().split('T')[0] : ''
         }));
+        handleNext(currentIndex); // Move to the next input
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    const handleNext = (index) => {
+        if (index >= inputs.length - 1) return;
+
+        const nextIndex = findNextInteractiveInputIndex(index);
+
+        if (nextIndex < inputs.length) {
+            setVisibleInputs(prevState => prevState.map((visible, i) => i <= nextIndex));
+            setButtonColors(prevColors => prevColors.map((color, i) => i === nextIndex ? '#777777' : color));
+            setInputColors(prevColors => prevColors.map((color, i) => i === nextIndex ? '#777777' : color));
+            setCurrentIndex(nextIndex);
+        }
+    };
+
+    const findNextInteractiveInputIndex = (currentIndex) => {
+        for (let i = currentIndex + 1; i < inputs.length; i++) {
+            if (inputs[i].type !== 'textInputs' && inputs[i].type !== 'imageInputs' && inputs[i].type !== 'videoInputs' && inputs[i].type !== 'gifInputs') {
+                return i;
+            }
+        }
+        return currentIndex;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
+            if (!backendUrl) throw new Error('Backend URL is not defined');
+    
+            // Assuming inputs is an array of input objects with _id, type, and value
+            const updatedInputs = {
+                textInputs: [],
+                imageInputs: [],
+                videoInputs: [],
+                gifInputs: [],
+                tinputs: [],
+                numberInputs: [],
+                phoneInputs: [],
+                emailInputs: [],
+                dateInputs: [],
+                ratingInputs: [],
+                buttonInputs: []
+            };
+    
+            inputs.forEach(input => {
+                if (input._id in inputValues) {
+                    input.value = inputValues[input._id];
+                }
+                updatedInputs[input.type].push(input);
+            });
+    
+            const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, {
+                formName: formData.formName,
+                textInputs: updatedInputs.textInputs,
+                imageInputs: updatedInputs.imageInputs,
+                videoInputs: updatedInputs.videoInputs,
+                gifInputs: updatedInputs.gifInputs,
+                tinputs: updatedInputs.tinputs,
+                numberInputs: updatedInputs.numberInputs,
+                phoneInputs: updatedInputs.phoneInputs,
+                emailInputs: updatedInputs.emailInputs,
+                dateInputs: updatedInputs.dateInputs,
+                ratingInputs: updatedInputs.ratingInputs,
+                buttonInputs: updatedInputs.buttonInputs,
+                refUserId: formData.refUserId
+            });
+    
+            console.log('Form submitted successfully:', response.data);
+            setInputValues({});
+            const interactiveInputs = inputs.map((input, index) => {
+                return input.type !== 'textInputs' && input.type !== 'imageInputs' && input.type !== 'videoInputs' && input.type !== 'gifInputs' ? index <= 1 : index === 0;
+            });
+            setVisibleInputs(interactiveInputs);
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        }
+    };
+    
 
     const fontStyle = {
         fontFamily: 'Open Sans,sans-serif',
@@ -143,294 +182,164 @@ const Formbot = () => {
         textAlign: 'left'
     };
 
+    const ratingContainerStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '20px'
+    };
+
+    const circleStyle = {
+        width: '30px',
+        height: '30px',
+        borderRadius: '50%',
+        backgroundColor: '#007bff',
+        color: 'white',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '0 5px',
+        cursor: 'pointer'
+    };
+
+    const handleRatingChange = (index, rating) => {
+        setSelectedRating(rating);
+    
+        // Ensure that ratingInputs is defined and is an array
+        setFormValues(prevValues => ({
+            ...prevValues,
+            ratingInputs: Array.isArray(prevValues.ratingInputs)
+                ? prevValues.ratingInputs.map((input, idx) =>
+                    idx === index ? { ...input, value: rating } : input
+                )
+                : [{ value: rating }] // Initialize if it was undefined
+        }));
+    
+        handleNext(currentIndex);
+    };
+    
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
     return (
         <div className="formbot-container">
+            {inputs.map((input, index) => {
+                const isVisible = visibleInputs[index];
+                const inputValue = inputValues[input._id] || '';
 
-            <div style={{ width: '79%', height: '70%', top: '84px', left: '103px', padding: '200px 200px 200px 200px', border: '1px red solid', fontFamily: 'Open Sans,sans-serif', fontSize: '15px', fontWeight: '600', lineHeight: '20.43px', textAlign: 'left' }}>
-
-                <form onSubmit={handleSubmit} className="inputs-container">
-
-                    {inputs.map((input, index) => (
-
-                        <div key={input._id} className={`input-item ${visibleInputs[index] ? 'visible' : 'hidden'}`} style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-
-                            {input.type === 'textInputs' && (
-
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-
-                                    <img src={Textlogo} alt="Logo" style={{ height: '7%', marginRight: '10px' }} />
-                                    <p style={{ height: '7%', background: '#EEEEEE', fontFamily: 'Open Sans, sans-serif', padding: '10px', width: 'auto', fontSize: '15px', fontWeight: '600',
-                                         lineHeight: '20.43px', textAlign: 'left', color: '#847F7F', marginTop: '2px', borderRadius: '2px' }} onClick={handleShowFirst}>
-                                        {input.value}
-                                    </p>
-                                </div>
-                            )}
-                            {input.type === 'imageInputs' && <img src={input.value} alt={`Image ${index}`} />}
-
-                            {input.type === 'videoInputs' && <video src={input.value} controls />}
-
-                            {input.type === 'gifInputs' && <img src={input.value} alt={`GIF ${index}`} />}
-
-                            {input.type === 'tinputs' && (
-                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px', position: 'absolute',left:'75%' }}>
+                return (
+                    <div key={input._id} style={{ display: isVisible ? 'block' : 'none', marginBottom: '20px' }}>
+                        {input.type === 'textInputs' && (
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                                <img src={Textlogo} alt="Logo" style={{ height: '7%', marginRight: '10px' }} />
+                                <p alt={`text ${index}`}>{input.value}</p>
+                            </div>
+                        )}
+                        {input.type === 'imageInputs' && (
+                            <div>
+                                <img src={input.value} alt={`image ${index}`} style={{ maxWidth: '100%', marginBottom: '10px' }} />
+                            </div>
+                        )}
+                        {input.type === 'videoInputs' && (
+                            <div>
+                                <video src={input.value} controls style={{ maxWidth: '100%', marginBottom: '10px' }} />
+                            </div>
+                        )}
+                        {input.type === 'gifInputs' && (
+                            <div>
+                                <img src={input.value} alt={`gif ${index}`} style={{ maxWidth: '100%', marginBottom: '10px' }} />
+                            </div>
+                        )}
+                        {input.type === 'tinputs' && (
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                                 <input
                                     type="text"
-                                    value={inputValues[input._id] || ''}
+                                    value={inputValue}
                                     onChange={(e) => handleChange(input._id, e.target.value)}
-                                    style={{
-                                    width: '331px',
-                                    height: '61px',
-                                    borderRadius: '4px',
-                                    boxShadow: '0px 4px 6.3px 0px #00000040',
-                                    color: '#040404',
-                                    fontStyle,
-                                    backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent',
-                                    position: 'relative', // Ensure this doesn't overlap other elements
-                                    zIndex: 1, // Ensure input is on top
-                                    pointerEvents: 'auto', // Ensure pointer events are enabled
-                                    }}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
                                 />
-                            <div
-                                style={{
-                                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
-                                    width: '62px',
-                                    height: '61px',
-                                    borderRadius: '5px',
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                    marginLeft: '10px',
-                                    position: 'relative',
-                                    zIndex: 2, // Ensure button is above other elements
-                                }}
-                                id='Next'
-                                >
-                                <img
-                                    type="button"
-                                    onClick={() => handleNext(index)}
-                                    src={Send}
-                                    style={{ width: '30px', height: '25px', cursor: 'pointer' }}
-                                />
+                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
                             </div>
-                        </div>
                         )}
-
-                            {input.type === 'numberInputs' && (
-
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px',left:'75%',position:'absolute' }}>
-
-                                    <input
-                                        type="number"
-                                        value={inputValues[input._id] || ''}
-                                        onChange={(e) => handleChange(input._id, e.target.value)}
-                                        style={{ width: '331px', height: '61px', borderRadius: '4px', boxShadow: '0px 4px 6.3px 0px #00000040', color: '#040404', fontStyle , 
-                                        backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent',}}
-                                    />
-                                    <div style={{  backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
-                                        width:'62px',height:'61px',borderRadius:'5px', display: 'flex',
-                                        justifyContent: 'center',alignItems: 'center', marginLeft: '10px',marginBottom:'20px'}} id='Next'>
-                                        <img type="button" onClick={() => handleNext(index)} src={Send} style={{width:'30px',height:'25px'}} />
+                        {input.type === 'numberInputs' && (
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                                <input
+                                    type="number"
+                                    value={inputValue}
+                                    onChange={(e) => handleChange(input._id, e.target.value)}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            </div>
+                        )}
+                        {input.type === 'emailInputs' && (
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                                <input
+                                    type="email"
+                                    value={inputValue}
+                                    onChange={(e) => handleChange(input._id, e.target.value)}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            </div>
+                        )}
+                        {input.type === 'phoneInputs' && (
+                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                                <input
+                                    type="tel"
+                                    value={inputValue}
+                                    onChange={(e) => handleChange(input._id, e.target.value)}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            </div>
+                        )}
+                        {input.type === 'dateInputs' && (
+                            <div>
+                                <DatePicker
+                                    selected={selectedDate}
+                                    onChange={(date) => handleDateChange(date, input._id)}
+                                    dateFormat="yyyy-MM-dd"
+                                    placeholderText="Select a date"
+                                    className="custom-datepicker"
+                                    style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                />
+                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            </div>
+                        )}
+                        {input.type === 'ratingInputs' && (
+                            <div style={ratingContainerStyle}>
+                                {[1, 2, 3, 4, 5].map(rating => (
+                                    <div
+                                        key={rating}
+                                        style={{ ...circleStyle, backgroundColor: rating <= selectedRating ? '#FFD700' : '#007bff' }}
+                                        onClick={() => handleRatingChange(index, rating)}
+                                    >
+                                        {rating}
                                     </div>
-
-                                </div>
-                                
-                            )}
-                            {input.type === 'emailInputs' && (
-
-                                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px',left:'75%',position:'absolute' }}>
-
-                                    <input
-                                        type="email"
-                                        value={inputValues[input._id] || ''}
-                                        onChange={(e) => handleChange(input._id, e.target.value)}
-                                        style={{ width: '331px', height: '61px', borderRadius: '4px', boxShadow: '0px 4px 6.3px 0px #00000040', color: '#040404', fontStyle,
-                                            backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent',
-                                         }}
-                                    />
-                                    <div style={{  backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
-                                        width:'62px',height:'61px',borderRadius:'5px', display: 'flex',
-                                        justifyContent: 'center',alignItems: 'center', marginLeft: '10px',marginBottom:'20px'}} id='Next'>
-                                        <img type="button" onClick={() => handleNext(index)} src={Send} style={{width:'30px',height:'25px'}} />
-                                    </div>
-
-                                </div>
-                            )}
-                            
-                            {input.type === 'dateInputs' && (
-
-                                <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px',left:'75%',position:'absolute' }}>
-
-                                    <div style={{ display: 'flex', alignItems: 'center' }}>
-
-                                        <input
-                                            type="date"
-                                            value={inputValues[input._id] || ''}
-                                            onChange={(e) => handleChange(input._id, e.target.value)}
-                                            style={{ width: '331px', height: '61px', borderRadius: '4px', boxShadow: '0px 4px 6.3px 0px #00000040', color: '#040404', fontStyle,
-                                                backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent',
-                                             }}
-                                        />
-                                        <div style={{
-                                            backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
-                                            width: '62px', height: '61px', borderRadius: '5px', display: 'flex',
-                                            justifyContent: 'center', alignItems: 'center', marginLeft: '10px'}} id='Next'>
-                                            <img type="button" onClick={() => handleNext(index)} src={Send} style={{ width: '30px', height: '25px', cursor: 'pointer' }} />
-                                        </div>
-
-                                    </div>
-                                    <div style={{ marginTop: '20px' }}>
-
-                                    <DatePicker
-                                        selected={selectedDate}
-                                        onChange={(date) => handleDateChange(date, input._id)}
-                                        inline
-                                    />
-                                    </div>
-
-                                </div>
-                            )}
-
-                            {input.type === 'phoneInputs' && (
-
-                                <div style={{display: 'flex', alignItems: 'center', marginBottom: '20px',left:'75%',position:'absolute' }}>
-
-                                    <input
-                                        type="tel"
-                                        value={inputValues[input._id] || ''}
-                                        onChange={(e) => handleChange(input._id, e.target.value)}
-                                        style={{ width: '331px', height: '61px', borderRadius: '4px', boxShadow: '0px 4px 6.3px 0px #00000040', color: '#040404', fontStyle,
-                                            backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent',
-                                         }}
-                                    />
-                                    <div style={{  backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
-                                        width:'62px',height:'61px',borderRadius:'5px', display: 'flex',
-                                        justifyContent: 'center',alignItems: 'center', marginLeft: '10px',marginBottom:'20px'}} id='Next'>
-                                        <img type="button" onClick={() => handleNext(index)} src={Send} style={{width:'30px',height:'25px'}} />
-                                    </div>
-
-                                </div>
-                            )}
-
-{input.type === 'ratingInputs' && (
-    <div style={{ position: 'relative', width: '100%', maxWidth: '450px', marginLeft: '75%', marginBottom: '20px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-            <div style={{ position: 'relative', flex: 1 }}>
-                <input
-                    type="text"
-                    readOnly
-                    value={(inputValues[input._id] || '')}
-                    style={{
-                        width: '100%',
-                        height: '61px',
-                        borderRadius: '4px',
-                        boxShadow: '0px 4px 6.3px 0px #00000040',
-                        color: '#040404',
-                        fontStyle,
-                        backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent',
-                        padding: '0 60px', // Adjust padding to create space for circles
-                        boxSizing: 'border-box'
-                    }}
-                />
-                <div 
-                    style={{ 
-                        position: 'absolute',
-                        top: '50%', 
-                        left: '50%',
-                        transform: 'translate(-50%, -50%)',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '80%',
-                        padding: '0 10px'
-                    }}
-                >
-                    {[1, 2, 3, 4, 5].map((rating) => (
-                        <div 
-                            key={rating}
-                            onClick={() => handleChange(input._id, rating)} // Update rating on click
-                            style={{
-                                width: '40px',
-                                height: '40px',
-                                borderRadius: '50%',
-                                backgroundColor: (inputValues[input._id] || 0) === rating ? 'yellow' : 'blue', // Color based on whether rating matches
-                                color: 'white',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                cursor: 'pointer',
-                                fontSize: '16px',
-                                fontWeight: 'bold'
-                            }}
-                        >
-                            {rating}
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div 
-                style={{ 
-                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
-                    width: '62px', 
-                    height: '61px', 
-                    borderRadius: '5px', 
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    marginLeft: '10px',
-                    cursor: 'pointer'
-                }} 
-                id='Next'
-            >
-                <img 
-                    type="button" 
-                    onClick={() => handleNext(index)} 
-                    src={Send} 
-                    style={{ width: '30px', height: '25px' }} 
-                />
-            </div>
-        </div>
-    </div>
-)}
-
-
-                            
-
-    
-                            {input.type === 'buttonInputs' && (
+                                ))}
+                            </div>
+                        )}
+                        {input.type === 'buttonInputs' && (
+                            <div>
                                 <button
-                                    type="button"
                                     onClick={() => handleButtonClick(input._id)}
-                                    style={{
-                                        width: 'auto',
-                                        height: '37px',
-                                        borderRadius: '6px',
-                                        left: '80%',
-                                        position: 'absolute',
-                                        background: clickedButtons[input._id] ? '#FF8E21' : '#053EC6',
-                                        color: 'white',
-                                        cursor: 'pointer',
-                                        padding: '0 10px',
-                                        fontFamily: 'Open Sans, sans-serif',
-                                        fontWeight: '600',
-                                        lineHeight: '20.43px',
-                                        textAlign: 'center'
-                                    }}
+                                    style={{ backgroundColor: clickedButtons[input._id] ? '#FFD700' : buttonColors[index], padding: '10px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}
                                 >
                                     {input.value}
                                 </button>
-                            )}
-                            {input.type === 'buttonInputs' && (
-                                <div className="send-button" style={{ textAlign: 'right', marginTop: '5px' }}>
-                                    <img src={Send} alt="Send" onClick={handleSubmit} style={{ cursor: 'pointer' }} />
-                                </div>
-                            )}
-
-                        </div>
-                        ))}
-                           
-                </form>
-            </div>
+                            </div>
+                        )}
+                    </div>
+                );
+            })}
+            <form onSubmit={handleSubmit}>
+                <button type="submit" style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', borderRadius: '4px', border: 'none', cursor: 'pointer', marginTop: '20px' }}>Submit</button>
+            </form>
         </div>
     );
-};
+}
 
 export default Formbot;
