@@ -391,7 +391,6 @@ function Formspace() {
                 return (
                     <div key={input.id} style={{ margin: '10px 0', display: 'flex', alignItems: 'center', gap: '10px', height: '119px', background: '#18181B', position: 'relative' }}>
                         <span style={{ fontFamily: 'Open Sans, sans-serif', fontSize: '20px', fontWeight: '600', lineHeight: '21px', textAlign: 'left', color: '#FFFFFF', top: '-35px', left: '20px', position: 'relative' }}>{input.name}</span>
-                        <button onClick={() => alert(input.value)}>{input.value || 'Click me'}</button>
                         <input
                             type="text"
                             value={input.value}
