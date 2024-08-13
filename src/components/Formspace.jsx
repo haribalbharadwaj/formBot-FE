@@ -29,6 +29,8 @@ function Formspace() {
     const navigate = useNavigate();
     const { setSelectedFormId } = useFormContext();
     const [formData, setFormData] = useState(null);
+    const [isInputClicked, setIsInputClicked] = useState(false);
+    const [isLinkCopied,setIsLinkCopied]=useState(false);
     const [inputCounts, setInputCounts] = useState({
         text: 0,
         image: 0,
@@ -42,6 +44,7 @@ function Formspace() {
         button: 0,
         tinput: 0
     });
+
 
     useEffect(() => {
         if (formId) {
@@ -171,6 +174,7 @@ function Formspace() {
                 const formLink = `${window.location.origin}/form/${formId}`;
                 await navigator.clipboard.writeText(formLink);
                 console.log('Link copied to clipboard:', formLink);
+                setIsLinkCopied(true); 
                 alert('Link copied to clipboard');
             }
         } catch (error) {
@@ -186,6 +190,10 @@ function Formspace() {
             [type]: newCount
         }));
         setInputs([...inputs, { id: inputs.length + 1, type, name: `${type.charAt(0).toUpperCase() + type.slice(1)}${newCount}`, value: '', visible: true }]);
+
+        setIsInputClicked(true);
+        setIsLinkCopied(false);
+       
     };
 
     const handleDeleteClick = (id) => {
@@ -211,6 +219,12 @@ function Formspace() {
         color: '#FFFFFF',
         cursor: 'pointer'
     };
+
+    const shareButtonStyle = {
+        ...buttonStyle,
+        backgroundColor: isInputClicked ? '#1A5FFF' : '#848890',
+    };
+    
 
 
     const inputStyle={
@@ -539,10 +553,14 @@ function Formspace() {
                     {error.name && <p style={{ color: 'red' }}>{error.name}</p>}
                 </div>
 
-                <div style={{left: '82%', position: 'absolute', top: '20%', display: 'flex', flexDirection: 'row', gap: '30px' }}>
-                    <button type="submit">Save</button>
+                <div style={{left: '82%', position: 'absolute', top: '20%', display: 'flex', flexDirection: 'row', gap: '30px',
+                    fontFamily: 'Open Sans,sans-serif',fontSize:'14px',fontWeight:'600',lineHeight:'16.8px',textAlign:'left'                    
+                 }}>
+                     <button type="button" onClick={handleShare} style={shareButtonStyle}>Share</button>
+
+                    <button  style={{background:'#4ADE80CC',width:'65px',height:'25px',borderRadius: '4px',color:'#FFFFFF'}}type="submit">Save</button>
+            
                     <img type="button" src={Close} onClick={handleCancel}/>
-                    <button type="button" onClick={handleShare}>Share</button>
                 </div>
 
 
@@ -557,6 +575,14 @@ function Formspace() {
                         <span style={activeButton === 'Response' ? activeButtonStyle : buttonStyle} onClick={() => handleResponseClick(formId)}>Response</span>
                     </div>
                 </div>
+
+                {isLinkCopied && (
+                    <div>
+                        <p style={{ width: '10%',zIndex:'1000px', textAlign: 'center', padding: '10px', backgroundColor: '#4CAF50', color: 'white', position: 'fixed', bottom: '10px', left: '50%', transform: 'translateX(-50%)' }}>Link copied</p>
+                    </div>
+                )}
+
+               
             </div>
         </div>
     );

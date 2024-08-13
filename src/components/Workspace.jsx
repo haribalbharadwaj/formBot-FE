@@ -224,7 +224,7 @@ function Workspace() {
 
     const confirmDeleteForm = async () => {
         const formId = localStorage.getItem('formId');
-        console.log('formId:', formId);
+        console.log('Deleting formId:', formId);
         
         if (!formId) {
             console.error('No form ID found in localStorage');
@@ -390,7 +390,13 @@ function Workspace() {
                                 <div  className="form-item" style={{ width:'225px',height:'270px',border: '1px solid ', background:'#D3D3D3',brderRadius: '5px',
                              display: 'flex',justifyContent: 'center',alignItems: 'center'}} onClick={() => handleFormClick(form._id)}>
                             <h3 style={{ margin: 0 ,color:'#FFFFFF',fontFamily: 'Open Sans,sans-serif',fontSize: '18px',fontWeight: '400',lineHeight: '21.6px',
-                            textAlign: 'center'}}>{form.formName}</h3>
+                            textAlign: 'center'}}
+                            onClick={() => {
+                                localStorage.setItem('formId', form._id); // Store the clicked form ID in localStorage
+                            }}
+                            
+                            >{form.formName}
+                            </h3>
                             {/* Render additional details of the form as needed */}
                         </div>
                             </div>

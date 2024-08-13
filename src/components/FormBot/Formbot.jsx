@@ -103,8 +103,8 @@ function Formbot() {
 
         if (nextIndex < inputs.length) {
             setVisibleInputs(prevState => prevState.map((visible, i) => i <= nextIndex));
-            setButtonColors(prevColors => prevColors.map((color, i) => i === nextIndex ? '#777777' : color));
-            setInputColors(prevColors => prevColors.map((color, i) => i === nextIndex ? '#777777' : color));
+            setButtonColors(prevColors => prevColors.map((color, i) => i === nextIndex ? '#1A5FFF' : color));
+            setInputColors(prevColors => prevColors.map((color, i) => i === nextIndex ? '#FFFFFF' : color));
             setCurrentIndex(nextIndex);
         }
     };
@@ -119,7 +119,6 @@ function Formbot() {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
         try {
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
             if (!backendUrl) throw new Error('Backend URL is not defined');
@@ -217,6 +216,11 @@ function Formbot() {
     
         handleNext(currentIndex);
     };
+
+    const handleImageClick = () => {
+        setIsClicked(!isClicked);
+        handleNext(currentIndex); 
+    };
     
 
     if (loading) {
@@ -224,7 +228,8 @@ function Formbot() {
     }
 
     return (
-        <div className="formbot-container">
+        <div className='Body'  style={{ padding: '20px', boxSizing: 'border-box' }}>
+            <div className="formbot-container" style={{ width: '100%', maxWidth: '100%' }}>
             {inputs.map((input, index) => {
                 const isVisible = visibleInputs[index];
                 const inputValue = inputValues[input._id] || '';
@@ -253,80 +258,272 @@ function Formbot() {
                             </div>
                         )}
                         {input.type === 'tinputs' && (
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                                <input
-                                    type="text"
-                                    value={inputValue}
-                                    onChange={(e) => handleChange(input._id, e.target.value)}
-                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                />
-                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            <div style={{ display: 'flex',justifyContent: 'flex-start',position:'relative',left:'40%' }}>
+                                <input className='text-input' type="text" value={inputValue} onChange={(e) => handleChange(input._id, e.target.value)}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc',
+                                        width:'23%',height:'7%',color: '#040404',backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent'}}/>
+                                <div  className='next'style={{borderRadius: '5px',
+                                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
+                                    display: 'flex',justifyContent: 'center',alignItems: 'center'}}  >
+                                        <img type="button" src={Send} alt="Logo"
+                                        onClick={() => {
+                                            handleNext(index);
+                                            document.querySelector('.text-input').style.backgroundColor = '#777777';  // Change box color
+                                            document.querySelector('.next').style.backgroundColor = '#777777';  // Change button color
+                                        }} 
+                                        style={{ marginTop:'4px',width: '30px', height: '25px', cursor: 'pointer'}}/>
+                                </div>
                             </div>
                         )}
                         {input.type === 'numberInputs' && (
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                                <input
-                                    type="number"
-                                    value={inputValue}
+                            <div style={{ display: 'flex',left:'40%',justifyContent: 'flex-start',position:'relative'  }}>
+                                <input className='number-input' type="number" value={inputValue}
                                     onChange={(e) => handleChange(input._id, e.target.value)}
-                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                />
-                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc',
+                                         width:'23%',height:'7%',color: '#040404',backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent'}}/>
+                                <div className='next'style={{ width: '3%',height: '7%',borderRadius: '5px',
+                                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
+                                    display: 'flex',justifyContent: 'center',alignItems: 'center'}}>
+                                        <img type="button" src={Send} alt="Logo" 
+                                        onClick={() => {
+                                            handleNext(index);
+                                            document.querySelector('.number-input').style.backgroundColor = '#777777';  // Change box color
+                                            document.querySelector('.next').style.backgroundColor = '#777777';  // Change button color
+                                        }}
+                                        style={{ marginTop:'4px',width: '30px', height: '25px', cursor: 'pointer'}}/>
+                                </div>
+                                
                             </div>
                         )}
                         {input.type === 'emailInputs' && (
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                                <input
-                                    type="email"
-                                    value={inputValue}
-                                    onChange={(e) => handleChange(input._id, e.target.value)}
-                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                />
-                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            <div style={{ display: 'flex',left:'40%',justifyContent: 'flex-start',position:'relative' }}>
+                                <input className='email-input' type="email" value={inputValue} onChange={(e) => handleChange(input._id, e.target.value)}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc',
+                                         width:'23%',height:'7%',color: '#040404',backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent'}}/>
+                                 <div style={{ width: '3%',height: '7%',borderRadius: '5px',
+                                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
+                                    display: 'flex',justifyContent: 'center',alignItems: 'center'}}  className='next'>
+                                        <img type="button" src={Send} alt="Logo" 
+                                        onClick={() => {
+                                            handleNext(index);
+                                            document.querySelector('.email-input').style.backgroundColor = '#777777';  // Change box color
+                                            document.querySelector('.next').style.backgroundColor = '#777777';  // Change button color
+                                        }}
+                                        style={{ marginTop:'4px',width: '30px', height: '25px', cursor: 'pointer'}}/>
+                                </div>
                             </div>
                         )}
                         {input.type === 'phoneInputs' && (
-                            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-                                <input
-                                    type="tel"
-                                    value={inputValue}
-                                    onChange={(e) => handleChange(input._id, e.target.value)}
-                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                />
-                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
+                            <div style={{ display: 'flex',left:'40%',justifyContent: 'flex-start',position:'relative' }}>
+                                <input className='phone-input' type="tel" value={inputValue} onChange={(e) => handleChange(input._id, e.target.value)}
+                                    style={{ marginRight: '10px', padding: '10px', borderRadius: '4px', border: '1px solid #ccc',
+                                         width:'23%',height:'7%',color: '#040404',backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent'}}/>
+                                <div style={{ width: '3%',height: '7%',borderRadius: '5px',
+                                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
+                                    display: 'flex',justifyContent: 'center',alignItems: 'center'}} className='next'>
+                                        <img type="button" src={Send} alt="Logo" 
+                                        onClick={() => {
+                                            handleNext(index);
+                                            document.querySelector('.phone-input').style.backgroundColor = '#777777';  // Change box color
+                                            document.querySelector('.next').style.backgroundColor = '#777777';  // Change button color
+                                        }}
+                                        style={{ marginTop:'4px',width: '30px', height: '25px', cursor: 'pointer'}}/>
+                                </div>
                             </div>
                         )}
-                        {input.type === 'dateInputs' && (
-                            <div>
-                                <DatePicker
-                                    selected={selectedDate}
-                                    onChange={(date) => handleDateChange(date, input._id)}
-                                    dateFormat="yyyy-MM-dd"
-                                    placeholderText="Select a date"
-                                    className="custom-datepicker"
-                                    style={{ padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
-                                />
-                                <button onClick={() => handleNext(index)} style={{ display: 'block', marginTop: '10px' }}>Next</button>
-                            </div>
-                        )}
-                        {input.type === 'ratingInputs' && (
-                            <div style={ratingContainerStyle}>
-                                {[1, 2, 3, 4, 5].map(rating => (
-                                    <div
-                                        key={rating}
-                                        style={{ ...circleStyle, backgroundColor: rating <= selectedRating ? '#FFD700' : '#007bff' }}
-                                        onClick={() => handleRatingChange(index, rating)}
-                                    >
-                                        {rating}
-                                    </div>
-                                ))}
-                            </div>
-                        )}
+
+{input.type === 'dateInputs' && (
+    <div 
+        style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            position: 'relative', 
+            left: '40%', 
+            width: '100%' , // Make the entire container responsive
+            maxWidth: '100%',  // Ensure the container is fully responsive on mobile
+            padding: '0 10px', // Add some padding for mobile
+            boxSizing: 'border-box'
+        }}
+    >
+        <div 
+            style={{ 
+                display: 'flex', 
+                justifyContent: 'flex-start', 
+                alignItems: 'center', 
+                marginBottom: '10px', 
+                width: '100%',  // Ensure the input and button container is also responsive
+                maxWidth: '100%'
+            }}
+        >
+            <input 
+                className='date-input'
+                type="date" 
+                value={inputValue} 
+                onChange={(e) => handleChange(input._id, e.target.value)}
+                style={{ 
+                    marginRight: '10px', 
+                    padding: '10px', 
+                    borderRadius: '4px', 
+                    border: '1px solid #ccc',
+                    width: '23%',   // Adjust width for better fit
+                    height: '7%',
+                    color: '#040404',
+                    backgroundColor: typeof inputColors[index] === 'string' ? inputColors[index] : 'transparent'
+
+                }}
+            />
+            <div 
+                style={{ 
+                    width: '3%',    // Increase width slightly for better alignment on smaller screens
+                    height: '7%', 
+                    borderRadius: '5px', 
+                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+                className='next'>
+                <img 
+                    type="button" 
+                    src={Send} 
+                    alt="Logo" 
+                    onClick={() => {
+                        handleNext(index);
+                        document.querySelector('.date-input').style.backgroundColor = '#777777';  // Change box color
+                        document.querySelector('.next').style.backgroundColor = '#777777';  // Change button color
+                    }}
+                   
+                    style={{ 
+                        marginTop: '4px', 
+                        width: '30px', 
+                        height: '25px', 
+                        cursor: 'pointer'
+                    }}
+                />
+            </div>
+        </div>
+
+        <div 
+            style={{ 
+                marginTop: '10px',
+                width: '100%',     // Make the DatePicker take full width on mobile
+                maxWidth: '100%',  // Restrict the maximum width
+                boxSizing: 'border-box'
+            }}
+        >
+            <DatePicker
+                selected={selectedDate}
+                onChange={(date) => handleDateChange(date, input._id)}
+                inline
+                showTimeSelectOnly 
+                calendarContainer={(props) => (
+                    <div {...props} style={{ width: '100%',
+                        maxWidth: '234px', 
+                            height: 'auto',   
+                            borderRadius: '6px 0px 0px 0px', 
+                            boxSizing: 'border-box',  
+                            opacity: 1,  
+                            margin: '0 auto', 
+                     }} />  // Control the calendar's width
+                )}
+            />
+        </div>
+    </div>
+)}
+
+
+{input.type === 'ratingInputs' && (
+    <div className="rating-input-container" style={{ position: 'relative', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', position: 'relative', width: '100%' }}>
+            <div 
+                style={{ 
+                    position: 'relative', 
+                    flex: 1, 
+                    paddingRight: '50px'  // To ensure input text doesn't overlap with the box
+                }}
+            >
+                <div 
+                    style={{ 
+                        position: 'absolute',
+                        top: '50%',
+                        right: '10px', 
+                        transform: 'translateY(-50%)',  // Center vertically
+                        width: '331px',
+                        height: '61px',
+                        borderRadius: '4px 0px 0px 0px',
+                        backgroundColor: '#FFFFFF',  // Default color
+                        display: 'flex',
+                        justifyContent: 'space-around', // Space out the circles evenly
+                        alignItems: 'center',
+                        boxShadow: '0px 4px 6.3px 0px #00000040',
+                        gap: '10px',  // Space between rating circles
+                    }}
+                    className="rating-box"
+                >
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                        <div 
+                            key={rating}
+                            onClick={() => handleChange(input._id, rating)} // Update rating on click
+                            style={{
+                                width: '30px',    // Size for each rating circle
+                                height: '30px', 
+                                borderRadius: '50%',
+                                backgroundColor: (inputValues[input._id] || 0) === rating ? '#FF8E21' : 'blue', // Color based on rating
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                cursor: 'pointer',
+                                fontSize: '12px', // Keep font size consistent
+                                fontWeight: 'bold',
+                                color: 'white',
+                            }}
+                        >
+                            {rating}
+                        </div>
+                    ))}
+                </div>
+            </div>
+            <div 
+                style={{ 
+                    backgroundColor: typeof buttonColors[index] === 'string' ? buttonColors[index] : 'transparent',
+                    width: '40px',   // Adjust button size
+                    height: '40px', 
+                    borderRadius: '5px', 
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginLeft: '10px',
+                    cursor: 'pointer',
+                }} 
+                className='next'
+                onClick={() => {
+                    handleNext(index);
+                    document.querySelector('.rating-box').style.backgroundColor = '#777777';  // Change box color
+                    document.querySelector('.next').style.backgroundColor = '#777777';  // Change button color
+                }}
+            >
+                <img 
+                    type="button" 
+                    src={Send} 
+                    style={{ width: '20px', height: '20px' }}  // Adjust image size
+                />
+            </div>
+        </div>
+    </div>
+)}
+
+
+
+
+
+
+                       
+                    
                         {input.type === 'buttonInputs' && (
-                            <div>
+                            <div style={{left:'75%',position:'relative'}}>
                                 <button
                                     onClick={() => handleButtonClick(input._id)}
-                                    style={{ backgroundColor: clickedButtons[input._id] ? '#FFD700' : buttonColors[index], padding: '10px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}
+                                    style={{ backgroundColor: clickedButtons[input._id] ? '#FF8E21' : buttonColors[index], padding: '10px', borderRadius: '4px', border: 'none', cursor: 'pointer' }}
                                 >
                                     {input.value}
                                 </button>
@@ -335,9 +532,11 @@ function Formbot() {
                     </div>
                 );
             })}
-            <form onSubmit={handleSubmit}>
-                <button type="submit" style={{ backgroundColor: '#007bff', color: 'white', padding: '10px 20px', borderRadius: '4px', border: 'none', cursor: 'pointer', marginTop: '20px' }}>Submit</button>
-            </form>
+        </div>
+                <div className="submit-container">
+                <img type="submit" onClick={() => handleSubmit()} style={{ backgroundColor: '#007bff', color: 'white', padding: '10px', borderRadius: '4px', border: 'none', cursor: 'pointer', marginTop: '20px' }} src={Send}/>
+
+                </div>
         </div>
     );
 }
