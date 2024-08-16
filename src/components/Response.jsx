@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Close from '../assets/close.png';
 import { useParams } from 'react-router-dom';
-import { useFormContext } from "../components/FormContext";
 
 function Response() {
     const [formData, setFormData] = useState(null);
@@ -10,7 +9,6 @@ function Response() {
     const [headers, setHeaders] = useState([]);
     const [rows, setRows] = useState([]);
     const { formId } = useParams();
-    const { selectedFormId } = useFormContext();
 
     const buttonStyle = {
         width: '58px',
@@ -41,54 +39,50 @@ function Response() {
         };
 
         fetchFormData();
-    }, [formId]); // Update dependency to formId
+    }, [formId]);
 
     const generateHeadersAndValues = (formData) => {
-        const submissions = formData.data || [];  // Get all submissions
-        const headersSet = new Set(['Slno', 'Submitted time']);  // Start with default headers
+        const submissions = formData.data || [];
+        const headersSet = new Set(['Slno', 'Submitted time']);
         const rows = [];
-    
-        // Ensure there are submissions to process
-        if (!Array.isArray(submissions) || submissions.length === 0) {
-            console.warn("No valid submissions found.");
-            setHeaders(Array.from(headersSet));
-            setRows([]);
-            return;
-        }
-    
-        // Process each submission
+
+        const includedInputTypes = [
+            'tinputs', 'emailInputs', 'phoneInputs', 'numberInputs', 'dateInputs', 'ratingInputs', 'buttonInputs'
+        ];
+
         submissions.forEach((submission, index) => {
             const row = {
                 'Slno': index + 1,
                 'Submitted time': new Date(submission.submissionTime).toLocaleString()
             };
-    
-            console.log(`Processing submission ${index + 1} at ${submission.submissionTime}`);
-    
-            // Process input types
-            ['tinputs', 'textInputs', 'emailInputs', 'phoneInputs', 'numberInputs', 'dateInputs', 'ratingInputs', 'gifInputs', 'imageInputs', 'videoInputs', 'buttonInputs'].forEach((inputType) => {
+
+            includedInputTypes.forEach((inputType) => {
                 const inputs = submission.submittedData[inputType] || [];
-                console.log(`Processing ${inputType}:`, inputs);
-    
-                inputs.forEach((input) => {
-                    const headerName = `${inputType.replace(/([A-Z])/g, ' $1')} ${index + 1}`;
-                    headersSet.add(headerName);
+
+                inputs.forEach((input, idx) => {
+                    const headerName = `${inputType.replace(/([A-Z])/g, ' $1')} ${idx + 1}`;
+
+                    if (!headersSet.has(headerName)) {
+                        headersSet.add(headerName);
+                    }
+
                     row[headerName] = input.value || 'N/A';
                 });
             });
-    
+
             rows.push(row);
         });
-    
-        console.log('Generated headers:', Array.from(headersSet));
-        console.log('Generated rows:', rows);
-    
-        setHeaders(Array.from(headersSet));
+
+        const headersArray = Array.from(headersSet);
+
+        setHeaders(headersArray);
         setRows(rows);
     };
-    
 
     if (error) return <div>{error}</div>;
+
+    // Check if there are submissions
+    const hasSubmissions = formData?.data?.length > 0;
 
     return (
         <div style={{ width: '1440px', height: '900px', margin: '0 auto', background: '#1F1F23', position: 'relative' }}>
@@ -101,26 +95,28 @@ function Response() {
                 <div style={{ left: '84%', top: '2%', position: 'absolute', display: 'flex', gap: '20px' }}>
                     <button style={{ background: '#848890', width: '65px', height: '25px', color: '#FFFFFF', fontFamily: 'Open Sans, sans-serif', fontSize: '14px', fontWeight: '600', lineHeight: '16.8px', textAlign: 'center' }}>Share</button>
                     <button style={{ background: '#4ADE80CC', width: '65px', height: '25px', color: '#FFFFFF', fontFamily: 'Open Sans, sans-serif', fontSize: '14px', fontWeight: '600', lineHeight: '16.8px', textAlign: 'center' }}>Save</button>
-                    <img src={Close} style={{ width: '24px', height: '24px' }} />
+                    <img src={Close} style={{ width: '24px', height: '24px' }} alt="Close" />
                 </div>
             </div>
 
-            {formData && (
+            {hasSubmissions && (
                 <div style={{ margin: '20px', width: '62.44%', height: '120.83px', top: '169px', left: '270px', borderRadius: '16.11px',
                     position: 'absolute', display: 'flex', flexDirection: 'row', gap: '300px', alignItems: 'center', justifyContent: 'center',
                     fontFamily: 'Open Sans,sans-serif', fontSize: '25.78px', fontWeight: '600', lineHeight: '35.1px', color: '#FFFFFF',
                     textAlign: 'left' }}>
                     <p style={{ width: '195.75px', height: '120.83px', borderRadius: '16.11px', background: '#323232', textAlign: 'center', 
                     display: 'flex', flexDirection: 'column', position: 'relative', justifyContent: 'center', padding: '10px'
-                    }}><span style={{ fontWeight: 'bold', display: 'block' }}>Views</span>
-                     <span style={{ fontWeight: 'bold', display: 'block' }}>{formData.views || 0}</span></p>
+                    }}>
+                        <span style={{ fontWeight: 'bold', display: 'block' }}>Views</span>
+                        <span style={{ fontWeight: 'bold', display: 'block' }}>{formData.views || 0}</span>
+                    </p>
 
                     <p style={{ width: '195.75px', height: '120.83px', borderRadius: '16.11px', background: '#323232', textAlign: 'center', 
                     display: 'flex', flexDirection: 'column', position: 'relative', justifyContent: 'center', padding: '10px'
                     }}>
                         <span style={{ fontWeight: 'bold', display: 'block' }}>Starts</span>
                         <span style={{ display: 'block' }}>{formData.startCount || 0}</span>
-                        </p>
+                    </p>
                     
                     <p style={{ width: '195.75px', height: '120.83px', borderRadius: '16.11px', background: '#323232', textAlign: 'center', 
                     display: 'flex', flexDirection: 'column', position: 'relative', justifyContent: 'center', padding: '10px'
@@ -131,36 +127,38 @@ function Response() {
                 </div>
             )}
 
-            <div>
-                {headers.length > 0 && (
-                    <table style={{ borderCollapse: 'collapse', width: '1024px', height: '274px', left: '16%', top: '370px', position: 'absolute' }}>
-                        <thead>
-                            <tr>
-                                {headers.map((header, index) => (
-                                    <th key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#7EA6FF', backgroundColor: '#3D3D40' }}>
-                                        {header}
-                                    </th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rows.length > 0 ? rows.map((row, index) => (
-                                <tr key={index}>
+            {hasSubmissions && (
+                <div>
+                    {headers.length > 0 && (
+                        <table style={{ borderCollapse: 'collapse', width: '1024px', height: '274px', left: '16%', top: '370px', position: 'absolute' }}>
+                            <thead>
+                                <tr>
                                     {headers.map((header, index) => (
-                                        <td key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#FFFFFF', backgroundColor: '#2A2A2A' }}>
-                                            {row[header] || 'N/A'}
-                                        </td>
+                                        <th key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#7EA6FF', backgroundColor: '#3D3D40' }}>
+                                            {header}
+                                        </th>
                                     ))}
                                 </tr>
-                            )) : (
-                                <tr>
-                                    <td colSpan={headers.length} style={{ textAlign: 'center', color: '#FFFFFF' }}>No data available</td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+                            </thead>
+                            <tbody>
+                                {rows.length > 0 ? rows.map((row, index) => (
+                                    <tr key={index}>
+                                        {headers.map((header, index) => (
+                                            <td key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#FFFFFF', backgroundColor: '#2A2A2A' }}>
+                                                {row[header] || 'N/A'}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                )) : (
+                                    <tr>
+                                        <td colSpan={headers.length} style={{ textAlign: 'center', color: '#FFFFFF' }}>No data available</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

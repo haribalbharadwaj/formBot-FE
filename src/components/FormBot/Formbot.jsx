@@ -22,6 +22,7 @@ function Formbot() {
     const [selectedRating, setSelectedRating] = useState(null);
     const [formValues, setFormValues] = useState({});
     const [isClicked, setIsClicked] = useState(false);
+    const [submitted, setSubmitted] = useState(false);
    
 
     
@@ -188,6 +189,7 @@ function Formbot() {
             setInputValues({});
             setFormValues({}); // Reset form-specific values
             setVisibleInputs(new Array(inputs.length).fill(false)); // Reset visibility
+            setSubmitted(true);
     
         } catch (error) {
             console.error('Error submitting form:', error);
