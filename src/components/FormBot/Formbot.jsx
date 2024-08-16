@@ -22,27 +22,37 @@ function Formbot() {
     const [selectedRating, setSelectedRating] = useState(null);
     const [formValues, setFormValues] = useState({});
     const [isClicked, setIsClicked] = useState(false);
+   
 
+    
     useEffect(() => {
         const fetchFormData = async () => {
             try {
+
                 const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
                 if (!backendUrl) throw new Error('Backend URL is not defined');
 
                 const response = await axios.get(`${backendUrl}/form/getForm/${formId}`);
                 const data = response.data.data || {};
+                
+                // Debugging
+                console.log('Fetched from data:', data);
 
                 const inputsArray = data.inputs || [];
                 const combinedInputs = inputsArray.map(input => ({
-                    ...input._doc,
-                    type: input.type
+                    ...input,
+                    type: input.type,
+                    _id: input._id 
                 })).sort((a, b) => a.id - b.id);
 
-                const initialValues = combinedInputs.reduce((acc, input) => {
-                    acc[input._id] = input.value;
+    
+                // Map inputs from fetched data
+                const initialValues = data.inputs.reduce((acc, input) => {
+                    if (input._id) acc[input._id] = input.value || "";
                     return acc;
                 }, {});
-
+    
+                console.log('Mapped initial values:', initialValues); // Debugging
                 setInputValues(initialValues);
                 setFormData(data);
                 setInputs(combinedInputs);
@@ -50,19 +60,16 @@ function Formbot() {
                 setVisibleInputs(new Array(combinedInputs.length).fill(false));
                 setButtonColors(new Array(combinedInputs.length).fill('#1A5FFF'));
                 setInputColors(new Array(combinedInputs.length).fill('#FFFFFF'));
-
-                setFormValues(prevValues => ({
-                    ...prevValues,
-                    ratingInputs: prevValues.ratingInputs || combinedInputs.filter(input => input.type === 'ratingInputs').map(input => ({ value: null }))
-                }));
             } catch (error) {
                 console.error('Error fetching form data:', error);
                 setLoading(false);
             }
         };
-
+    
         fetchFormData();
     }, [formId]);
+    
+    
 
     useEffect(() => {
         if (inputs.length > 0) {
@@ -71,11 +78,13 @@ function Formbot() {
     }, [inputs]);
 
     const handleChange = (id, value) => {
-        setInputValues(prevValues => ({
-            ...prevValues,
-            [id]: value
-        }));
+        setInputValues(prevValues => {
+            const updatedValues = { ...prevValues, [id]: value };
+            console.log('Updated inputValues:', updatedValues); // Add this line
+            return updatedValues;
+        });
     };
+    
 
     const handleButtonClick = (id) => {
         setClickedButtons(prev => ({ ...prev, [id]: !prev[id] }));
@@ -118,12 +127,13 @@ function Formbot() {
         return currentIndex;
     };
 
-    const handleSubmit = async (e) => {
+
+    const handleSubmit = async () => {
         try {
             const backendUrl = process.env.REACT_APP_FORMBOT_BACKEND_URL;
             if (!backendUrl) throw new Error('Backend URL is not defined');
     
-            // Assuming inputs is an array of input objects with _id, type, and value
+            // Prepare updated inputs
             const updatedInputs = {
                 textInputs: [],
                 imageInputs: [],
@@ -139,40 +149,55 @@ function Formbot() {
             };
     
             inputs.forEach(input => {
-                if (input._id in inputValues) {
+                const inputType = input.type;
+                if (inputValues[input._id]) {
                     input.value = inputValues[input._id];
                 }
-                updatedInputs[input.type].push(input);
+                if (updatedInputs[inputType]) {
+                    updatedInputs[inputType].push(input);
+                } else {
+                    updatedInputs[inputType] = [input];
+                }
             });
     
+            const submissionData = {
+                ...updatedInputs,
+                submissionTime: new Date()
+            };
+    
+            // Fetch the current form data
+            const formResponse = await axios.get(`${backendUrl}/form/getForm/${formId}`);
+            const currentFormData = formResponse.data;
+    
+            // Ensure submissions is an array
+            const currentSubmissions = Array.isArray(currentFormData.submissions)
+                ? currentFormData.submissions
+                : []; // Default to an empty array if not an array
+    
+            // Update the form document with new submissions
             const response = await axios.put(`${backendUrl}/form/updateForm/${formId}`, {
-                formName: formData.formName,
-                textInputs: updatedInputs.textInputs,
-                imageInputs: updatedInputs.imageInputs,
-                videoInputs: updatedInputs.videoInputs,
-                gifInputs: updatedInputs.gifInputs,
-                tinputs: updatedInputs.tinputs,
-                numberInputs: updatedInputs.numberInputs,
-                phoneInputs: updatedInputs.phoneInputs,
-                emailInputs: updatedInputs.emailInputs,
-                dateInputs: updatedInputs.dateInputs,
-                ratingInputs: updatedInputs.ratingInputs,
-                buttonInputs: updatedInputs.buttonInputs,
-                refUserId: formData.refUserId
+                ...currentFormData,
+                ...updatedInputs,
+                submissions: [...currentSubmissions, submissionData], // Ensure submissions is an array
+                updatedAt: new Date()
             });
     
             console.log('Form submitted successfully:', response.data);
+    
+            // Clear input values after submission
             setInputValues({});
-            const interactiveInputs = inputs.map((input, index) => {
-                return input.type !== 'textInputs' && input.type !== 'imageInputs' && input.type !== 'videoInputs' && input.type !== 'gifInputs' ? index <= 1 : index === 0;
-            });
-            setVisibleInputs(interactiveInputs);
+            setFormValues({}); // Reset form-specific values
+            setVisibleInputs(new Array(inputs.length).fill(false)); // Reset visibility
+    
         } catch (error) {
             console.error('Error submitting form:', error);
         }
     };
     
+   
+    
 
+     
     const fontStyle = {
         fontFamily: 'Open Sans,sans-serif',
         fontSize: '15px',
@@ -193,7 +218,7 @@ function Formbot() {
         height: '30px',
         borderRadius: '50%',
         backgroundColor: '#007bff',
-        color: 'white',
+        color: 'white', 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -234,12 +259,14 @@ function Formbot() {
                 const isVisible = visibleInputs[index];
                 const inputValue = inputValues[input._id] || '';
 
+                const uniqueKey = `${input._id}-${index}`;
+
                 return (
-                    <div key={input._id} style={{ display: isVisible ? 'block' : 'none', marginBottom: '20px' }}>
+                    <div key={uniqueKey} style={{ display: isVisible ? 'block' : 'none', marginBottom: '20px' }}>
                         {input.type === 'textInputs' && (
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
                                 <img src={Textlogo} alt="Logo" style={{ height: '7%', marginRight: '10px' }} />
-                                <p alt={`text ${index}`}>{input.value}</p>
+                                <p alt={`text ${index}`}> {input.value}</p>
                             </div>
                         )}
                         {input.type === 'imageInputs' && (

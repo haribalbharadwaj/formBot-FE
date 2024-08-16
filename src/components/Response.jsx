@@ -30,13 +30,7 @@ function Response() {
                     const response = await axios.get(`${process.env.REACT_APP_FORMBOT_BACKEND_URL}/form/response/${formId}`);
                     console.log("Response data:", response.data); // Debug log
                     setFormData(response.data);
-
-                    // Check if response.data.submissions exists
-                    if (response.data.submissions) {
-                        generateHeadersAndValues(response.data.submissions);
-                    } else {
-                        setError('No submissions found');
-                    }
+                    generateHeadersAndValues(response.data);
                 } else {
                     setError('Form ID not found in localStorage');
                 }
@@ -49,30 +43,50 @@ function Response() {
         fetchFormData();
     }, [formId]); // Update dependency to formId
 
-    const generateHeadersAndValues = (submissions) => {
-        const headersSet = new Set(['Slno', 'Submitted time']);
+    const generateHeadersAndValues = (formData) => {
+        const submissions = formData.data || [];  // Get all submissions
+        const headersSet = new Set(['Slno', 'Submitted time']);  // Start with default headers
         const rows = [];
-
+    
+        // Ensure there are submissions to process
+        if (!Array.isArray(submissions) || submissions.length === 0) {
+            console.warn("No valid submissions found.");
+            setHeaders(Array.from(headersSet));
+            setRows([]);
+            return;
+        }
+    
+        // Process each submission
         submissions.forEach((submission, index) => {
-            const row = { 'Slno': index + 1, 'Submitted time': new Date(submission.updatedAt).toLocaleString() };
-
-            Object.keys(submission).forEach((key) => {
-                if (key !== 'updatedAt' && key !== '_id') {
-                    // Ensure that each field is an array
-                    (submission[key] || []).forEach((input, idx) => {
-                        const headerName = `${key.replace(/([A-Z])/g, ' $1')} ${idx + 1}`;
-                        headersSet.add(headerName);
-                        row[headerName] = input.value || 'N/A';
-                    });
-                }
+            const row = {
+                'Slno': index + 1,
+                'Submitted time': new Date(submission.submissionTime).toLocaleString()
+            };
+    
+            console.log(`Processing submission ${index + 1} at ${submission.submissionTime}`);
+    
+            // Process input types
+            ['tinputs', 'textInputs', 'emailInputs', 'phoneInputs', 'numberInputs', 'dateInputs', 'ratingInputs', 'gifInputs', 'imageInputs', 'videoInputs', 'buttonInputs'].forEach((inputType) => {
+                const inputs = submission.submittedData[inputType] || [];
+                console.log(`Processing ${inputType}:`, inputs);
+    
+                inputs.forEach((input) => {
+                    const headerName = `${inputType.replace(/([A-Z])/g, ' $1')} ${index + 1}`;
+                    headersSet.add(headerName);
+                    row[headerName] = input.value || 'N/A';
+                });
             });
-
+    
             rows.push(row);
         });
-
+    
+        console.log('Generated headers:', Array.from(headersSet));
+        console.log('Generated rows:', rows);
+    
         setHeaders(Array.from(headersSet));
         setRows(rows);
     };
+    
 
     if (error) return <div>{error}</div>;
 
@@ -123,18 +137,26 @@ function Response() {
                         <thead>
                             <tr>
                                 {headers.map((header, index) => (
-                                    <th key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#f4f4f4' }}>{header}</th>
+                                    <th key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#7EA6FF', backgroundColor: '#3D3D40' }}>
+                                        {header}
+                                    </th>
                                 ))}
                             </tr>
                         </thead>
                         <tbody>
-                            {rows.map((row, index) => (
+                            {rows.length > 0 ? rows.map((row, index) => (
                                 <tr key={index}>
-                                    {headers.map((header, idx) => (
-                                        <td key={idx} style={{ border: '1px solid #ddd', padding: '8px', color: '#f4f4f4' }}>{row[header] || 'N/A'}</td>
+                                    {headers.map((header, index) => (
+                                        <td key={index} style={{ border: '1px solid #ddd', padding: '8px', color: '#FFFFFF', backgroundColor: '#2A2A2A' }}>
+                                            {row[header] || 'N/A'}
+                                        </td>
                                     ))}
                                 </tr>
-                            ))}
+                            )) : (
+                                <tr>
+                                    <td colSpan={headers.length} style={{ textAlign: 'center', color: '#FFFFFF' }}>No data available</td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 )}
